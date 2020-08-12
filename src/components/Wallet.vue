@@ -86,7 +86,7 @@
           v-bind:key="assetRecord.assetId"
         >
           <div class="name">{{ assetRecord.name }}</div>
-          <div class="balance">{{ assetRecord.balance }}</div>
+          <div class="balance">{{ assetRecord.balanceFormatted }}</div>
           <div class="faceut">
             <button @click="mintAsset(assetRecord.assetId)">
               ++GET++

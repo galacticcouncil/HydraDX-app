@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import Api from "../api";
 import { ApiPromise } from "@polkadot/api";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { AccountData } from "@polkadot/types/interfaces/balances";
+import { formatBalance } from "@polkadot/util";
 
 type AccountInfo = {
   name: string;
@@ -19,6 +19,7 @@ type AssetRecord = {
 type AssetBalance = {
   assetId: number;
   balance: number;
+  balanceFormatted: string;
 };
 
 type State = {
@@ -78,13 +79,16 @@ const store = new Vuex.Store<State>({
 
       // TODO: Faster algo
       const balances = assetList.map(assetRecord => {
-        const balance = assetBalances.find(
+        const tokenInfo = assetBalances.find(
           x => x.assetId === assetRecord.assetId
-        )?.balance;
+        );
+        const balance = tokenInfo?.balance;
+        const balanceFormatted = tokenInfo?.balanceFormatted;
 
         return {
           ...assetRecord,
-          balance: balance || 0
+          balance: balance || 0,
+          balanceFormatted: balanceFormatted || 0
         };
       });
       return balances;
@@ -170,14 +174,15 @@ const syncAssetBalances = async (api: ApiPromise) => {
   if (account) {
     const multiTokenInfo = await api.query.tokens.accounts.entries(account);
     const baseTokenInfo = await api.query.system.account(account);
+    const baseTokenBalance = baseTokenInfo.data.free.toNumber();
 
     balances[0] = {
       assetId: 0,
-      balance: baseTokenInfo.data.free.toNumber()
+      balance: baseTokenBalance,
+      balanceFormatted: formatBalance(baseTokenBalance)
     };
     multiTokenInfo.forEach(record => {
-      let assetId = 0;
-      let balance = 0;
+      let assetId = 99999;
 
       const assetInfo = record[0].toHuman();
       if (Array.isArray(assetInfo) && typeof assetInfo[1] === "string") {
@@ -185,11 +190,13 @@ const syncAssetBalances = async (api: ApiPromise) => {
       }
 
       const assetBalances = api.createType("AccountData", record[1]);
-      balance = assetBalances.free.toNumber();
+      const balance = assetBalances.free.toNumber();
+      const balanceFormatted = formatBalance(balance);
 
       balances[assetId] = {
         assetId,
-        balance
+        balance,
+        balanceFormatted
       };
     });
   }
@@ -229,6 +236,12 @@ const syncAssetList = async (api: ApiPromise) => {
 };
 
 Api.initialize().then(async api => {
+  // INITIALIZE HELPERS
+  formatBalance.setDefaults({
+    decimals: 12,
+    unit: ""
+  });
+
   // INITIALIZE WALLET
   store.commit("setExtensionPresent", false);
   Api.syncWallets(updateWalletInfo).then(async accountSubscription => {
