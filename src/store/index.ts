@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import Api from "../api";
 import { ApiPromise } from "@polkadot/api";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { AccountData } from "@polkadot/types/interfaces/balances";
 
 type AccountInfo = {
   name: string;
@@ -169,8 +170,28 @@ const syncAssetBalances = async (api: ApiPromise) => {
   if (account) {
     const multiTokenInfo = await api.query.tokens.accounts.entries(account);
     const baseTokenInfo = await api.query.system.account(account);
-    // console.log(multiTokenInfo);
-    // console.log(baseTokenInfo);
+
+    balances[0] = {
+      assetId: 0,
+      balance: baseTokenInfo.data.free.toNumber()
+    };
+    multiTokenInfo.forEach(record => {
+      let assetId = 0;
+      let balance = 0;
+
+      const assetInfo = record[0].toHuman();
+      if (Array.isArray(assetInfo) && typeof assetInfo[1] === "string") {
+        assetId = parseInt(assetInfo[1]);
+      }
+
+      const assetBalances = api.createType("AccountData", record[1]);
+      balance = assetBalances.free.toNumber();
+
+      balances[assetId] = {
+        assetId,
+        balance
+      };
+    });
   }
 
   store.commit("setAssetBalances", balances);

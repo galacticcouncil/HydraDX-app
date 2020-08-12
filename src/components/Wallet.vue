@@ -114,7 +114,6 @@ export default Vue.extend({
   },
   methods: {
     mintAsset: function(value: number) {
-      console.log("val", value);
       this.$store.dispatch("mintAsset", value);
     }
   },
