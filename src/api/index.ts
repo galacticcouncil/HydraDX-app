@@ -32,7 +32,15 @@ const syncWallets = async (
 };
 
 const initialize = async () => {
-  const wsProvider = new WsProvider("ws://127.0.0.1:9944");
+  const local =
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost";
+
+  const serverAddress = local
+    ? "ws://127.0.0.1:9944"
+    : "wss://hack.hydradx.io:9944";
+
+  const wsProvider = new WsProvider(serverAddress);
 
   /* eslint-disable @typescript-eslint/camelcase */
 
