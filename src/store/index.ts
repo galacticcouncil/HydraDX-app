@@ -37,6 +37,7 @@ type State = {
   poolInfo: {
     [key: string]: {
       poolAssets: number[];
+      poolAssetNames: string[];
       shareToken: number;
     };
   };
@@ -224,7 +225,17 @@ const store = new Vuex.Store<State>({
         extensionPresent
       };
     },
-    poolInfo: ({ poolInfo }) => poolInfo,
+    poolInfo: ({ poolInfo }) => {
+      const assetList = store.state.assetList;
+      for (const pool in poolInfo) {
+        poolInfo[pool].poolAssetNames = [];
+        poolInfo[pool].poolAssetNames[0] =
+          assetList[poolInfo[pool].poolAssets[0]].name;
+        poolInfo[pool].poolAssetNames[1] =
+          assetList[poolInfo[pool].poolAssets[1]].name;
+      }
+      return poolInfo;
+    },
     spotPrice: ({ spotPrice }) => spotPrice,
     tokenTradeMap: ({ tokenTradeMap }) => {
       return tokenTradeMap;
@@ -391,7 +402,8 @@ const syncPools = async (api: ApiPromise) => {
     const poolId = key.toHuman()?.toString() || "ERR";
     const poolAssets = api
       .createType("Vec<u32>", value)
-      .map(assetId => assetId.toNumber());
+      .map(assetId => assetId.toNumber())
+      .sort((a, b) => a - b);
 
     poolAssets.forEach((asset, key) => {
       const otherAsset = poolAssets[+!key];

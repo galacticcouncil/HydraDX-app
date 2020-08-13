@@ -211,14 +211,9 @@ label {
   background-color: transparent;
   color: #5eafe1;
   border-width: 1px;
+  font-size: 1em;
   border-color: #5eafe1;
   outline: none;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 
 .assetRecord label:hover {

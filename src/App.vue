@@ -96,6 +96,12 @@ input {
   font-family: Pexico-Regular, sans-serif;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 #app {
   font-family: Pexico-Regular, sans-serif;
   -webkit-font-smoothing: antialiased;
