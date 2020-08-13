@@ -74,7 +74,7 @@
       <div class="noTokens" v-if="!accountList.length">
         HUH?... UNHELPFUL ERROR
       </div>
-      <div class="tokenList" v-if="assetBalances && assetBalances.length > 1">
+      <div class="tokenList" v-if="assetBalances && assetBalances.length">
         <div class="legend inverted">
           <div class="name">TOKEN</div>
           <div class="balance">BALANCE</div>
@@ -170,6 +170,10 @@ a,
   padding: 1.5em;
 }
 
+.menu label:hover {
+  box-shadow: 0 0 10px #5eafe1 inset;
+}
+
 .noAccounts {
   padding: 1.5em;
 }
@@ -181,7 +185,7 @@ a,
 
 .tokenList button:hover,
 label:hover {
-  border-width: 1px;
+  border-top-width: 1px;
   border-color: #5eafe1;
   box-shadow: 0 0 7px #5eafe1 inset;
 }

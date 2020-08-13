@@ -85,16 +85,14 @@ a,
 
 .menu label:hover {
   box-shadow: 0 0 15px #f653a2 inset;
-  border-bottom-width: 1px;
 }
 
 .selected {
-  color: #0d106e;
-  background-color: #f653a2;
-  border-bottom-width: 1px;
+  background-color: #0c36a1;
 }
 
-button {
+button,
+input {
   font-family: Pexico-Regular, sans-serif;
 }
 
