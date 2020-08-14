@@ -1,4 +1,10 @@
-# hack-hydra-ui
+# hack HydraDX app
+
+XYK AMM + Exchange order matching built for Hackusama hackaton
+
+- https://hack.hydradx.io/
+- [node source](https://github.com/galacticcouncil/hack.HydraDX-node)
+- [hack submission](https://devpost.com/software/hack-hydra-dx-io)
 
 ## Project setup
 ```
