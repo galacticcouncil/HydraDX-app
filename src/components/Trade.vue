@@ -140,7 +140,6 @@ export default Vue.extend({
   computed: {
     tradeAmount: {
       get() {
-        console.log(this.sellPrice);
         return this.$store.state.tradeAmount.inputAmount;
       },
       set(tradeAmount) {

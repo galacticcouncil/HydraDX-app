@@ -115,6 +115,10 @@ const initialize = async () => {
         amount: "Balance",
         assetId: "AssetId"
       },
+      IntentionId: "u128",
+      IntentionType: {
+        _enum: ["SELL", "BUY"]
+      },
       Intention: {
         who: "AccountId",
         asset_sell: "AssetId",

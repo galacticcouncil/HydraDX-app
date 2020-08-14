@@ -5,6 +5,7 @@ import { ApiPromise } from "@polkadot/api";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { bnToBn } from "@polkadot/util";
 import BN from "bn.js";
+import { EventRecord, ExtrinsicStatus } from "@polkadot/types/interfaces";
 import { formatBalance } from "@polkadot/util";
 
 type AccountInfo = {
@@ -28,6 +29,20 @@ type AssetAmount = {
   amount: BN;
   inputAmount: number;
   amountFormatted: string;
+};
+
+type Transaction = {
+  //USERID || TXID?
+  [key: string]: {
+    progress: string;
+    block: number;
+    type: string;
+    tokenIn: number;
+    tokenOut: number;
+    expectedOut: number;
+    matchIn: number;
+    matchOut: number;
+  };
 };
 
 type TokenTradeMap = number[][];
@@ -72,6 +87,7 @@ type State = {
     spot: NodeJS.Timeout | null;
     real: NodeJS.Timeout | null;
   };
+  transactions: Transaction[];
 };
 
 Vue.use(Vuex);
@@ -96,7 +112,6 @@ const formatInputAmount = (amount: number) => {
 };
 
 const formatBalanceAmount = (balance: BN) => {
-  console.log("balance");
   const bnDecimals = bnToBn(decimalPlaces);
   //TODO: Precision
   const baseAmount = bnToBn(10).pow(bnDecimals.sub(bnToBn(4)));
@@ -106,6 +121,19 @@ const formatBalanceAmount = (balance: BN) => {
     inputAmount: inputAmount,
     amountFormatted: formatBalance(balance)
   };
+};
+
+// PARSE EVENTS FROM TRADES
+const mapEventsToTrades = (events: EventRecord[], status: ExtrinsicStatus) => {
+  console.log("events", status, events);
+  // if (status) {
+  //   // Loop through Vec<EventRecord> to display all events
+  //   events.forEach(({ phase, event: { data, method, section } }) => {
+  //     console.log("READY");
+  //     console.log(`\t' ${phase}: ${section}.${method}:: ${data}`);
+  //   });
+  // }
+  //unsub();
 };
 
 const store = new Vuex.Store<State>({
@@ -158,7 +186,8 @@ const store = new Vuex.Store<State>({
     polling: {
       spot: null,
       real: null
-    }
+    },
+    transactions: []
   },
   actions: {
     mintAsset: async (context, assetId) => {
@@ -186,16 +215,13 @@ const store = new Vuex.Store<State>({
 
         let token1: number | null = null;
         let token2: number | null = null;
-        let isSell = false;
 
         if (currentScreen === "trade") {
           token1 = state.tradeProperties.token1;
           token2 = state.tradeProperties.token2;
-          isSell = state.tradeProperties.actionType === "sell";
         } else if (currentScreen === "liquidity") {
           token1 = state.liquidityProperties.token1;
           token2 = state.liquidityProperties.token2;
-          isSell = true;
         } else {
           return;
         }
@@ -203,14 +229,9 @@ const store = new Vuex.Store<State>({
         const timeout = setTimeout(async () => {
           const amountData =
             // @ts-expect-error
-            await api.rpc.amm.getSpotPrice(
-              isSell ? token1 : token2,
-              isSell ? token2 : token1,
-              1000000000000
-            );
-          const amount = amountData.amount;
+            await api.rpc.amm.getSpotPrice(token1, token2, 1000000000000);
 
-          console.log("spot", token1);
+          const amount = amountData.amount;
           context.commit("updateSpotPrice", amount);
         }, 200);
         context.commit("setSpotPriceTimer", timeout);
@@ -230,7 +251,7 @@ const store = new Vuex.Store<State>({
                 context.state.tradeProperties.token2,
                 context.state.tradeAmount.amount
               );
-              console.log("", amountData, context.state.tradeAmount.amount);
+
               amount = amountData.amount;
             } else {
               // @ts-expect-error
@@ -239,7 +260,7 @@ const store = new Vuex.Store<State>({
                 context.state.tradeProperties.token2,
                 context.state.tradeAmount.amount
               );
-              console.log("", amountData, context.state.tradeAmount.amount);
+
               amount = amountData.amount;
             }
           }
@@ -286,9 +307,6 @@ const store = new Vuex.Store<State>({
           .div(bnToBn(100))
           .mul(percentage);
 
-        console.log("removing liquidity", percentage.toString());
-        console.log("removing liquidity", liquidityToRemove.toString());
-        console.log("removing liquidity", liquidityBalance.toString());
         api.tx.amm
           .removeLiquidity(token1, token2, liquidityToRemove)
           .signAndSend(
@@ -313,25 +331,19 @@ const store = new Vuex.Store<State>({
         if (actionType === "buy") {
           api.tx.exchange
             .buy(token1, token2, amount, false)
-            .signAndSend(
-              account,
-              { signer: signer },
-              (/*{ events, status }*/) => {
-                context.dispatch("getSpotPrice");
-                context.dispatch("getSellPrice");
-              }
-            );
+            .signAndSend(account, { signer: signer }, ({ events, status }) => {
+              mapEventsToTrades(events, status);
+              context.dispatch("getSpotPrice");
+              context.dispatch("getSellPrice");
+            });
         } else {
           api.tx.exchange
             .sell(token1, token2, amount, false)
-            .signAndSend(
-              account,
-              { signer: signer },
-              (/*{ events, status }*/) => {
-                context.dispatch("getSpotPrice");
-                context.dispatch("getSellPrice");
-              }
-            );
+            .signAndSend(account, { signer: signer }, ({ events, status }) => {
+              mapEventsToTrades(events, status);
+              context.dispatch("getSpotPrice");
+              context.dispatch("getSellPrice");
+            });
         }
       }
     }
@@ -635,14 +647,12 @@ Api.initialize().then(async api => {
   });
 
   api.query.system.events(events => {
-    console.log(`\nReceived ${events.length} events:`);
-
-    // Loop through the Vec<EventRecord>
     events.forEach(record => {
       // Extract the phase, event and the event types
       const { event, phase } = record;
       const types = event.typeDef;
 
+      //if (event.section === "exchange") {
       // Show what we are busy with
       console.log(
         `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
@@ -653,6 +663,7 @@ Api.initialize().then(async api => {
       event.data.forEach((data, index) => {
         console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
       });
+      //}
     });
   });
 
