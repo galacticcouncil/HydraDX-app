@@ -2,32 +2,32 @@
   <div class="trade">
     <!-- MENU -->
     <div class="menu">
-      <label :class="{ selected: tradeType === 'buy' }">
+      <label :class="{ selected: actionType === 'buy' }">
         <input
-          v-model="tradeType"
+          v-model="actionType"
           type="radio"
-          name="tradeType"
+          name="actionType"
           value="buy"
         />BUY</label
       >
-      <label :class="{ selected: tradeType === 'sell' }">
+      <label :class="{ selected: actionType === 'sell' }">
         <input
-          v-model="tradeType"
+          v-model="actionType"
           type="radio"
-          name="tradeType"
+          name="actionType"
           value="sell"
         />SELL</label
       >
     </div>
 
     <div class="noPools" v-if="!tokenTradeMap.length">
-      HUH?... NO POOLS TO TRADE
+      AWWW... NO POOLS TO TRADE
     </div>
     <div class="tradePlatform" v-if="tokenTradeMap.length">
       <!-- ASSET 1 -->
       <div class="actionList main">
         <div class="legend inverted">
-          <div class="name">{{ tradeType }} TOKEN</div>
+          <div class="name">{{ actionType }} TOKEN</div>
         </div>
         <div
           class="assetRecord"
@@ -75,7 +75,9 @@
           <div class="name">AMOUNT</div>
         </div>
         <div class="params" v-if="token2 !== null">
-          <div class="spotPrice">SPOT PRICE: {{ spotPrice }}</div>
+          <div class="spotPrice">
+            SPOT PRICE: {{ spotPrice.amountFormatted }}
+          </div>
           <div class="walletState">
             <div>
               {{ assetList[token1].name }}
@@ -89,11 +91,28 @@
             </div>
           </div>
           <label class="amount">
-            {{ tradeType }} AMOUNT:
-            <input type="number" v-model="tradeAmount" step="any" />
+            {{ assetList[token1].name }} TO
+            {{ actionType === "sell" ? "SELL" : "BUY" }}
+            <input
+              type="number"
+              class="amountInput"
+              v-model="tradeAmount"
+              step="any"
+            />
+            <div class="computed">
+              {{ assetList[token2].name }} TO
+              {{ actionType === "sell" ? "BUY" : "SELL" }}:
+              {{ sellPrice.amountFormatted }}
+              <input
+                type="number"
+                class="amountInput"
+                step="any"
+                :value="sellPrice.inputAmount"
+                disabled
+              />
+            </div>
           </label>
-          <div>EXPECTED PRICE {{ tradePrice.priceFormatted }}</div>
-          <button @click="swap" class="buyButton">{{ tradeType }}</button>
+          <button @click="swap" class="buyButton">{{ actionType }}</button>
         </div>
       </div>
 
@@ -121,7 +140,7 @@ export default Vue.extend({
   computed: {
     tradeAmount: {
       get() {
-        //console.log(this.$store.state.tradeAmount.amount);
+        console.log(this.sellPrice);
         return this.$store.state.tradeAmount.inputAmount;
       },
       set(tradeAmount) {
@@ -144,12 +163,12 @@ export default Vue.extend({
         this.$store.commit("setTradeProperties", { token2 });
       }
     },
-    tradeType: {
+    actionType: {
       get() {
-        return this.$store.state.tradeProperties.tradeType;
+        return this.$store.state.tradeProperties.actionType;
       },
-      set(tradeType) {
-        this.$store.commit("setTradeProperties", { tradeType });
+      set(actionType) {
+        this.$store.commit("setTradeProperties", { actionType });
       }
     },
     ...mapGetters([
@@ -158,7 +177,7 @@ export default Vue.extend({
       "tokenTradeMap",
       "assetBalances",
       "spotPrice",
-      "tradePrice"
+      "sellPrice"
     ])
   }
 });
@@ -224,6 +243,17 @@ label {
 
 .assetRecord input {
   margin: 0;
+}
+
+.amount {
+  text-align: left;
+  padding: 0;
+  margin-left: 10%;
+}
+
+.amountInput {
+  width: 80%;
+  text-align: right;
 }
 
 .spotPrice {

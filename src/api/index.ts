@@ -46,6 +46,64 @@ const initialize = async () => {
 
   api = await ApiPromise.create({
     provider: wsProvider,
+    rpc: {
+      amm: {
+        getSpotPrice: {
+          description: "Get spot price",
+          params: [
+            {
+              name: "asset1",
+              type: "AssetId"
+            },
+            {
+              name: "asset2",
+              type: "AssetId"
+            },
+            {
+              name: "amount",
+              type: "Balance"
+            }
+          ],
+          type: "BalanceInfo"
+        },
+        getSellPrice: {
+          description: "Get AMM sell price",
+          params: [
+            {
+              name: "asset1",
+              type: "AssetId"
+            },
+            {
+              name: "asset2",
+              type: "AssetId"
+            },
+            {
+              name: "amount",
+              type: "Balance"
+            }
+          ],
+          type: "BalanceInfo"
+        },
+        getBuyPrice: {
+          description: "Get AMM buy price",
+          params: [
+            {
+              name: "asset1",
+              type: "AssetId"
+            },
+            {
+              name: "asset2",
+              type: "AssetId"
+            },
+            {
+              name: "amount",
+              type: "Balance"
+            }
+          ],
+          type: "BalanceInfo"
+        }
+      }
+    },
     types: {
       Amount: "i128",
       AmountOf: "Amount",
@@ -53,6 +111,10 @@ const initialize = async () => {
       LookupSource: "AccountId",
       CurrencyId: "AssetId",
       CurrencyIdOf: "AssetId",
+      BalanceInfo: {
+        amount: "Balance",
+        assetId: "AssetId"
+      },
       Intention: {
         who: "AccountId",
         asset_sell: "AssetId",

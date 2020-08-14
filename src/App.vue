@@ -102,6 +102,24 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+#app button:disabled,
+#app input:disabled {
+  color: #aaa;
+  border-color: #aaa;
+}
+
+.disabled {
+  color: #aaa;
+  border-color: #aaa;
+}
+
+.noPools,
+.noTokens {
+  padding: 3em;
+  font-size: 1.5em;
+  border-width: 3px;
+}
+
 #app {
   font-family: Pexico-Regular, sans-serif;
   -webkit-font-smoothing: antialiased;

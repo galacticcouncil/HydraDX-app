@@ -2,25 +2,28 @@
   <div class="liquidity">
     <!-- MENU -->
     <div class="menu">
-      <label :class="{ selected: liquidityAction === 'add' }">
+      <label :class="{ selected: actionType === 'add' }">
         <input
-          v-model="liquidityAction"
+          v-model="actionType"
           type="radio"
-          name="liquidityAction"
+          name="actionType"
           value="add"
         />ADD</label
       >
-      <label :class="{ selected: liquidityAction === 'remove' }">
+      <label :class="{ selected: actionType === 'withdraw' }">
         <input
-          v-model="liquidityAction"
+          v-model="actionType"
           type="radio"
-          name="liquidityAction"
-          value="remove"
-        />REMOVE</label
+          name="actionType"
+          value="withdraw"
+        />WITHDRAW</label
       >
     </div>
 
-    <div class="liquidityPlatform">
+    <div class="noPools" v-if="!Object.keys(poolInfo).length">
+      OH!... NO POOLS ON CHAIN
+    </div>
+    <div class="liquidityPlatform" v-if="Object.keys(poolInfo).length">
       <!-- POOL LIST -->
       <div class="actionList main">
         <div class="legend inverted">
@@ -30,7 +33,6 @@
           class="assetRecord"
           v-for="(pool, poolId) in poolInfo"
           v-bind:key="poolId"
-          v-show="Object.keys(poolInfo).length"
         >
           <div class="listItem">
             <label :class="{ selected: selectedPool === poolId }">
@@ -52,7 +54,9 @@
           <div class="name">AMOUNT</div>
         </div>
         <div class="params" v-if="selectedPool !== null">
-          <!-- <div class="spotPrice">SPOT PRICE: {{ spotPrice }}</div> -->
+          <div class="spotPrice">
+            SPOT PRICE: {{ spotPrice.amountFormatted }}
+          </div>
           <div class="walletState">
             <div>
               {{ poolInfo[selectedPool].poolAssetNames[0] }}
@@ -70,17 +74,51 @@
                   .balanceFormatted
               }}
             </div>
+            <div class="shares" v-if="actionType === 'withdraw'">
+              SHARE TOKENS OWNED:
+              {{
+                assetBalances[poolInfo[selectedPool].shareToken]
+                  .balanceFormatted
+              }}
+            </div>
           </div>
           <label class="amount">
-            ADD AMOUNT:
-            <input type="number" v-model="addAmount" step="any" />
+            <div v-if="actionType === 'withdraw'">BURN SHARE %:</div>
+            <div v-if="actionType === 'add'">
+              {{ poolInfo[selectedPool].poolAssetNames[0] }} AMOUNT:
+            </div>
+            <input
+              type="number"
+              class="amountInput"
+              v-model="liquidityAmount"
+            />
+            <div class="computed">
+              {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
+              <input
+                type="number"
+                class="amountInput"
+                :value="spotPrice.inputAmount * liquidityAmount"
+                disabled
+              />
+            </div>
           </label>
-          <!-- <div>EXPECTED PRICE {{ tradePrice.priceFormatted }}</div> -->
-          <button @click="add" class="addButton">ADD LIQUIDITY</button>
+
+          <!-- ADD LIQUIDITY -->
+          <button @click="add" class="addButton" v-if="actionType === 'add'">
+            ADD
+          </button>
+
+          <!-- REMOVE LIQUIDITY -->
+          <button
+            @click="withdraw"
+            class="withdrawButton"
+            :disabled="liquidityAmount > 100 || liquidityAmount < 0"
+            v-if="actionType === 'withdraw'"
+          >
+            WITHDRAW
+          </button>
         </div>
       </div>
-
-      <!-- REMOVE LIQUIDITY -->
     </div>
   </div>
 </template>
@@ -93,17 +131,42 @@ export default Vue.extend({
   name: "Head",
   methods: {
     add: function() {
-      //
+      this.$store.dispatch("addLiquidity");
+    },
+    withdraw: function() {
+      this.$store.dispatch("withdrawLiquidity");
     }
   },
-  data: () => {
-    return {
-      addAmount: 0,
-      liquidityAction: "add",
-      selectedPool: null
-    };
-  },
-  computed: mapGetters(["poolInfo", "assetBalances"])
+  computed: {
+    liquidityAmount: {
+      get() {
+        return this.$store.state.liquidityAmount.inputAmount;
+      },
+      set(liquidityAmount) {
+        this.$store.commit("setLiquidityAmount", liquidityAmount);
+      }
+    },
+    selectedPool: {
+      get() {
+        return this.$store.state.selectedPool;
+      },
+      set(poolId: string) {
+        const token1 = this.poolInfo[poolId].poolAssets[0];
+        const token2 = this.poolInfo[poolId].poolAssets[1];
+        this.$store.commit("setLiquidityProperties", { token1, token2 });
+        this.$store.commit("setSelectedPool", poolId);
+      }
+    },
+    actionType: {
+      get() {
+        return this.$store.state.liquidityProperties.actionType;
+      },
+      set(actionType) {
+        this.$store.commit("setLiquidityProperties", { actionType });
+      }
+    },
+    ...mapGetters(["poolInfo", "assetBalances", "spotPrice"])
+  }
 });
 </script>
 
@@ -144,6 +207,26 @@ label {
   border-bottom-width: 15px;
 }
 
+.shares {
+  padding-top: 1em;
+}
+
+.amount {
+  text-align: left;
+  padding: 0;
+  margin-left: 10%;
+}
+
+.amountInput {
+  width: 80%;
+  text-align: right;
+}
+
+.computed {
+  color: #aaa;
+  padding-top: 0.5em;
+}
+
 button {
   outline: none;
   border-width: 1px;
@@ -165,6 +248,16 @@ button {
   border-width: 1px;
   border-color: #5eafe1;
   outline: none;
+}
+
+.spotPrice {
+  padding-top: 1em;
+}
+
+.assetRecord label:hover {
+  border-top-width: 1px;
+  border-color: #5eafe1;
+  box-shadow: 0 0 7px #5eafe1 inset;
 }
 
 .menu label:hover,

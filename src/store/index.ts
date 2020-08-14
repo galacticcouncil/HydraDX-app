@@ -3,6 +3,8 @@ import Vuex from "vuex";
 import Api from "../api";
 import { ApiPromise } from "@polkadot/api";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { bnToBn } from "@polkadot/util";
+import BN from "bn.js";
 import { formatBalance } from "@polkadot/util";
 
 type AccountInfo = {
@@ -18,13 +20,20 @@ type AssetRecord = {
 
 type AssetBalance = {
   assetId: number;
-  balance: number;
+  balance: BN;
   balanceFormatted: string;
+};
+
+type AssetAmount = {
+  amount: BN;
+  inputAmount: number;
+  amountFormatted: string;
 };
 
 type TokenTradeMap = number[][];
 
 type State = {
+  actions: [];
   account: string | null;
   accountList: AccountInfo[];
   assetBalances: AssetBalance[];
@@ -42,22 +51,22 @@ type State = {
     };
   };
   subscriptions: [];
-  shareTokens: number[];
-  spotPrice: number;
+  shareTokenIds: number[];
+  selectedPool: string | null;
+  sellPrice: AssetAmount;
+  spotPrice: AssetAmount;
   tokenTradeMap: TokenTradeMap;
-  tradeAmount: {
-    amount: number;
-    inputAmount: number;
-    amountFormatted: string;
+  liquidityAmount: AssetAmount;
+  tradeAmount: AssetAmount;
+  liquidityProperties: {
+    token1: number | null;
+    token2: number | null;
+    actionType: string;
   };
   tradeProperties: {
     token1: number | null;
     token2: number | null;
-    tradeType: string;
-  };
-  tradePrice: {
-    price: number;
-    priceFormatted: string;
+    actionType: string;
   };
   polling: {
     spot: NodeJS.Timeout | null;
@@ -70,36 +79,81 @@ Vue.use(Vuex);
 const decimalPlaces = 12;
 
 const savedAccount = localStorage.getItem("account");
+const savedScreen = localStorage.getItem("screen");
+const bnDecimals = bnToBn(decimalPlaces);
+//TODO: Precision
+const baseAmount = bnToBn(10).pow(bnDecimals.sub(bnToBn(4)));
+
+const formatInputAmount = (amount: number) => {
+  const normalAmount = amount
+    ? bnToBn(Math.round(amount * 10 ** 4)).mul(baseAmount)
+    : bnToBn(0);
+  return {
+    amount: normalAmount,
+    inputAmount: amount,
+    amountFormatted: formatBalance(normalAmount)
+  };
+};
+
+const formatBalanceAmount = (balance: BN) => {
+  console.log("balance");
+  const bnDecimals = bnToBn(decimalPlaces);
+  //TODO: Precision
+  const baseAmount = bnToBn(10).pow(bnDecimals.sub(bnToBn(4)));
+  const inputAmount = balance.div(baseAmount).toNumber() / 10 ** 4;
+  return {
+    amount: balance,
+    inputAmount: inputAmount,
+    amountFormatted: formatBalance(balance)
+  };
+};
 
 const store = new Vuex.Store<State>({
   state: {
+    actions: [],
     account: savedAccount || null,
     accountList: [],
     assetBalances: [],
     assetList: [],
     blockHash: null,
     blockNumber: 0,
-    currentScreen: "initial",
+    currentScreen: savedScreen ? savedScreen : "initial",
     extensionInitialized: false,
     extensionPresent: true,
     poolInfo: {},
     subscriptions: [],
-    shareTokens: [],
-    spotPrice: 0,
-    tokenTradeMap: [],
-    tradeAmount: {
-      amount: 0,
+    shareTokenIds: [],
+    selectedPool: null,
+    sellPrice: {
+      amount: bnToBn(0),
       inputAmount: 0,
       amountFormatted: "0"
+    },
+    spotPrice: {
+      amount: bnToBn(0),
+      inputAmount: 0,
+      amountFormatted: "0"
+    },
+    tokenTradeMap: [],
+    liquidityAmount: {
+      amount: bnToBn(0),
+      inputAmount: 0,
+      amountFormatted: "0"
+    },
+    tradeAmount: {
+      amount: bnToBn(0),
+      inputAmount: 0,
+      amountFormatted: "0"
+    },
+    liquidityProperties: {
+      token1: null,
+      token2: null,
+      actionType: "add"
     },
     tradeProperties: {
       token1: null,
       token2: null,
-      tradeType: "buy"
-    },
-    tradePrice: {
-      price: 0,
-      priceFormatted: "0"
+      actionType: "buy"
     },
     polling: {
       spot: null,
@@ -114,49 +168,136 @@ const store = new Vuex.Store<State>({
         const signer = await Api.getSinger(account);
         api.tx.faucet
           .mint(assetId, 100000000000000)
-          .signAndSend(account, { signer: signer }, result => {
-            console.log("SIGN AND SEND RESULT:", result);
-          });
+          .signAndSend(
+            account,
+            { signer: signer },
+            (/*{ events, status }*/) => {
+              // TODO:STUFF
+            }
+          );
       }
     },
     getSpotPrice: async context => {
       const api = Api.getApi();
       if (context.state.polling.spot) clearTimeout(context.state.polling.spot);
       if (api) {
-        const timeout = setTimeout(() => {
-          const spotPrice = 0.5;
-          // await api.query.amm.getSpotPrice(
-          //  context.state.tradeProperties.token1,
-          //  context.state.tradeProperties.token2
-          // );
-          console.log(spotPrice);
-          context.commit("setSpotPrice", spotPrice);
+        const state = context.state;
+        const currentScreen = context.state.currentScreen;
+
+        let token1: number | null = null;
+        let token2: number | null = null;
+        let isSell = false;
+
+        if (currentScreen === "trade") {
+          token1 = state.tradeProperties.token1;
+          token2 = state.tradeProperties.token2;
+          isSell = state.tradeProperties.actionType === "sell";
+        } else if (currentScreen === "liquidity") {
+          token1 = state.liquidityProperties.token1;
+          token2 = state.liquidityProperties.token2;
+          isSell = true;
+        } else {
+          return;
+        }
+
+        const timeout = setTimeout(async () => {
+          const amountData =
+            // @ts-expect-error
+            await api.rpc.amm.getSpotPrice(
+              isSell ? token1 : token2,
+              isSell ? token2 : token1,
+              1000000000000
+            );
+          const amount = amountData.amount;
+
+          console.log("spot", token1);
+          context.commit("updateSpotPrice", amount);
         }, 200);
         context.commit("setSpotPriceTimer", timeout);
       }
     },
-    getSalePrice: async context => {
+    getSellPrice: async context => {
       const api = Api.getApi();
       if (context.state.polling.real) clearTimeout(context.state.polling.real);
       if (api) {
-        const timeout = setTimeout(() => {
-          const sellPrice = api.createType(
-            "Balance",
-            context.state.tradeAmount.amount / 2
-          );
-          // await api.query.amm.getSpotPrice(
-          //  context.state.tradeProperties.token1,
-          //  context.state.tradeProperties.token2,
-          //  context.state.tradeAmount.amount
-          // );
-          const tradePrice = {
-            price: sellPrice,
-            priceFormatted: formatBalance(sellPrice)
-          };
-          console.log(sellPrice);
-          context.commit("setTradePrice", tradePrice);
+        const timeout = setTimeout(async () => {
+          let amount = bnToBn(0);
+          if (context.state.tradeAmount.inputAmount) {
+            if (context.state.tradeProperties.actionType === "sell") {
+              // @ts-expect-error
+              const amountData = await api.rpc.amm.getSellPrice(
+                context.state.tradeProperties.token1,
+                context.state.tradeProperties.token2,
+                context.state.tradeAmount.amount
+              );
+              console.log("", amountData, context.state.tradeAmount.amount);
+              amount = amountData.amount;
+            } else {
+              // @ts-expect-error
+              const amountData = await api.rpc.amm.getBuyPrice(
+                context.state.tradeProperties.token1,
+                context.state.tradeProperties.token2,
+                context.state.tradeAmount.amount
+              );
+              console.log("", amountData, context.state.tradeAmount.amount);
+              amount = amountData.amount;
+            }
+          }
+          context.commit("updateSellPrice", amount);
         }, 200);
-        context.commit("setSalePriceTimer", timeout);
+        context.commit("setSellPriceTimer", timeout);
+      }
+    },
+    addLiquidity: async context => {
+      const api = Api.getApi();
+      const account = context.state.account;
+      const amount = context.state.liquidityAmount.amount;
+      const token1 = context.state.liquidityProperties.token1;
+      const token2 = context.state.liquidityProperties.token2;
+      const spotPrice = context.state.spotPrice.inputAmount;
+      const maxSellPrice = amount.mul(bnToBn(spotPrice * 1.1));
+
+      if (api && account) {
+        const signer = await Api.getSinger(account);
+        api.tx.amm
+          .addLiquidity(token1, token2, amount, maxSellPrice)
+          .signAndSend(
+            account,
+            { signer: signer },
+            (/*{ events, status }*/) => {
+              context.dispatch("getSpotPrice");
+            }
+          );
+      }
+    },
+    withdrawLiquidity: async context => {
+      const api = Api.getApi();
+      const state = context.state;
+      const account = state.account;
+      const token1 = state.liquidityProperties.token1;
+      const token2 = state.liquidityProperties.token2;
+
+      if (api && account && state.selectedPool) {
+        const signer = await Api.getSinger(account);
+        const percentage = bnToBn(state.liquidityAmount.inputAmount);
+        const shareToken = state.poolInfo[state.selectedPool].shareToken;
+        const liquidityBalance = state.assetBalances[shareToken].balance;
+        const liquidityToRemove = liquidityBalance
+          .div(bnToBn(100))
+          .mul(percentage);
+
+        console.log("removing liquidity", percentage.toString());
+        console.log("removing liquidity", liquidityToRemove.toString());
+        console.log("removing liquidity", liquidityBalance.toString());
+        api.tx.amm
+          .removeLiquidity(token1, token2, liquidityToRemove)
+          .signAndSend(
+            account,
+            { signer: signer },
+            (/*{ events, status }*/) => {
+              context.dispatch("getSpotPrice");
+            }
+          );
       }
     },
     swap: async context => {
@@ -165,22 +306,32 @@ const store = new Vuex.Store<State>({
       const amount = context.state.tradeAmount.amount;
       const token1 = context.state.tradeProperties.token1;
       const token2 = context.state.tradeProperties.token2;
-      const tradeType = context.state.tradeProperties.tradeType;
+      const actionType = context.state.tradeProperties.actionType;
 
       if (api && account) {
         const signer = await Api.getSinger(account);
-        if (tradeType === "buy") {
+        if (actionType === "buy") {
           api.tx.exchange
             .buy(token1, token2, amount, false)
-            .signAndSend(account, { signer: signer }, result => {
-              console.log("BOY RESULT:", result);
-            });
+            .signAndSend(
+              account,
+              { signer: signer },
+              (/*{ events, status }*/) => {
+                context.dispatch("getSpotPrice");
+                context.dispatch("getSellPrice");
+              }
+            );
         } else {
           api.tx.exchange
             .sell(token1, token2, amount, false)
-            .signAndSend(account, { signer: signer }, result => {
-              console.log("SELL RESULT:", result);
-            });
+            .signAndSend(
+              account,
+              { signer: signer },
+              (/*{ events, status }*/) => {
+                context.dispatch("getSpotPrice");
+                context.dispatch("getSellPrice");
+              }
+            );
         }
       }
     }
@@ -241,7 +392,7 @@ const store = new Vuex.Store<State>({
       return tokenTradeMap;
     },
     tradeAmount: ({ tradeAmount }) => tradeAmount,
-    tradePrice: ({ tradePrice }) => tradePrice,
+    sellPrice: ({ sellPrice }) => sellPrice,
     tradeProperties: ({ tradeProperties }) => tradeProperties
   },
   mutations: {
@@ -263,41 +414,47 @@ const store = new Vuex.Store<State>({
       state.extensionInitialized = extensionInitialized;
     },
     setScreen(state, screen) {
+      localStorage.setItem("screen", screen);
       state.currentScreen = screen;
     },
-    setShareTokens(state, shareTokens) {
-      state.shareTokens = shareTokens;
+    setShareTokenIds(state, shareTokenIds) {
+      state.shareTokenIds = shareTokenIds;
     },
-    setSpotPrice(state, spotPrice) {
-      state.spotPrice = spotPrice;
+    setSelectedPool(state, poolId) {
+      store.dispatch("getSpotPrice");
+      state.selectedPool = poolId;
     },
-    setSalePriceTimer(state, timer) {
+    setSellPriceTimer(state, timer) {
       state.polling.real = timer;
     },
     setSpotPriceTimer(state, timer) {
       state.polling.spot = timer;
     },
-    setTradeAmount(state, tradeAmount) {
-      const amount = tradeAmount * Math.pow(10, decimalPlaces);
-      state.tradeAmount = {
-        amount: amount,
-        inputAmount: tradeAmount,
-        amountFormatted: formatBalance(amount)
-      };
-      store.dispatch("getSalePrice");
+    setLiquidityAmount(state, liquidityAmount) {
+      state.liquidityAmount = formatInputAmount(liquidityAmount);
     },
-    setTradePrice(state, tradePrice) {
-      state.tradePrice = tradePrice;
+    setTradeAmount(state, tradeAmount) {
+      state.tradeAmount = formatInputAmount(tradeAmount);
+      store.dispatch("getSellPrice");
+    },
+    setLiquidityProperties(state, liquidityProperties) {
+      state.liquidityProperties = {
+        ...state.liquidityProperties,
+        ...liquidityProperties
+      };
+      store.dispatch("getSpotPrice");
     },
     setTradeProperties(state, tradeProperties) {
       state.tradeProperties = {
         ...state.tradeProperties,
         ...tradeProperties
       };
+
       if (
         state.tradeProperties.token1 != null &&
         state.tradeProperties.token2 != null
       ) {
+        store.dispatch("getSellPrice");
         store.dispatch("getSpotPrice");
       }
     },
@@ -310,6 +467,12 @@ const store = new Vuex.Store<State>({
     },
     updatePoolInfo(state, poolInfo) {
       state.poolInfo = poolInfo;
+    },
+    updateSellPrice(state, sellPrice) {
+      state.sellPrice = formatBalanceAmount(sellPrice);
+    },
+    updateSpotPrice(state, spotPrice) {
+      state.spotPrice = formatBalanceAmount(spotPrice);
     },
     updateTokenTradeMap(state, tokenTradeMap) {
       state.tokenTradeMap = tokenTradeMap;
@@ -326,7 +489,10 @@ const updateWalletInfo = (accountsWithMeta: InjectedAccountWithMeta[]) => {
     };
   });
   store.commit("setExtensionPresent", true);
-  store.commit("setScreen", "wallet");
+
+  if (!savedScreen) {
+    store.commit("setScreen", "wallet");
+  }
   if (accounts.length) {
     store.commit("setAccountList", accounts);
     if (
@@ -352,7 +518,7 @@ const syncAssetBalances = async (api: ApiPromise) => {
   if (account) {
     const multiTokenInfo = await api.query.tokens.accounts.entries(account);
     const baseTokenInfo = await api.query.system.account(account);
-    const baseTokenBalance = baseTokenInfo.data.free.toNumber();
+    const baseTokenBalance = bnToBn(baseTokenInfo.data.free);
 
     balances[0] = {
       assetId: 0,
@@ -368,7 +534,7 @@ const syncAssetBalances = async (api: ApiPromise) => {
       }
 
       const assetBalances = api.createType("AccountData", record[1]);
-      const balance = assetBalances.free.toNumber();
+      const balance = bnToBn(assetBalances.free);
       const balanceFormatted = formatBalance(balance);
 
       balances[assetId] = {
@@ -395,7 +561,7 @@ const syncPools = async (api: ApiPromise) => {
     };
   } = {};
 
-  const shareTokens: number[] = [];
+  const shareTokenIds: number[] = [];
   const tokenTradeMap: TokenTradeMap = [];
 
   allPools.forEach(([key, value]) => {
@@ -424,13 +590,13 @@ const syncPools = async (api: ApiPromise) => {
     const poolId = key.toHuman()?.toString() || "ERR";
     const shareToken = api.createType("u32", value).toNumber();
 
-    shareTokens.push(shareToken);
+    shareTokenIds.push(shareToken);
 
     poolInfo[poolId].shareToken = shareToken;
   });
 
   store.commit("updateTokenTradeMap", tokenTradeMap);
-  store.commit("setShareTokens", shareTokens);
+  store.commit("setShareTokenIds", shareTokenIds);
   store.commit("updatePoolInfo", poolInfo);
 };
 
@@ -466,6 +632,28 @@ Api.initialize().then(async api => {
       store.commit("setExtensionPresent", true);
     }
     store.commit("setExtensionInitialized", true);
+  });
+
+  api.query.system.events(events => {
+    console.log(`\nReceived ${events.length} events:`);
+
+    // Loop through the Vec<EventRecord>
+    events.forEach(record => {
+      // Extract the phase, event and the event types
+      const { event, phase } = record;
+      const types = event.typeDef;
+
+      // Show what we are busy with
+      console.log(
+        `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
+      );
+      console.log(`\t\t${event.meta.documentation.toString()}`);
+
+      // Loop through each of the parameters, displaying the type and data
+      event.data.forEach((data, index) => {
+        console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+      });
+    });
   });
 
   api.rpc.chain.subscribeNewHeads(header => {
