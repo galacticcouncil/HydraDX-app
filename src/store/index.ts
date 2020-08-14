@@ -355,7 +355,7 @@ const store = new Vuex.Store<State>({
       return accountList.find(x => x.address === account);
     },
     accountList: ({ accountList }) => accountList,
-    assetBalances: ({ assetList, assetBalances }) => {
+    assetBalances: ({ assetList, assetBalances, shareTokenIds, poolInfo }) => {
       if (!assetList) return [];
 
       // TODO: Faster algo
@@ -363,11 +363,21 @@ const store = new Vuex.Store<State>({
         const tokenInfo = assetBalances.find(
           x => x && x.assetId == assetRecord.assetId
         );
+        const shareTokenId = shareTokenIds[assetRecord.assetId];
+        const name = shareTokenId
+            ? Object.values(poolInfo)
+                .find(({ shareToken }) => shareToken === shareTokenId)
+                .poolAssets
+                .map(asset => assetList.find(x => x && x.assetId == asset))
+                .map(({ name }) => name)
+                .join(' | ')
+            : assetRecord.name;
         const balance = tokenInfo?.balance;
         const balanceFormatted = tokenInfo?.balanceFormatted;
 
         return {
           ...assetRecord,
+          name,
           balance: balance || 0,
           balanceFormatted: balanceFormatted || 0
         };
