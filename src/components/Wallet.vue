@@ -3,6 +3,7 @@
     <!-- CURRENT ACCOUNT INFO -->
     <div class="currentAccount inverted">
       <h3 v-if="accountInfo">SELECTED ACCOUNT</h3>
+      <h3 v-if="!accountInfo">PLEASE SELECT ACCOUNT</h3>
       <div v-if="accountList.length < 1">
         PLEASE ADD ACCOUNT WITH polkadot{.js}
         <a href="https://github.com/polkadot-js/extension#installation"
