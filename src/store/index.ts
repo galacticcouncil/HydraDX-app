@@ -363,10 +363,10 @@ const store = new Vuex.Store<State>({
         const tokenInfo = assetBalances.find(
           x => x && x.assetId == assetRecord.assetId
         );
-        const shareTokenId = shareTokenIds[assetRecord.assetId];
-        const name = shareTokenId
+        const shareToken = shareTokenIds.includes(assetRecord.assetId);
+        const name = shareToken
             ? Object.values(poolInfo)
-                .find(({ shareToken }) => shareToken === shareTokenId)
+                .find(({ shareToken }) => shareToken === assetRecord.assetId)
                 .poolAssets
                 .map(asset => assetList.find(x => x && x.assetId == asset))
                 .map(({ name }) => name)
@@ -378,11 +378,12 @@ const store = new Vuex.Store<State>({
         return {
           ...assetRecord,
           name,
+          shareToken,
           balance: balance || 0,
           balanceFormatted: balanceFormatted || 0
         };
       });
-      return balances;
+      return balances.sort((a, b) => b.balance - a.balance);
     },
     assetList: ({ assetList }) => assetList,
     blockInfo: ({ blockNumber, blockHash }) => {

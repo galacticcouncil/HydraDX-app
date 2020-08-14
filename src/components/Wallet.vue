@@ -88,7 +88,7 @@
         >
           <div class="name">{{ assetRecord.name }}</div>
           <div class="balance">{{ assetRecord.balanceFormatted }}</div>
-          <div class="faceut">
+          <div class="faceut" v-if="!assetRecord.shareToken">
             <button @click="mintAsset(assetRecord.assetId)">
               ++GET++
             </button>
