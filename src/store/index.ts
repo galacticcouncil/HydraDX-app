@@ -125,7 +125,7 @@ const formatBalanceAmount = (balance: BN) => {
 
 // PARSE EVENTS FROM TRADES
 const mapEventsToTrades = (events: EventRecord[], status: ExtrinsicStatus) => {
-  console.log("events", status, events);
+  //console.log("events", status, events);
   // if (status) {
   //   // Loop through Vec<EventRecord> to display all events
   //   events.forEach(({ phase, event: { data, method, section } }) => {
@@ -369,11 +369,10 @@ const store = new Vuex.Store<State>({
           for (const key in poolInfo) {
             const pool = poolInfo[key];
             if (pool.shareToken === assetRecord.assetId) {
-              name = pool
-                  .poolAssets
-                  .map(asset => assetList.find(x => x && x.assetId == asset))
-                  .map(x => x?.name)
-                  .join(' | ');
+              name = pool.poolAssets
+                .map(asset => assetList.find(x => x && x.assetId == asset))
+                .map(x => x?.name)
+                .join(" | ");
               break;
             }
           }
@@ -664,24 +663,22 @@ Api.initialize().then(async api => {
   });
 
   api.query.system.events(events => {
-    events.forEach(record => {
-      // Extract the phase, event and the event types
-      const { event, phase } = record;
-      const types = event.typeDef;
-
-      //if (event.section === "exchange") {
-      // Show what we are busy with
-      console.log(
-        `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
-      );
-      console.log(`\t\t${event.meta.documentation.toString()}`);
-
-      // Loop through each of the parameters, displaying the type and data
-      event.data.forEach((data, index) => {
-        console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-      });
-      //}
-    });
+    // events.forEach(record => {
+    //   // Extract the phase, event and the event types
+    //   const { event, phase } = record;
+    //   const types = event.typeDef;
+    //   //if (event.section === "exchange") {
+    //   // Show what we are busy with
+    //   console.log(
+    //     `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
+    //   );
+    //   console.log(`\t\t${event.meta.documentation.toString()}`);
+    //   // Loop through each of the parameters, displaying the type and data
+    //   event.data.forEach((data, index) => {
+    //     console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+    //   });
+    //   //}
+    // });
   });
 
   api.rpc.chain.subscribeNewHeads(header => {
