@@ -72,7 +72,7 @@
 
     <!-- TOKEN SCREEN -->
     <div class="tokenScreen" v-if="screenState === 'tokens'">
-      <div class="noTokens" v-if="!accountList.length">
+      <div class="noTokens" v-if="!assetBalances">
         HUH?... UNHELPFUL ERROR
       </div>
       <div class="tokenList" v-if="assetBalances && assetBalances.length">
