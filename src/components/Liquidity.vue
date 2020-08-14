@@ -119,6 +119,12 @@
           </button>
         </div>
       </div>
+      <!-- TRADES -->
+      <div class="actionList trades">
+        <div class="legend inverted">
+          <div class="name">TRADES</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -189,6 +195,10 @@ export default Vue.extend({
 
 .actionList.add {
   flex-basis: 30%;
+}
+
+.actionList.trades {
+  flex-basis: 40%;
 }
 
 .listItem {
