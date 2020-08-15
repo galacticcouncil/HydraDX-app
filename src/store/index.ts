@@ -388,7 +388,7 @@ const store = new Vuex.Store<State>({
           balanceFormatted: balanceFormatted || 0
         };
       });
-      return balances.sort((a, b) => Number(b.balance) - Number(a.balance));
+      return balances;
     },
     assetList: ({ assetList }) => assetList,
     blockInfo: ({ blockNumber, blockHash }) => {

@@ -83,7 +83,7 @@
         </div>
         <div
           class="assetRecord"
-          v-for="assetRecord in assetBalances"
+          v-for="assetRecord in [...assetBalances].sort((a, b) => Number(b.balance) - Number(a.balance))"
           v-bind:key="assetRecord.assetId"
         >
           <div class="name">{{ assetRecord.name }}</div>
