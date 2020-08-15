@@ -276,8 +276,11 @@ const store = new Vuex.Store<State>({
       const token1 = context.state.liquidityProperties.token1;
       const token2 = context.state.liquidityProperties.token2;
       const spotPrice = context.state.spotPrice.inputAmount;
-      const maxSellPrice = amount.mul(bnToBn(spotPrice * 1.1));
+      const maxSellPrice = amount
+        .mul(bnToBn(spotPrice * 1.1 * 10 ** 3))
+        .div(bnToBn(10 ** 3));
 
+      console.log(maxSellPrice);
       if (api && account) {
         const signer = await Api.getSinger(account);
         api.tx.amm

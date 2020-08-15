@@ -92,7 +92,7 @@
               class="amountInput"
               v-model="liquidityAmount"
             />
-            <div class="computed">
+            <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
               <input
                 type="number"
