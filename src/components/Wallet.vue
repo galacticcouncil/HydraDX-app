@@ -43,12 +43,7 @@
       <div class="noAccounts" v-if="accountInfo && accountList.length === 1">
         NO ACCOUNTS TO CHANGE...
       </div>
-      <div
-        class="accountList"
-        v-if="
-          accountList.length > 1 || (!accountInfo && accountList.length === 1)
-        "
-      >
+      <div class="accountList" v-if="accountList.length > 0">
         <div
           v-for="accountRecord in accountList"
           v-bind:key="accountRecord.address"
