@@ -46,8 +46,7 @@
       <div
         class="accountList"
         v-if="
-          (accountInfo && accountList.length > 1) ||
-            (!accountInfo && accountList.length === 1)
+          accountList.length > 1 || (!accountInfo && accountList.length === 1)
         "
       >
         <div
@@ -83,7 +82,9 @@
         </div>
         <div
           class="assetRecord"
-          v-for="assetRecord in [...assetBalances].sort((a, b) => Number(b.balance) - Number(a.balance))"
+          v-for="assetRecord in [...assetBalances].sort(
+            (a, b) => Number(b.balance) - Number(a.balance)
+          )"
           v-bind:key="assetRecord.assetId"
         >
           <div class="name">{{ assetRecord.name }}</div>
