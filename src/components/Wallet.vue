@@ -120,7 +120,7 @@ export default Vue.extend({
         return this.$store.state.account;
       },
       set(value) {
-        this.$store.commit("setAccount", value);
+        this.$store.dispatch("changeAccount", value);
       }
     },
     ...mapGetters(["accountList", "accountInfo", "assetBalances"])

@@ -117,9 +117,20 @@
       </div>
 
       <!-- TRADES -->
-      <div class="actionList trade">
+      <div class="actionList transaction">
         <div class="legend inverted">
           <div class="name">TRADES</div>
+        </div>
+        <div v-for="transaction in transactionList" v-bind:key="transaction.id">
+          <div
+            v-show="transaction.progress < 5"
+            :class="'transactionRecord p' + transaction.progress"
+          >
+            {{ transaction.type }} {{ transaction.amountIn }}
+            {{ assetList[transaction.tokenIn].name }} FOR
+            {{ transaction.expectedOut }}
+            {{ assetList[transaction.tokenOut].name }}
+          </div>
         </div>
       </div>
     </div>
@@ -143,7 +154,7 @@ export default Vue.extend({
         return this.$store.state.tradeAmount.inputAmount;
       },
       set(tradeAmount) {
-        this.$store.commit("setTradeAmount", tradeAmount);
+        this.$store.dispatch("changeTradeAmount", tradeAmount);
       }
     },
     token1: {
@@ -151,7 +162,7 @@ export default Vue.extend({
         return this.$store.state.tradeProperties.token1;
       },
       set(token1) {
-        this.$store.commit("setTradeProperties", { token1, token2: null });
+        this.$store.dispatch("changeTradeProperties", { token1, token2: null });
       }
     },
     token2: {
@@ -159,7 +170,7 @@ export default Vue.extend({
         return this.$store.state.tradeProperties.token2;
       },
       set(token2) {
-        this.$store.commit("setTradeProperties", { token2 });
+        this.$store.dispatch("changeTradeProperties", { token2 });
       }
     },
     actionType: {
@@ -167,7 +178,7 @@ export default Vue.extend({
         return this.$store.state.tradeProperties.actionType;
       },
       set(actionType) {
-        this.$store.commit("setTradeProperties", { actionType });
+        this.$store.dispatch("changeTradeProperties", { actionType });
       }
     },
     ...mapGetters([
@@ -176,7 +187,8 @@ export default Vue.extend({
       "tokenTradeMap",
       "assetBalances",
       "spotPrice",
-      "sellPrice"
+      "sellPrice",
+      "transactionList"
     ])
   }
 });
@@ -211,7 +223,8 @@ button:hover {
   flex-basis: 20%;
 }
 
-.actionList.trade {
+.actionList.trade,
+.actionList.transaction {
   flex-basis: 30%;
 }
 
@@ -232,6 +245,42 @@ label {
   font-size: 1em;
   border-color: #5eafe1;
   outline: none;
+}
+
+.transactionRecord {
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0.7em 0.5em 0 0.5em;
+}
+
+.transactionRecord::before {
+  content: " ";
+  display: inline-block;
+  font-size: 0.8em;
+  width: 1em;
+  height: 1em;
+  border-radius: 0.5em;
+  vertical-align: middle;
+}
+
+.p0::before {
+  background-color: #666;
+}
+
+.p1::before {
+  background-color: #aaa;
+}
+
+.p2::before {
+  background-color: royalblue;
+}
+
+.p3::before {
+  background-color: green;
+}
+
+.p4::before {
+  background-color: red;
 }
 
 .assetRecord label:hover {

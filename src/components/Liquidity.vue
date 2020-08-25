@@ -160,7 +160,8 @@ export default Vue.extend({
         const token1 = this.poolInfo[poolId].poolAssets[0];
         const token2 = this.poolInfo[poolId].poolAssets[1];
         this.$store.commit("setLiquidityProperties", { token1, token2 });
-        this.$store.commit("setSelectedPool", poolId);
+        this.$store.dispatch("getSpotPrice");
+        this.$store.dispatch("changeSelectedPool", poolId);
       }
     },
     actionType: {
@@ -169,6 +170,7 @@ export default Vue.extend({
       },
       set(actionType) {
         this.$store.commit("setLiquidityProperties", { actionType });
+        this.$store.dispatch("getSpotPrice");
       }
     },
     ...mapGetters(["poolInfo", "assetBalances", "spotPrice"])

@@ -126,7 +126,8 @@ const initialize = async () => {
         amount: "Balance",
         discount: "bool",
         sell_or_buy: "IntentionType"
-      }
+      },
+      Price: "Balance"
     }
   });
 
