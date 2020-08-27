@@ -123,6 +123,7 @@
         </div>
         <div v-for="transaction in transactionList" v-bind:key="transaction.id">
           <div
+            v-if="transaction.tokenIn != null && transaction.tokenOut != null"
             v-show="transaction.progress < 5"
             :class="'transactionRecord p' + transaction.progress"
           >

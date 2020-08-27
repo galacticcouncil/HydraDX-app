@@ -73,10 +73,12 @@ export const getters: GetterTree<State, State> = {
   sellPrice: ({ sellPrice }) => sellPrice,
   transactionList: ({ transactions, unpairedTransactions }) => {
     const allTransactions = { ...transactions };
-    unpairedTransactions.forEach(transaction => {
-      transaction.id = "unpaired" + Math.random();
-      allTransactions[transaction.id] = transaction;
-    });
+    for (const transaction in unpairedTransactions) {
+      const id = "unpaired" + Math.random();
+      const transactionData = unpairedTransactions[transaction];
+      transactionData.id = id;
+      allTransactions[id] = transactionData;
+    }
 
     return allTransactions;
   },

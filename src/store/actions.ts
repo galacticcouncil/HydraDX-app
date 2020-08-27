@@ -6,8 +6,6 @@ import { formatBalance } from "@polkadot/util";
 import { EventRecord, ExtrinsicStatus } from "@polkadot/types/interfaces";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
-let currentTransactionIndex = 0;
-
 export const actions: ActionTree<State, State> = {
   changeAccount(context, account) {
     context.commit("setAccount", account);
@@ -118,7 +116,6 @@ export const actions: ActionTree<State, State> = {
       .mul(bnToBn(spotPrice * 1.1 * 10 ** 3))
       .div(bnToBn(10 ** 3));
 
-    console.log(maxSellPrice);
     if (api && account) {
       const signer = await Api.getSinger(account);
       api.tx.amm
@@ -158,7 +155,7 @@ export const actions: ActionTree<State, State> = {
     const token1 = context.state.tradeProperties.token1;
     const token2 = context.state.tradeProperties.token2;
     const actionType = context.state.tradeProperties.actionType;
-    const currentIndex = currentTransactionIndex;
+    const currentIndex = Math.random();
 
     if (api && account && amount && token1 != null && token2 != null) {
       context.commit("updateTransaction", {
@@ -171,8 +168,6 @@ export const actions: ActionTree<State, State> = {
         type: actionType,
         progress: 0
       });
-
-      currentTransactionIndex++;
 
       const signer = await Api.getSinger(account);
       if (actionType === "buy") {
@@ -368,9 +363,11 @@ export const actions: ActionTree<State, State> = {
       status?: ExtrinsicStatus;
     }
   ) => {
+    if (!events) return;
     //TODO: BETTER HANDLING | SPLIT LOGIC
+
     events.forEach(({ event: { data, method } }) => {
-      console.log("status", status?.toHuman(), method, currentIndex);
+      // console.log("status", status?.toHuman(), method, currentIndex);
       if (method === "IntentionRegistered") {
         if (status && status.isInBlock) {
           const parsedData = data.toJSON();
@@ -389,27 +386,37 @@ export const actions: ActionTree<State, State> = {
         currentIndex != null &&
         status?.isInBlock
       ) {
-        console.log("fail", status?.toHuman());
         context.commit("updateTransaction", {
           id: Math.random(),
           index: currentIndex,
           progress: 4
         });
       }
-      // if (method === "IntentionResolvedAMMTrade") {
-      //   if (status && status.isInBlock) {
-      //     console.log("inblock, TX#", currentId);
-      //     const parsedData = data.toJSON();
-      //     if (Array.isArray(parsedData) && parsedData.length === 6) {
-      //       const id = parsedData[5]?.toString();
-
-      //       state.transactions[currentId].id = id;
-      //       if (state.transactions[currentId].progress < 2) {
-      //         state.transactions[currentId].progress = 2;
-      //       }
-      //     }
-      //   }
-      // }
+      if (method === "IntentionResolvedAMMTrade") {
+        const parsedData = data.toJSON();
+        if (Array.isArray(parsedData)) {
+          const id = parsedData[2]?.toString();
+          context.commit("updateTransaction", {
+            id: id,
+            progress: 3
+          });
+        }
+      }
+      if (method === "IntentionResolvedDirectTrade") {
+        //const account = context.state.account;
+        //TODO: add amounts matched
+        const parsedData = data.toJSON();
+        if (Array.isArray(parsedData)) {
+          context.commit("updateTransaction", {
+            id: parsedData[3]?.toString(),
+            progress: 3
+          });
+          context.commit("updateTransaction", {
+            id: parsedData[3]?.toString(),
+            progress: 3
+          });
+        }
+      }
     });
   }
 };

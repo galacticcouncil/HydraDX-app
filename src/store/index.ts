@@ -67,7 +67,7 @@ const store = new Vuex.Store<State>({
       token2: null
     },
     transactions: {},
-    unpairedTransactions: []
+    unpairedTransactions: {}
   },
   actions,
   getters,
@@ -94,22 +94,25 @@ Api.initialize().then(async api => {
   });
 
   api.query.system.events(events => {
-    events.forEach(record => {
-      // Extract the phase, event and the event types
-      const { event, phase } = record;
-      const types = event.typeDef;
-      //if (event.section === "exchange") {
-      // Show what we are busy with
-      console.log(
-        `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
-      );
-      console.log(`\t\t${event.meta.documentation.toString()}`);
-      // Loop through each of the parameters, displaying the type and data
-      event.data.forEach((data, index) => {
-        console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-      });
-      //}
-    });
+    // const eventsMap = events.map(record => {
+    //   // Extract the phase, event and the event types
+    //   const { event, phase } = record;
+    //   const types = event.typeDef;
+    //   //if (event.section === "exchange") {
+    //   // Show what we are busy with
+    //   console.log(
+    //     `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
+    //   );
+    //   console.log(`\t\t${event.meta.documentation.toString()}`);
+    //   // Loop through each of the parameters, displaying the type and data
+    //   // event.data.forEach((data, index) => {
+    //   //   console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+    //   // });
+    //   //}
+    //   return event;
+    // });
+    console.log("eventsMap", events);
+    store.dispatch("updateTransactions", { events: events });
   });
 
   api.rpc.chain.subscribeNewHeads(header => {

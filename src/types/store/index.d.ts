@@ -90,5 +90,7 @@ type State = {
   transactions: {
     [key: string]: Transaction;
   };
-  unpairedTransactions: Transaction[];
+  unpairedTransactions: {
+    [key: string]: Transaction;
+  };
 };
