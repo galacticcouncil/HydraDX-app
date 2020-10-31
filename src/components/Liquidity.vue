@@ -87,11 +87,7 @@
             <div v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[0] }} AMOUNT:
             </div>
-            <input
-              type="number"
-              class="amountInput"
-              v-model="liquidityAmount"
-            />
+            <BalanceInput v-model="liquidityAmount" />
             <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
               <input
@@ -132,25 +128,27 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
+import BalanceInput from "./BalanceInput.vue";
 
 export default Vue.extend({
   name: "Head",
+  components: { BalanceInput },
   methods: {
-    add: function() {
+    add: function () {
       this.$store.dispatch("addLiquidity");
     },
-    withdraw: function() {
+    withdraw: function () {
       this.$store.dispatch("withdrawLiquidity");
-    }
+    },
   },
   computed: {
     liquidityAmount: {
       get() {
-        return this.$store.state.liquidityAmount.inputAmount;
+        return this.$store.state.liquidityAmount;
       },
       set(liquidityAmount) {
         this.$store.commit("setLiquidityAmount", liquidityAmount);
-      }
+      },
     },
     selectedPool: {
       get() {
@@ -162,7 +160,7 @@ export default Vue.extend({
         this.$store.commit("setLiquidityProperties", { token1, token2 });
         this.$store.dispatch("getSpotPrice");
         this.$store.dispatch("changeSelectedPool", poolId);
-      }
+      },
     },
     actionType: {
       get() {
@@ -171,10 +169,10 @@ export default Vue.extend({
       set(actionType) {
         this.$store.commit("setLiquidityProperties", { actionType });
         this.$store.dispatch("getSpotPrice");
-      }
+      },
     },
-    ...mapGetters(["poolInfo", "assetBalances", "spotPrice"])
-  }
+    ...mapGetters(["poolInfo", "assetBalances", "spotPrice"]),
+  },
 });
 </script>
 
@@ -225,13 +223,7 @@ label {
 
 .amount {
   text-align: left;
-  padding: 0;
-  margin-left: 10%;
-}
-
-.amountInput {
-  width: 80%;
-  text-align: right;
+  padding: 10%;
 }
 
 .computed {

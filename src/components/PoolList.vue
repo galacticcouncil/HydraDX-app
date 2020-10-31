@@ -8,7 +8,7 @@ import { mapGetters } from "vuex";
 
 export default Vue.extend({
   name: "PoolList",
-  computed: mapGetters(["poolInfo"])
+  computed: mapGetters(["poolInfo"]),
 });
 </script>
 

@@ -2,6 +2,7 @@ import { ActionTree } from "vuex";
 import Api from "../api";
 
 import { bnToBn } from "@polkadot/util";
+import { bnToDec, decToBn } from "./util";
 import { formatBalance } from "@polkadot/util";
 import { EventRecord, ExtrinsicStatus } from "@polkadot/types/interfaces";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
@@ -42,7 +43,7 @@ export const actions: ActionTree<State, State> = {
         });
     }
   },
-  getSpotPrice: async context => {
+  getSpotPrice: async (context) => {
     const api = Api.getApi();
     if (context.state.polling.spot) clearTimeout(context.state.polling.spot);
     if (api) {
@@ -62,9 +63,17 @@ export const actions: ActionTree<State, State> = {
         return;
       }
 
+      console.log(
+        token1,
+        state.tradeProperties.token1,
+        token2,
+        state.tradeProperties.token2,
+        state.tradeAmount
+      );
+
       const timeout = setTimeout(async () => {
         const amountData =
-          // @ts-expect-error
+          // @ts-expect-error TS2339
           await api.rpc.amm.getSpotPrice(token1, token2, 1000000000000);
 
         const amount = amountData.amount;
@@ -73,28 +82,34 @@ export const actions: ActionTree<State, State> = {
       context.commit("setSpotPriceTimer", timeout);
     }
   },
-  getSellPrice: async context => {
+  getSellPrice: async (context) => {
     const api = Api.getApi();
     if (context.state.polling.real) clearTimeout(context.state.polling.real);
     if (api) {
       const timeout = setTimeout(async () => {
         let amount = bnToBn(0);
-        if (context.state.tradeAmount.inputAmount) {
+
+        console.log(
+          context.state.tradeProperties.token1,
+          context.state.tradeProperties.token2,
+          context.state.tradeAmount
+        );
+        if (context.state.tradeAmount) {
           if (context.state.tradeProperties.actionType === "sell") {
-            // @ts-expect-error
+            // @ts-expect-error TS2339
             const amountData = await api.rpc.amm.getSellPrice(
               context.state.tradeProperties.token1,
               context.state.tradeProperties.token2,
-              context.state.tradeAmount.amount
+              context.state.tradeAmount
             );
 
             amount = amountData.amount;
           } else {
-            // @ts-expect-error
+            // @ts-expect-error TS2339
             const amountData = await api.rpc.amm.getBuyPrice(
               context.state.tradeProperties.token1,
               context.state.tradeProperties.token2,
-              context.state.tradeAmount.amount
+              context.state.tradeAmount
             );
 
             amount = amountData.amount;
@@ -105,16 +120,14 @@ export const actions: ActionTree<State, State> = {
       context.commit("setSellPriceTimer", timeout);
     }
   },
-  addLiquidity: async context => {
+  addLiquidity: async (context) => {
     const api = Api.getApi();
     const account = context.state.account;
-    const amount = context.state.liquidityAmount.amount;
+    const amount = context.state.liquidityAmount;
     const token1 = context.state.liquidityProperties.token1;
     const token2 = context.state.liquidityProperties.token2;
     const spotPrice = context.state.spotPrice.inputAmount;
-    const maxSellPrice = amount
-      .mul(bnToBn(spotPrice * 1.1 * 10 ** 3))
-      .div(bnToBn(10 ** 3));
+    const maxSellPrice = decToBn(bnToDec(amount).multipliedBy(spotPrice * 1.1));
 
     if (api && account) {
       const signer = await Api.getSinger(account);
@@ -125,7 +138,7 @@ export const actions: ActionTree<State, State> = {
         });
     }
   },
-  withdrawLiquidity: async context => {
+  withdrawLiquidity: async (context) => {
     const api = Api.getApi();
     const state = context.state;
     const account = state.account;
@@ -134,7 +147,7 @@ export const actions: ActionTree<State, State> = {
 
     if (api && account && state.selectedPool) {
       const signer = await Api.getSinger(account);
-      const percentage = bnToBn(state.liquidityAmount.inputAmount);
+      const percentage = state.liquidityAmount;
       const shareToken = state.poolInfo[state.selectedPool].shareToken;
       const liquidityBalance = state.assetBalances[shareToken].balance;
       const liquidityToRemove = liquidityBalance
@@ -148,10 +161,10 @@ export const actions: ActionTree<State, State> = {
         });
     }
   },
-  swap: async context => {
+  swap: async (context) => {
     const api = Api.getApi();
     const account = context.state.account;
-    const amount = context.state.tradeAmount.amount;
+    const amount = context.state.tradeAmount;
     const token1 = context.state.tradeProperties.token1;
     const token2 = context.state.tradeProperties.token2;
     const actionType = context.state.tradeProperties.actionType;
@@ -166,18 +179,25 @@ export const actions: ActionTree<State, State> = {
         amountIn: formatBalance(amount),
         expectedOut: context.state.sellPrice.amountFormatted,
         type: actionType,
-        progress: 0
+        progress: 0,
       });
 
       const signer = await Api.getSinger(account);
+      const decimalAmount = bnToDec(amount);
       if (actionType === "buy") {
         api.tx.exchange
-          .buy(token1, token2, amount, false)
+          .buy(
+            token1,
+            token2,
+            amount,
+            decToBn(decimalAmount.multipliedBy(0.9)),
+            false
+          )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
             context.dispatch("updateTransactions", {
               events,
               currentIndex,
-              status
+              status,
             });
             context.dispatch("getSpotPrice");
             context.dispatch("getSellPrice");
@@ -185,17 +205,23 @@ export const actions: ActionTree<State, State> = {
           .catch(() => {
             context.commit("updateTransaction", {
               index: currentIndex,
-              progress: 5
+              progress: 5,
             });
           });
       } else {
         api.tx.exchange
-          .sell(token1, token2, amount, false)
+          .sell(
+            token1,
+            token2,
+            amount,
+            decToBn(decimalAmount.multipliedBy(1.1)),
+            false
+          )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
             context.dispatch("updateTransactions", {
               events,
               currentIndex,
-              status
+              status,
             });
             context.dispatch("getSpotPrice");
             context.dispatch("getSellPrice");
@@ -203,7 +229,7 @@ export const actions: ActionTree<State, State> = {
           .catch(() => {
             context.commit("updateTransaction", {
               index: currentIndex,
-              progress: 5
+              progress: 5,
             });
           });
       }
@@ -211,7 +237,7 @@ export const actions: ActionTree<State, State> = {
   },
   // GET ASSET BALANCES
   // BEWARE OF BASE ASSET
-  syncAssetBalances: async context => {
+  syncAssetBalances: async (context) => {
     const api = Api.getApi();
     const account = context.state.account;
     const balances: AssetBalance[] = [];
@@ -224,9 +250,9 @@ export const actions: ActionTree<State, State> = {
       balances[0] = {
         assetId: 0,
         balance: baseTokenBalance,
-        balanceFormatted: formatBalance(baseTokenBalance)
+        balanceFormatted: formatBalance(baseTokenBalance),
       };
-      multiTokenInfo.forEach(record => {
+      multiTokenInfo.forEach((record) => {
         let assetId = 99999;
 
         const assetInfo = record[0].toHuman();
@@ -241,7 +267,7 @@ export const actions: ActionTree<State, State> = {
         balances[assetId] = {
           assetId,
           balance,
-          balanceFormatted
+          balanceFormatted,
         };
       });
     }
@@ -251,7 +277,7 @@ export const actions: ActionTree<State, State> = {
 
   // GET LIST OF ALL POOLS
   // GET LIST OF SHARE TOKENS
-  syncPools: async context => {
+  syncPools: async (context) => {
     const api = Api.getApi();
     if (!api) return;
     const allPools = await api.query.amm.poolAssets.entries();
@@ -271,7 +297,7 @@ export const actions: ActionTree<State, State> = {
       const poolId = key.toHuman()?.toString() || "ERR";
       const poolAssets = api
         .createType("Vec<u32>", value)
-        .map(assetId => assetId.toNumber())
+        .map((assetId) => assetId.toNumber())
         .sort((a, b) => a - b);
 
       poolAssets.forEach((asset, key) => {
@@ -285,7 +311,7 @@ export const actions: ActionTree<State, State> = {
 
       poolInfo[poolId] = {
         poolAssets,
-        shareToken: 99999
+        shareToken: 99999,
       };
     });
 
@@ -305,7 +331,7 @@ export const actions: ActionTree<State, State> = {
 
   // GET LIST OF ALL ASSETS ON THE CHAIN
   // BEWARE OF TRANSFERS AND BALANCES WITH BASE ASSET
-  syncAssetList: async context => {
+  syncAssetList: async (context) => {
     const api = Api.getApi();
     if (!api) return;
     const assetIds = await api.query.assetRegistry.assetIds.entries();
@@ -324,10 +350,10 @@ export const actions: ActionTree<State, State> = {
 
   // SYNCING OF POLKADOT.{js} WALLET
   updateWalletInfo: (context, accountsWithMeta: InjectedAccountWithMeta[]) => {
-    const accounts = accountsWithMeta.map(account => {
+    const accounts = accountsWithMeta.map((account) => {
       return {
         address: account.address.toString(),
-        name: account.meta.name?.toString()
+        name: account.meta.name?.toString(),
       };
     });
     context.commit("setExtensionPresent", true);
@@ -339,7 +365,7 @@ export const actions: ActionTree<State, State> = {
       context.commit("setAccountList", accounts);
       if (
         context.state.account &&
-        !accounts.find(x => x.address === context.state.account)
+        !accounts.find((x) => x.address === context.state.account)
       ) {
         localStorage.removeItem("account");
         context.dispatch("changeAccount", null);
@@ -356,7 +382,7 @@ export const actions: ActionTree<State, State> = {
     {
       events,
       currentIndex,
-      status
+      status,
     }: {
       events: EventRecord[];
       currentIndex?: number;
@@ -367,7 +393,7 @@ export const actions: ActionTree<State, State> = {
     //TODO: BETTER HANDLING | SPLIT LOGIC
 
     events.forEach(({ event: { data, method } }) => {
-      // console.log("status", status?.toHuman(), method, currentIndex);
+      console.log("status", status?.toHuman(), method, currentIndex);
       if (method === "IntentionRegistered") {
         if (status && status.isInBlock) {
           const parsedData = data.toJSON();
@@ -376,7 +402,7 @@ export const actions: ActionTree<State, State> = {
             context.commit("updateTransaction", {
               id: id,
               index: currentIndex,
-              progress: 2
+              progress: 2,
             });
           }
         }
@@ -389,7 +415,7 @@ export const actions: ActionTree<State, State> = {
         context.commit("updateTransaction", {
           id: Math.random(),
           index: currentIndex,
-          progress: 4
+          progress: 4,
         });
       }
       if (method === "IntentionResolvedAMMTrade") {
@@ -398,7 +424,7 @@ export const actions: ActionTree<State, State> = {
           const id = parsedData[2]?.toString();
           context.commit("updateTransaction", {
             id: id,
-            progress: 3
+            progress: 3,
           });
         }
       }
@@ -409,14 +435,14 @@ export const actions: ActionTree<State, State> = {
         if (Array.isArray(parsedData)) {
           context.commit("updateTransaction", {
             id: parsedData[3]?.toString(),
-            progress: 3
+            progress: 3,
           });
           context.commit("updateTransaction", {
             id: parsedData[3]?.toString(),
-            progress: 3
+            progress: 3,
           });
         }
       }
     });
-  }
+  },
 };

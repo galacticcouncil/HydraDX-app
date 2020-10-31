@@ -58,10 +58,10 @@ export default Vue.extend({
       },
       set(screen) {
         this.$store.commit("setScreen", screen);
-      }
+      },
     },
-    ...mapGetters(["blockInfo", "accountInfo"])
-  }
+    ...mapGetters(["blockInfo", "accountInfo"]),
+  },
 });
 </script>
 

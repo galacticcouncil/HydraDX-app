@@ -1,3 +1,5 @@
+type BN = import("bn.js");
+
 type AccountInfo = {
   name: string;
   address: string;
@@ -71,8 +73,8 @@ type State = {
   sellPrice: AssetAmount;
   spotPrice: AssetAmount;
   tokenTradeMap: TokenTradeMap;
-  liquidityAmount: AssetAmount;
-  tradeAmount: AssetAmount;
+  liquidityAmount: BN;
+  tradeAmount: BN;
   liquidityProperties: {
     token1: number | null;
     token2: number | null;

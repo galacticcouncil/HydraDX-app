@@ -26,19 +26,15 @@ const store = new Vuex.Store<State>({
     currentScreen: savedScreen ? savedScreen : "initial",
     extensionInitialized: false,
     extensionPresent: true,
-    liquidityAmount: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
+    liquidityAmount: bnToBn(0),
     liquidityProperties: {
       actionType: "add",
       token1: null,
-      token2: null
+      token2: null,
     },
     polling: {
       real: null,
-      spot: null
+      spot: null,
     },
     poolInfo: {},
     savedScreen: savedScreen ? true : false,
@@ -46,54 +42,52 @@ const store = new Vuex.Store<State>({
     sellPrice: {
       amount: bnToBn(0),
       amountFormatted: "0",
-      inputAmount: 0
+      inputAmount: 0,
     },
     shareTokenIds: [],
     spotPrice: {
       amount: bnToBn(0),
       amountFormatted: "0",
-      inputAmount: 0
+      inputAmount: 0,
     },
     subscriptions: [],
     tokenTradeMap: [],
-    tradeAmount: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
+    tradeAmount: bnToBn(0),
     tradeProperties: {
       actionType: "buy",
       token1: null,
-      token2: null
+      token2: null,
     },
     transactions: {},
-    unpairedTransactions: {}
+    unpairedTransactions: {},
   },
   actions,
   getters,
-  mutations
+  mutations,
 });
 
 // API INITIALIZATION
-Api.initialize().then(async api => {
+Api.initialize().then(async (api) => {
   // INITIALIZE HELPERS
   formatBalance.setDefaults({
     decimals: 12,
-    unit: ""
+    unit: "",
   });
 
+  const int = api.createType("FixedU128", "100000000000000");
+  console.log(int.toHuman());
   // INITIALIZE WALLET
   store.commit("setExtensionPresent", false);
-  Api.syncWallets(payload => {
+  Api.syncWallets((payload) => {
     store.dispatch("updateWalletInfo", payload);
-  }).then(async accountSubscription => {
+  }).then(async (accountSubscription) => {
     if (accountSubscription) {
       store.commit("setExtensionPresent", true);
     }
     store.commit("setExtensionInitialized", true);
   });
 
-  api.query.system.events(events => {
+  api.query.system.events((events) => {
     // const eventsMap = events.map(record => {
     //   // Extract the phase, event and the event types
     //   const { event, phase } = record;
@@ -115,13 +109,13 @@ Api.initialize().then(async api => {
     store.dispatch("updateTransactions", { events: events });
   });
 
-  api.rpc.chain.subscribeNewHeads(header => {
+  api.rpc.chain.subscribeNewHeads((header) => {
     store.dispatch("syncAssetBalances");
     store.dispatch("syncAssetList");
     store.dispatch("syncPools");
     store.commit("updateBlockInfo", {
       blockNumber: header.number.toNumber(),
-      blockHash: header.hash.toString()
+      blockHash: header.hash.toString(),
     });
   });
 });

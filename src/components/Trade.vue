@@ -90,50 +90,13 @@
               {{ assetBalances[token2].balanceFormatted }}
             </div>
           </div>
-          <label class="amount">
-            {{ assetList[token1].name }} TO
-            {{ actionType === "sell" ? "SELL" : "BUY" }}
-            <input
-              type="number"
-              class="amountInput"
-              v-model="tradeAmount"
-              step="any"
-            />
-            <div class="computed">
-              {{ assetList[token2].name }} TO
-              {{ actionType === "sell" ? "BUY" : "SELL" }}:
-              {{ sellPrice.amountFormatted }}
-              <input
-                type="number"
-                class="amountInput"
-                step="any"
-                :value="sellPrice.inputAmount"
-                disabled
-              />
-            </div>
-          </label>
+          <TradeAmount />
           <button @click="swap" class="buyButton">{{ actionType }}</button>
         </div>
       </div>
 
       <!-- TRADES -->
-      <div class="actionList transaction">
-        <div class="legend inverted">
-          <div class="name">TRADES</div>
-        </div>
-        <div v-for="transaction in transactionList" v-bind:key="transaction.id">
-          <div
-            v-if="transaction.tokenIn != null && transaction.tokenOut != null"
-            v-show="transaction.progress < 5"
-            :class="'transactionRecord p' + transaction.progress"
-          >
-            {{ transaction.type }} {{ transaction.amountIn }}
-            {{ assetList[transaction.tokenIn].name }} FOR
-            {{ transaction.expectedOut }}
-            {{ assetList[transaction.tokenOut].name }}
-          </div>
-        </div>
-      </div>
+      <TradeList />
     </div>
   </div>
 </template>
@@ -142,29 +105,25 @@
 import Vue from "vue";
 import { mapGetters } from "vuex";
 
+import TradeList from "./TradeList.vue";
+import TradeAmount from "./TradeAmount.vue";
+
 export default Vue.extend({
   name: "Trade",
   methods: {
-    swap: function() {
+    swap: function () {
       this.$store.dispatch("swap");
-    }
-  },
-  computed: {
-    tradeAmount: {
-      get() {
-        return this.$store.state.tradeAmount.inputAmount;
-      },
-      set(tradeAmount) {
-        this.$store.dispatch("changeTradeAmount", tradeAmount);
-      }
     },
+  },
+  components: { TradeList, TradeAmount },
+  computed: {
     token1: {
       get() {
         return this.$store.state.tradeProperties.token1;
       },
       set(token1) {
         this.$store.dispatch("changeTradeProperties", { token1, token2: null });
-      }
+      },
     },
     token2: {
       get() {
@@ -172,7 +131,7 @@ export default Vue.extend({
       },
       set(token2) {
         this.$store.dispatch("changeTradeProperties", { token2 });
-      }
+      },
     },
     actionType: {
       get() {
@@ -180,7 +139,7 @@ export default Vue.extend({
       },
       set(actionType) {
         this.$store.dispatch("changeTradeProperties", { actionType });
-      }
+      },
     },
     ...mapGetters([
       "poolInfo",
@@ -189,13 +148,27 @@ export default Vue.extend({
       "assetBalances",
       "spotPrice",
       "sellPrice",
-      "transactionList"
-    ])
-  }
+    ]),
+  },
 });
 </script>
 
 <style scoped>
+.actionList {
+  border-color: #5eafe1;
+  border-right-width: 1px;
+  border-bottom-width: 15px;
+}
+
+.actionList.main,
+.actionList.secondary {
+  flex-basis: 20%;
+}
+
+.actionList.trade {
+  flex-basis: 30%;
+}
+
 .tradePlatform {
   display: flex;
 }
@@ -211,22 +184,6 @@ export default Vue.extend({
 .menu label:hover,
 button:hover {
   box-shadow: 0 0 10px #5eafe1 inset;
-}
-
-.actionList {
-  border-color: #5eafe1;
-  border-right-width: 1px;
-  border-bottom-width: 15px;
-}
-
-.actionList.main,
-.actionList.secondary {
-  flex-basis: 20%;
-}
-
-.actionList.trade,
-.actionList.transaction {
-  flex-basis: 30%;
 }
 
 .assetRecord .listItem {
@@ -264,26 +221,6 @@ label {
   vertical-align: middle;
 }
 
-.p0::before {
-  background-color: #666;
-}
-
-.p1::before {
-  background-color: #aaa;
-}
-
-.p2::before {
-  background-color: royalblue;
-}
-
-.p3::before {
-  background-color: green;
-}
-
-.p4::before {
-  background-color: red;
-}
-
 .assetRecord label:hover {
   border-top-width: 1px;
   border-color: #5eafe1;
@@ -296,13 +233,7 @@ label {
 
 .amount {
   text-align: left;
-  padding: 0;
-  margin-left: 10%;
-}
-
-.amountInput {
-  width: 80%;
-  text-align: right;
+  padding: 0 10%;
 }
 
 .spotPrice {

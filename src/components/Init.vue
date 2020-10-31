@@ -22,7 +22,7 @@ import { mapGetters } from "vuex";
 
 export default Vue.extend({
   name: "Init",
-  computed: mapGetters(["blockInfo", "extensionInfo"])
+  computed: mapGetters(["blockInfo", "extensionInfo"]),
 });
 </script>
 

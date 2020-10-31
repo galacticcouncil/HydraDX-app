@@ -1,5 +1,5 @@
 import { MutationTree } from "vuex";
-import { formatInputAmount, formatBalanceAmount } from "./util";
+import { formatBalanceAmount } from "./util";
 import Vue from "vue";
 
 export const mutations: MutationTree<State> = {
@@ -36,21 +36,21 @@ export const mutations: MutationTree<State> = {
     state.polling.spot = timer;
   },
   setLiquidityAmount(state, liquidityAmount) {
-    state.liquidityAmount = formatInputAmount(liquidityAmount);
+    state.liquidityAmount = liquidityAmount;
   },
   setTradeAmount(state, tradeAmount) {
-    state.tradeAmount = formatInputAmount(tradeAmount);
+    state.tradeAmount = tradeAmount;
   },
   setLiquidityProperties(state, liquidityProperties) {
     state.liquidityProperties = {
       ...state.liquidityProperties,
-      ...liquidityProperties
+      ...liquidityProperties,
     };
   },
   setTradeProperties(state, tradeProperties) {
     state.tradeProperties = {
       ...state.tradeProperties,
-      ...tradeProperties
+      ...tradeProperties,
     };
   },
   updateTransaction(state, transaction: Transaction) {
@@ -73,14 +73,14 @@ export const mutations: MutationTree<State> = {
         ...transactionData,
         ...state.transactions[transaction.id],
         ...transaction,
-        progress
+        progress,
       };
 
       Vue.set(state.transactions, transaction.id, transactionData);
     } else if (transaction.index != null) {
       Vue.set(state.unpairedTransactions, transaction.index, {
         ...state.unpairedTransactions[transaction.index],
-        ...transaction
+        ...transaction,
       });
     }
   },
@@ -102,5 +102,5 @@ export const mutations: MutationTree<State> = {
   },
   updateTokenTradeMap(state, tokenTradeMap) {
     state.tokenTradeMap = tokenTradeMap;
-  }
+  },
 };

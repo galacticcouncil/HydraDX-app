@@ -3,16 +3,16 @@ import { GetterTree } from "vuex";
 export const getters: GetterTree<State, State> = {
   account: ({ account }) => account,
   accountInfo: ({ account, accountList }) => {
-    return accountList.find(x => x.address === account);
+    return accountList.find((x) => x.address === account);
   },
   accountList: ({ accountList }) => accountList,
   assetBalances: ({ assetList, assetBalances, shareTokenIds, poolInfo }) => {
     if (!assetList) return [];
 
     // TODO: Faster algo
-    const balances = assetList.map(assetRecord => {
+    const balances = assetList.map((assetRecord) => {
       const tokenInfo = assetBalances.find(
-        x => x && x.assetId == assetRecord.assetId
+        (x) => x && x.assetId == assetRecord.assetId
       );
       let name = assetRecord.name;
       const shareToken = shareTokenIds.includes(assetRecord.assetId);
@@ -21,8 +21,8 @@ export const getters: GetterTree<State, State> = {
           const pool = poolInfo[key];
           if (pool.shareToken === assetRecord.assetId) {
             name = pool.poolAssets
-              .map(asset => assetList.find(x => x && x.assetId == asset))
-              .map(x => x?.name)
+              .map((asset) => assetList.find((x) => x && x.assetId == asset))
+              .map((x) => x?.name)
               .join(" | ");
             break;
           }
@@ -36,7 +36,7 @@ export const getters: GetterTree<State, State> = {
         name,
         shareToken,
         balance: balance || 0,
-        balanceFormatted: balanceFormatted || 0
+        balanceFormatted: balanceFormatted || 0,
       };
     });
     return balances;
@@ -45,14 +45,14 @@ export const getters: GetterTree<State, State> = {
   blockInfo: ({ blockNumber, blockHash }) => {
     return {
       blockNumber,
-      blockHash
+      blockHash,
     };
   },
   currentScreen: ({ currentScreen }) => currentScreen,
   extensionInfo: ({ extensionInitialized, extensionPresent }) => {
     return {
       extensionInitialized,
-      extensionPresent
+      extensionPresent,
     };
   },
   poolInfo: ({ poolInfo, assetList }) => {
@@ -82,5 +82,5 @@ export const getters: GetterTree<State, State> = {
 
     return allTransactions;
   },
-  tradeProperties: ({ tradeProperties }) => tradeProperties
+  tradeProperties: ({ tradeProperties }) => tradeProperties,
 };

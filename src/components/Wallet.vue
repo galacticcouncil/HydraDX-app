@@ -66,9 +66,7 @@
 
     <!-- TOKEN SCREEN -->
     <div class="tokenScreen" v-if="screenState === 'tokens'">
-      <div class="noTokens" v-if="!assetBalances">
-        HUH?... UNHELPFUL ERROR
-      </div>
+      <div class="noTokens" v-if="!assetBalances">HUH?... UNHELPFUL ERROR</div>
       <div class="tokenList" v-if="assetBalances && assetBalances.length">
         <div class="legend inverted">
           <div class="name">TOKEN</div>
@@ -85,9 +83,7 @@
           <div class="name">{{ assetRecord.name }}</div>
           <div class="balance">{{ assetRecord.balanceFormatted }}</div>
           <div class="faceut" v-if="!assetRecord.shareToken">
-            <button @click="mintAsset(assetRecord.assetId)">
-              ++GET++
-            </button>
+            <button @click="mintAsset(assetRecord.assetId)">++GET++</button>
           </div>
         </div>
       </div>
@@ -106,13 +102,13 @@ export default Vue.extend({
   name: "Wallet",
   data: () => {
     return {
-      screenState: account ? "tokens" : "select"
+      screenState: account ? "tokens" : "select",
     };
   },
   methods: {
-    mintAsset: function(value: number) {
+    mintAsset: function (value: number) {
       this.$store.dispatch("mintAsset", value);
-    }
+    },
   },
   computed: {
     account: {
@@ -121,10 +117,10 @@ export default Vue.extend({
       },
       set(value) {
         this.$store.dispatch("changeAccount", value);
-      }
+      },
     },
-    ...mapGetters(["accountList", "accountInfo", "assetBalances"])
-  }
+    ...mapGetters(["accountList", "accountInfo", "assetBalances"]),
+  },
 });
 </script>
 
