@@ -55,6 +55,7 @@ export const getters: GetterTree<State, State> = {
       extensionPresent,
     };
   },
+  pendingAction: ({ pendingAction }) => pendingAction,
   poolInfo: ({ poolInfo, assetList }) => {
     for (const pool in poolInfo) {
       poolInfo[pool].poolAssetNames = [];

@@ -3,6 +3,9 @@ import { formatBalanceAmount } from "./util";
 import Vue from "vue";
 
 export const mutations: MutationTree<State> = {
+  setPendingAction(state, pending) {
+    state.pendingAction = pending;
+  },
   setAccount(state, account) {
     state.account = account;
     localStorage.setItem("account", account);

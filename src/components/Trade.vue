@@ -94,10 +94,9 @@
           <button @click="swap" class="buyButton">{{ actionType }}</button>
         </div>
       </div>
-
-      <!-- TRADES -->
-      <TradeList />
     </div>
+    <!-- TRADES -->
+    <TradeList />
   </div>
 </template>
 
@@ -162,11 +161,11 @@ export default Vue.extend({
 
 .actionList.main,
 .actionList.secondary {
-  flex-basis: 20%;
+  flex-basis: 30%;
 }
 
 .actionList.trade {
-  flex-basis: 30%;
+  flex-basis: 70%;
 }
 
 .tradePlatform {
@@ -194,6 +193,10 @@ label {
   padding: 1em;
   display: block;
   width: 100%;
+}
+
+.trade {
+  position: relative;
 }
 
 .trade input {

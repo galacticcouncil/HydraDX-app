@@ -90,12 +90,7 @@
             <BalanceInput v-model="liquidityAmount" />
             <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
-              <input
-                type="number"
-                class="amountInput"
-                :value="spotPrice.inputAmount * liquidityAmount"
-                disabled
-              />
+              {{ spotPrice.amount }}
             </div>
           </label>
 

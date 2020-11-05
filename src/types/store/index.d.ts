@@ -59,6 +59,7 @@ type State = {
   currentScreen: string;
   extensionInitialized: boolean;
   extensionPresent: boolean;
+  pendingAction: boolean;
   poolInfo: {
     [key: string]: {
       poolAssets: number[];

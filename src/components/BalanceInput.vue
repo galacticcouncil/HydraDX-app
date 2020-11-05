@@ -117,10 +117,10 @@ select {
   vertical-align: bottom;
 }
 .range {
-  width: 20%;
+  width: 35%;
 }
 .balanceInput {
-  width: 80%;
+  width: 65%;
   text-align: right;
 }
 </style>

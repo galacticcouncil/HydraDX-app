@@ -32,6 +32,7 @@ const store = new Vuex.Store<State>({
       token1: null,
       token2: null,
     },
+    pendingAction: false,
     polling: {
       real: null,
       spot: null,
@@ -113,6 +114,7 @@ Api.initialize().then(async (api) => {
     store.dispatch("syncAssetBalances");
     store.dispatch("syncAssetList");
     store.dispatch("syncPools");
+    store.commit("setPendingAction", false);
     store.commit("updateBlockInfo", {
       blockNumber: header.number.toNumber(),
       blockHash: header.hash.toString(),

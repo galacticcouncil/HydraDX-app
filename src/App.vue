@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ pendingAction: pendingAction }">
     <Init v-if="currentScreen === 'initial'" />
     <Header v-if="currentScreen !== 'initial'" />
     <Wallet v-if="currentScreen === 'wallet'" />
@@ -24,9 +24,9 @@ export default {
     Wallet,
     Init,
     Liquidity,
-    Trade
+    Trade,
   },
-  computed: mapGetters(["currentScreen"])
+  computed: mapGetters(["currentScreen", "pendingAction"]),
 };
 </script>
 
@@ -91,6 +91,12 @@ a,
   background-color: #0c36a1;
 }
 
+button {
+  outline: none;
+  background: transparent;
+  text-decoration: underline;
+}
+
 button,
 input {
   font-family: Pexico-Regular, sans-serif;
@@ -126,5 +132,25 @@ input::-webkit-inner-spin-button {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #5eafe1;
+}
+
+.pendingAction .headerInfo,
+.pendingAction button,
+.pendingAction .legend {
+  animation: filter-animation 1s infinite;
+}
+
+@keyframes filter-animation {
+  0% {
+    filter: hue-rotate(80deg);
+  }
+
+  50% {
+    filter: hue-rotate(210deg);
+  }
+
+  100% {
+    filter: hue-rotate(80deg);
+  }
 }
 </style>

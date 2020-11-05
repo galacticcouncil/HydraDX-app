@@ -219,13 +219,10 @@ label:hover {
 }
 
 .tokenList button {
-  outline: none;
   width: 100%;
   height: 3em;
   padding: 1em;
   font-size: 1em;
-  background: transparent;
-  text-decoration: underline;
   color: #5eafe1;
 }
 

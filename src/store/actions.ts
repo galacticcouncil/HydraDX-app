@@ -133,7 +133,8 @@ export const actions: ActionTree<State, State> = {
       const signer = await Api.getSinger(account);
       api.tx.amm
         .addLiquidity(token1, token2, amount, maxSellPrice)
-        .signAndSend(account, { signer: signer }, (/*{ events, status }*/) => {
+        .signAndSend(account, { signer: signer }, ({ events, status }) => {
+          if (status.isReady) context.commit("setPendingAction", true);
           context.dispatch("getSpotPrice");
         });
     }
@@ -156,7 +157,8 @@ export const actions: ActionTree<State, State> = {
 
       api.tx.amm
         .removeLiquidity(token1, token2, liquidityToRemove)
-        .signAndSend(account, { signer: signer }, (/*{ events, status }*/) => {
+        .signAndSend(account, { signer: signer }, ({ events, status }) => {
+          if (status.isReady) context.commit("setPendingAction", true);
           context.dispatch("getSpotPrice");
         });
     }
@@ -194,6 +196,7 @@ export const actions: ActionTree<State, State> = {
             false
           )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
+            if (status.isReady) context.commit("setPendingAction", true);
             context.dispatch("updateTransactions", {
               events,
               currentIndex,
@@ -218,6 +221,7 @@ export const actions: ActionTree<State, State> = {
             false
           )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
+            if (status.isReady) context.commit("setPendingAction", true);
             context.dispatch("updateTransactions", {
               events,
               currentIndex,

@@ -1,19 +1,25 @@
 <template>
   <!-- TRADES -->
-  <div class="actionList transaction">
+  <div class="actionList transaction" v-bind:class="{ isShown: isShown }">
     <div class="legend inverted">
-      <div class="name">TRADES</div>
+      <button @click="isShown = !isShown">
+        <div class="name">
+          {{ isShown ? "↓" : "↑" }} TRADES {{ transactionLenght }}
+          {{ isShown ? "↓" : "↑" }}
+        </div>
+      </button>
     </div>
-    <div v-for="transaction in transactionList" v-bind:key="transaction.id">
-      <div
-        v-if="transaction.tokenIn != null && transaction.tokenOut != null"
-        v-show="transaction.progress < 5"
-        :class="'transactionRecord p' + transaction.progress"
-      >
-        {{ transaction.type }} {{ transaction.amountIn }}
-        {{ assetList[transaction.tokenIn].name }} FOR
-        {{ transaction.expectedOut }}
-        {{ assetList[transaction.tokenOut].name }}
+    <div class="transactionData">
+      <div v-for="transaction in transactionList" v-bind:key="transaction.id">
+        <div
+          v-if="transaction.tokenIn != null && transaction.tokenOut != null"
+          :class="'transactionRecord p' + transaction.progress"
+        >
+          {{ transaction.type }} {{ transaction.amountIn }}
+          {{ assetList[transaction.tokenIn].name }} FOR
+          {{ transaction.expectedOut }}
+          {{ assetList[transaction.tokenOut].name }}
+        </div>
       </div>
     </div>
   </div>
@@ -25,8 +31,19 @@ import { mapGetters } from "vuex";
 
 export default Vue.extend({
   name: "Trade",
+  data: function () {
+    return {
+      isShown: false,
+    };
+  },
   computed: {
     ...mapGetters(["assetList", "transactionList"]),
+    transactionLenght: {
+      get() {
+        const txList = this.$store.getters.transactionList;
+        return Object.keys(txList).length;
+      },
+    },
   },
 });
 </script>
@@ -36,18 +53,38 @@ export default Vue.extend({
   padding: 0.5em;
 }
 
-.actionList {
-  border-color: #5eafe1;
-  border-right-width: 1px;
+.actionList.transaction.isShown {
+  top: 0;
+  height: 100%;
   border-bottom-width: 15px;
 }
 
 .actionList.transaction {
-  flex-basis: 30%;
+  position: absolute;
+  top: calc(100% - 15px);
+  height: auto;
+  background: #0d106e;
+  width: 100%;
+
+  border-color: #5eafe1;
+  border-right-width: 1px;
+  border-bottom-width: 0px;
 }
 
 .assetRecord .listItem {
   width: 100%;
+}
+
+button {
+  font-size: 1em;
+}
+
+.transactionData {
+  display: none;
+}
+
+.isShown .transactionData {
+  display: initial;
 }
 
 .transactionRecord {
@@ -67,7 +104,7 @@ export default Vue.extend({
 }
 
 .p0::before {
-  background-color: #666;
+  background-color: #444;
 }
 
 .p1::before {
@@ -84,5 +121,9 @@ export default Vue.extend({
 
 .p4::before {
   background-color: red;
+}
+
+.p5::before {
+  background-color: #777;
 }
 </style>
