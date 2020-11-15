@@ -39,7 +39,7 @@ const formatInput = (value: BN, range: string): string => {
   return decimalFormattedValue;
 };
 const unformatInput = (value: string, range: string): BN => {
-  BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
+  BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
   const unformattedValue = new BigNumber(value, 10);
   const decimalUnormattedValue = unformattedValue
     .multipliedBy(1e12)

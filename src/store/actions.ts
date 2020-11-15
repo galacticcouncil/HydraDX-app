@@ -38,7 +38,8 @@ export const actions: ActionTree<State, State> = {
       const signer = await Api.getSinger(account);
       api.tx.faucet
         .mint(assetId, 100000000000000)
-        .signAndSend(account, { signer: signer }, (/*{ events, status }*/) => {
+        .signAndSend(account, { signer: signer }, ({ events, status }) => {
+          if (status.isReady) context.commit("setPendingAction", true);
           // TODO:STUFF
         });
     }
@@ -192,7 +193,7 @@ export const actions: ActionTree<State, State> = {
             token1,
             token2,
             amount,
-            decToBn(decimalAmount.multipliedBy(0.9)),
+            decToBn(decimalAmount.multipliedBy(1.1)),
             false
           )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
@@ -217,7 +218,7 @@ export const actions: ActionTree<State, State> = {
             token1,
             token2,
             amount,
-            decToBn(decimalAmount.multipliedBy(1.1)),
+            decToBn(decimalAmount.multipliedBy(0.9)),
             false
           )
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
