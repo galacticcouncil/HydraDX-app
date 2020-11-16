@@ -1,10 +1,10 @@
 <template>
   <label class="amount">
-    {{ assetList[token1].name }} TO
+    {{ assetList[asset1].name }} TO
     {{ actionType === "sell" ? "SELL" : "BUY" }}
     <BalanceInput v-model="tradeAmount" :options="tradeAmountOptions" />
     <div class="computed">
-      {{ assetList[token2].name }} TO
+      {{ assetList[asset2].name }} TO
       {{ actionType === "sell" ? "BUY" : "SELL" }}:
       {{ sellPrice.amountFormatted }}
     </div>
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import { mapGetters } from "vuex";
 import BalanceInput from "./BalanceInput.vue";
 
@@ -22,9 +22,12 @@ export default Vue.extend({
   computed: {
     tradeAmountOptions: {
       get() {
-        return {
-          units: this.assetList[this.$store.state.tradeProperties.token1].name,
-        };
+        if (this.$store.state.tradeProperties.asset1) {
+          return {
+            units: this.assetList[this.$store.state.tradeProperties.asset1]
+              .name,
+          };
+        } else return { units: "" };
       },
     },
     tradeAmount: {
@@ -35,14 +38,14 @@ export default Vue.extend({
         this.$store.dispatch("changeTradeAmount", tradeAmount);
       },
     },
-    token1: {
+    asset1: {
       get() {
-        return this.$store.state.tradeProperties.token1;
+        return this.$store.state.tradeProperties.asset1;
       },
     },
-    token2: {
+    asset2: {
       get() {
-        return this.$store.state.tradeProperties.token2;
+        return this.$store.state.tradeProperties.asset2;
       },
     },
     actionType: {

@@ -18,6 +18,14 @@
           value="withdraw"
         />WITHDRAW</label
       >
+      <label :class="{ selected: actionType === 'create' }">
+        <input
+          v-model="actionType"
+          type="radio"
+          name="actionType"
+          value="create"
+        />CREATE</label
+      >
     </div>
 
     <div class="noPools" v-if="!Object.keys(poolInfo).length">
@@ -121,7 +129,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import { mapGetters } from "vuex";
 import BalanceInput from "./BalanceInput.vue";
 
@@ -150,9 +158,9 @@ export default Vue.extend({
         return this.$store.state.selectedPool;
       },
       set(poolId: string) {
-        const token1 = this.poolInfo[poolId].poolAssets[0];
-        const token2 = this.poolInfo[poolId].poolAssets[1];
-        this.$store.commit("setLiquidityProperties", { token1, token2 });
+        const asset1 = this.poolInfo[poolId].poolAssets[0];
+        const asset2 = this.poolInfo[poolId].poolAssets[1];
+        this.$store.commit("setLiquidityProperties", { asset1, asset2 });
         this.$store.dispatch("getSpotPrice");
         this.$store.dispatch("changeSelectedPool", poolId);
       },

@@ -46,7 +46,7 @@ type Transaction = {
   matchOut?: number;
 };
 
-type TokenTradeMap = number[][];
+type TokenTradeMap = { [key: number]: number[] };
 
 type State = {
   actions: [];
@@ -77,13 +77,13 @@ type State = {
   liquidityAmount: BN;
   tradeAmount: BN;
   liquidityProperties: {
-    token1: number | null;
-    token2: number | null;
+    asset1: number | null;
+    asset2: number | null;
     actionType: string;
   };
   tradeProperties: {
-    token1: number | null;
-    token2: number | null;
+    asset1: number | null;
+    asset2: number | null;
     actionType: string;
   };
   polling: {

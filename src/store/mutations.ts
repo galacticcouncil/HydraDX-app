@@ -1,6 +1,6 @@
 import { MutationTree } from "vuex";
 import { formatBalanceAmount } from "./util";
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 
 export const mutations: MutationTree<State> = {
   setPendingAction(state, pending) {

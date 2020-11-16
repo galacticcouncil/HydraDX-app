@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue from "./vue-typed/vue-typed";
 import App from "./App.vue";
 import store from "./store";
 

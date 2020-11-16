@@ -20,28 +20,17 @@
       >
     </div>
 
-    <div class="noPools" v-if="!tokenTradeMap.length">
+    <div class="noPools" v-if="!Object.entries(tokenTradeMap).length">
       AWWW... NO POOLS TO TRADE
     </div>
-    <div class="tradePlatform" v-if="tokenTradeMap.length">
+
+    <div class="tradePlatform" v-if="Object.entries(tokenTradeMap).length">
       <!-- ASSET 1 -->
       <div class="actionList main">
         <div class="legend inverted">
           <div class="name">{{ actionType }} TOKEN</div>
         </div>
-        <div
-          class="assetRecord"
-          v-for="(tradableAssets, key) in tokenTradeMap"
-          v-bind:key="key"
-          v-show="tradableAssets"
-        >
-          <div class="listItem">
-            <label :class="{ selected: token1 === key }">
-              <input v-model="token1" type="radio" name="token1" :value="key" />
-              {{ assetList[key].name }}
-            </label>
-          </div>
-        </div>
+        <AssetList v-model="asset1" :assetList="asset1List" name="asset1" />
       </div>
 
       <!-- ASSET 2 -->
@@ -49,24 +38,12 @@
         <div class="legend inverted">
           <div class="name">FOR TOKEN</div>
         </div>
-        <div
-          class="assetRecord"
-          v-for="assetId in tokenTradeMap[token1]"
-          v-bind:key="assetId"
-          v-show="token1 !== null"
-        >
-          <div class="listItem">
-            <label :class="{ selected: token2 === assetId }">
-              <input
-                v-model="token2"
-                type="radio"
-                name="token2"
-                :value="assetId"
-              />
-              {{ assetList[assetId].name }}
-            </label>
-          </div>
-        </div>
+        <AssetList
+          v-show="asset1 !== null"
+          v-model="asset2"
+          :assetList="asset2List"
+          name="asset2"
+        />
       </div>
 
       <!-- TRADE PARAMS -->
@@ -74,20 +51,20 @@
         <div class="legend inverted">
           <div class="name">AMOUNT</div>
         </div>
-        <div class="params" v-if="token2 !== null">
+        <div class="params" v-if="asset2 !== null">
           <div class="spotPrice">
             SPOT PRICE: {{ spotPrice.amountFormatted }}
           </div>
           <div class="walletState">
             <div>
-              {{ assetList[token1].name }}
+              {{ assetList[asset1].name }}
               OWNED:
-              {{ assetBalances[token1].balanceFormatted }}
+              {{ assetBalances[asset1].balanceFormatted }}
             </div>
             <div>
-              {{ assetList[token2].name }}
+              {{ assetList[asset2].name }}
               OWNED:
-              {{ assetBalances[token2].balanceFormatted }}
+              {{ assetBalances[asset2].balanceFormatted }}
             </div>
           </div>
           <TradeAmount />
@@ -101,11 +78,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import { mapGetters } from "vuex";
 
 import TradeList from "./TradeList.vue";
 import TradeAmount from "./TradeAmount.vue";
+import AssetList from "./AssetList.vue";
 
 export default Vue.extend({
   name: "Trade",
@@ -114,22 +92,46 @@ export default Vue.extend({
       this.$store.dispatch("swap");
     },
   },
-  components: { TradeList, TradeAmount },
+  components: { TradeList, TradeAmount, AssetList },
   computed: {
-    token1: {
+    asset1List: {
       get() {
-        return this.$store.state.tradeProperties.token1;
-      },
-      set(token1) {
-        this.$store.dispatch("changeTradeProperties", { token1, token2: null });
+        return this.$store.state.assetList.filter(
+          (element) =>
+            Object.keys(this.$store.state.tokenTradeMap).findIndex(
+              (assetId) => parseInt(assetId) === element.assetId
+            ) >= 0
+        );
       },
     },
-    token2: {
+    asset2List: {
       get() {
-        return this.$store.state.tradeProperties.token2;
+        return this.$store.state.assetList.filter((element) => {
+          const asset1 = this.asset1 as number | null;
+          if (asset1) {
+            return (
+              this.$store.state.tokenTradeMap[asset1].findIndex(
+                (assetId) => assetId === element.assetId
+              ) >= 0
+            );
+          } else return false;
+        });
       },
-      set(token2) {
-        this.$store.dispatch("changeTradeProperties", { token2 });
+    },
+    asset1: {
+      get() {
+        return this.$store.state.tradeProperties.asset1;
+      },
+      set(asset1) {
+        this.$store.dispatch("changeTradeProperties", { asset1, asset2: null });
+      },
+    },
+    asset2: {
+      get() {
+        return this.$store.state.tradeProperties.asset2;
+      },
+      set(asset2) {
+        this.$store.dispatch("changeTradeProperties", { asset2 });
       },
     },
     actionType: {
@@ -185,16 +187,6 @@ button:hover {
   box-shadow: 0 0 10px #5eafe1 inset;
 }
 
-.assetRecord .listItem {
-  width: 100%;
-}
-
-label {
-  padding: 1em;
-  display: block;
-  width: 100%;
-}
-
 .trade {
   position: relative;
 }
@@ -222,16 +214,6 @@ label {
   height: 1em;
   border-radius: 0.5em;
   vertical-align: middle;
-}
-
-.assetRecord label:hover {
-  border-top-width: 1px;
-  border-color: #5eafe1;
-  box-shadow: 0 0 7px #5eafe1 inset;
-}
-
-.assetRecord input {
-  margin: 0;
 }
 
 .amount {

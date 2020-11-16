@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import BigNumber from "bignumber.js";
 import * as BN from "bn.js";
 import { decToBn } from "../store/util";

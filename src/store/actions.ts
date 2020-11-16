@@ -24,8 +24,8 @@ export const actions: ActionTree<State, State> = {
     context.commit("setTradeProperties", tradeProperties);
 
     if (
-      context.state.tradeProperties.token1 != null &&
-      context.state.tradeProperties.token2 != null
+      context.state.tradeProperties.asset1 != null &&
+      context.state.tradeProperties.asset2 != null
     ) {
       context.dispatch("getSellPrice");
       context.dispatch("getSpotPrice");
@@ -51,31 +51,31 @@ export const actions: ActionTree<State, State> = {
       const state = context.state;
       const currentScreen = context.state.currentScreen;
 
-      let token1: number | null = null;
-      let token2: number | null = null;
+      let asset1: number | null = null;
+      let asset2: number | null = null;
 
       if (currentScreen === "trade") {
-        token1 = state.tradeProperties.token1;
-        token2 = state.tradeProperties.token2;
+        asset1 = state.tradeProperties.asset1;
+        asset2 = state.tradeProperties.asset2;
       } else if (currentScreen === "liquidity") {
-        token1 = state.liquidityProperties.token1;
-        token2 = state.liquidityProperties.token2;
+        asset1 = state.liquidityProperties.asset1;
+        asset2 = state.liquidityProperties.asset2;
       } else {
         return;
       }
 
       console.log(
-        token1,
-        state.tradeProperties.token1,
-        token2,
-        state.tradeProperties.token2,
+        asset1,
+        state.tradeProperties.asset1,
+        asset2,
+        state.tradeProperties.asset2,
         state.tradeAmount
       );
 
       const timeout = setTimeout(async () => {
         const amountData =
           // @ts-expect-error TS2339
-          await api.rpc.amm.getSpotPrice(token1, token2, 1000000000000);
+          await api.rpc.amm.getSpotPrice(asset1, asset2, 1000000000000);
 
         const amount = amountData.amount;
         context.commit("updateSpotPrice", amount);
@@ -91,16 +91,16 @@ export const actions: ActionTree<State, State> = {
         let amount = bnToBn(0);
 
         console.log(
-          context.state.tradeProperties.token1,
-          context.state.tradeProperties.token2,
+          context.state.tradeProperties.asset1,
+          context.state.tradeProperties.asset2,
           context.state.tradeAmount
         );
         if (context.state.tradeAmount) {
           if (context.state.tradeProperties.actionType === "sell") {
             // @ts-expect-error TS2339
             const amountData = await api.rpc.amm.getSellPrice(
-              context.state.tradeProperties.token1,
-              context.state.tradeProperties.token2,
+              context.state.tradeProperties.asset1,
+              context.state.tradeProperties.asset2,
               context.state.tradeAmount
             );
 
@@ -108,8 +108,8 @@ export const actions: ActionTree<State, State> = {
           } else {
             // @ts-expect-error TS2339
             const amountData = await api.rpc.amm.getBuyPrice(
-              context.state.tradeProperties.token1,
-              context.state.tradeProperties.token2,
+              context.state.tradeProperties.asset1,
+              context.state.tradeProperties.asset2,
               context.state.tradeAmount
             );
 
@@ -125,15 +125,15 @@ export const actions: ActionTree<State, State> = {
     const api = Api.getApi();
     const account = context.state.account;
     const amount = context.state.liquidityAmount;
-    const token1 = context.state.liquidityProperties.token1;
-    const token2 = context.state.liquidityProperties.token2;
+    const asset1 = context.state.liquidityProperties.asset1;
+    const asset2 = context.state.liquidityProperties.asset2;
     const spotPrice = context.state.spotPrice.inputAmount;
     const maxSellPrice = decToBn(bnToDec(amount).multipliedBy(spotPrice * 1.1));
 
     if (api && account) {
       const signer = await Api.getSinger(account);
       api.tx.amm
-        .addLiquidity(token1, token2, amount, maxSellPrice)
+        .addLiquidity(asset1, asset2, amount, maxSellPrice)
         .signAndSend(account, { signer: signer }, ({ events, status }) => {
           if (status.isReady) context.commit("setPendingAction", true);
           context.dispatch("getSpotPrice");
@@ -144,8 +144,8 @@ export const actions: ActionTree<State, State> = {
     const api = Api.getApi();
     const state = context.state;
     const account = state.account;
-    const token1 = state.liquidityProperties.token1;
-    const token2 = state.liquidityProperties.token2;
+    const asset1 = state.liquidityProperties.asset1;
+    const asset2 = state.liquidityProperties.asset2;
 
     if (api && account && state.selectedPool) {
       const signer = await Api.getSinger(account);
@@ -157,7 +157,7 @@ export const actions: ActionTree<State, State> = {
         .mul(percentage);
 
       api.tx.amm
-        .removeLiquidity(token1, token2, liquidityToRemove)
+        .removeLiquidity(asset1, asset2, liquidityToRemove)
         .signAndSend(account, { signer: signer }, ({ events, status }) => {
           if (status.isReady) context.commit("setPendingAction", true);
           context.dispatch("getSpotPrice");
@@ -168,17 +168,17 @@ export const actions: ActionTree<State, State> = {
     const api = Api.getApi();
     const account = context.state.account;
     const amount = context.state.tradeAmount;
-    const token1 = context.state.tradeProperties.token1;
-    const token2 = context.state.tradeProperties.token2;
+    const asset1 = context.state.tradeProperties.asset1;
+    const asset2 = context.state.tradeProperties.asset2;
     const actionType = context.state.tradeProperties.actionType;
     const currentIndex = Math.random();
 
-    if (api && account && amount && token1 != null && token2 != null) {
+    if (api && account && amount && asset1 != null && asset2 != null) {
       context.commit("updateTransaction", {
         index: currentIndex,
         accountId: account,
-        tokenIn: token1,
-        tokenOut: token2,
+        tokenIn: asset1,
+        tokenOut: asset2,
         amountIn: formatBalance(amount),
         expectedOut: context.state.sellPrice.amountFormatted,
         type: actionType,
@@ -186,16 +186,10 @@ export const actions: ActionTree<State, State> = {
       });
 
       const signer = await Api.getSinger(account);
-      const decimalAmount = bnToDec(amount);
       if (actionType === "buy") {
         api.tx.exchange
-          .buy(
-            token1,
-            token2,
-            amount,
-            decToBn(decimalAmount.multipliedBy(1.1)),
-            false
-          )
+          //TODO: CALCULATE LIMITS FROM SPOT PRICE
+          .buy(asset1, asset2, amount, bnToBn("100000000000000000"), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
             if (status.isReady) context.commit("setPendingAction", true);
             context.dispatch("updateTransactions", {
@@ -214,13 +208,8 @@ export const actions: ActionTree<State, State> = {
           });
       } else {
         api.tx.exchange
-          .sell(
-            token1,
-            token2,
-            amount,
-            decToBn(decimalAmount.multipliedBy(0.9)),
-            false
-          )
+          //TODO: CALCULATE LIMITS FROM SPOT PRICE
+          .sell(asset1, asset2, amount, bnToBn(1000), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
             if (status.isReady) context.commit("setPendingAction", true);
             context.dispatch("updateTransactions", {
@@ -296,7 +285,7 @@ export const actions: ActionTree<State, State> = {
     } = {};
 
     const shareTokenIds: number[] = [];
-    const tokenTradeMap: TokenTradeMap = [];
+    const tokenTradeMap: TokenTradeMap = {};
 
     allPools.forEach(([key, value]) => {
       const poolId = key.toHuman()?.toString() || "ERR";

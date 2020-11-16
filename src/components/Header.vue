@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import { mapGetters } from "vuex";
 
 export default Vue.extend({

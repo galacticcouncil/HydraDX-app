@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue from "../vue-typed/vue-typed";
 import Vuex from "vuex";
 import Api from "../api";
 
@@ -29,8 +29,8 @@ const store = new Vuex.Store<State>({
     liquidityAmount: bnToBn(0),
     liquidityProperties: {
       actionType: "add",
-      token1: null,
-      token2: null,
+      asset1: null,
+      asset2: null,
     },
     pendingAction: false,
     polling: {
@@ -56,8 +56,8 @@ const store = new Vuex.Store<State>({
     tradeAmount: bnToBn(0),
     tradeProperties: {
       actionType: "buy",
-      token1: null,
-      token2: null,
+      asset1: null,
+      asset2: null,
     },
     transactions: {},
     unpairedTransactions: {},
