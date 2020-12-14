@@ -12,7 +12,7 @@
       >
       installed and authorize HACK.HydraDX.io to access your address list.
     </div>
-    <!-- <div>Or explore the <button v-on="click">app</button></div> -->
+    <!--  <div>Or explore the <button v-on="click">app</button></div>  -->
   </div>
 </template>
 
