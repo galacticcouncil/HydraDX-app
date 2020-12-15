@@ -1,0 +1,4 @@
+export enum ActionTypes {
+  CHANGE_ACCOUNT = 'CHANGE_ACCOUNT',
+  UPDATE_WALLET_INFO = 'UPDATE_WALLET_INFO',
+}

@@ -1,39 +1,15 @@
 <template>
-  <div id="app" :class="{ pendingAction: pendingAction }">
-    <Init v-if="currentScreen === 'initial'" />
-    <Header v-if="currentScreen !== 'initial'" />
-    <Wallet v-if="currentScreen === 'wallet'" />
-    <Liquidity v-if="currentScreen === 'liquidity'" />
-    <Trade v-if="currentScreen === 'trade'" />
+  <div id="app">
+    <AppLayout>
+      <router-view />
+    </AppLayout>
   </div>
 </template>
 
-<script lang="ts">
-import { mapGetters } from "vuex";
-
-import Init from "./components/Init.vue";
-import Header from "./components/Header.vue";
-import Wallet from "./components/Wallet.vue";
-import Liquidity from "./components/Liquidity.vue";
-import Trade from "./components/Trade.vue";
-
-export default {
-  name: "App",
-  components: {
-    Header,
-    Wallet,
-    Init,
-    Liquidity,
-    Trade,
-  },
-  computed: mapGetters(["currentScreen", "pendingAction"]),
-};
-</script>
-
-<style>
+<style lang="scss">
 @font-face {
-  font-family: "Pexico-Regular";
-  src: url("./assets/Pexico-Regular/font.woff2") format("woff2");
+  font-family: 'Pexico-Regular';
+  src: url('./assets/font/Pexico-Regular/font.woff2') format('woff2');
 }
 * {
   box-sizing: border-box;
