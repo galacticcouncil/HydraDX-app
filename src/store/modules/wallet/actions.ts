@@ -1,8 +1,9 @@
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 import { ActionTree } from 'vuex';
-import { ActionTypes } from './action-types';
-import { MutationTypes } from './mutation-types';
+import { ActionTypes } from '@/store/modules/wallet/action-types';
+import { MutationTypes } from '@/store/modules/wallet/mutation-types';
+import { AllMutationTypes } from '@/store/mutation-types';
 import {
   WalletActionsTypes,
   WalletStateTypes,
@@ -15,6 +16,7 @@ export const actions: ActionTree<WalletStateTypes, IRootState> &
     commit(MutationTypes.SET_ACCOUNT, account);
     commit(MutationTypes.SET_ASSET_BALANCES, []);
   },
+
   [ActionTypes.UPDATE_WALLET_INFO](
     { commit, dispatch, state, rootState },
     accountsWithMeta: InjectedAccountWithMeta[]
@@ -25,11 +27,9 @@ export const actions: ActionTree<WalletStateTypes, IRootState> &
         name: account.meta.name?.toString(),
       };
     });
-    // TODO change for real keys
-    commit('setExtensionPresent', true);
-    // TODO change for real keys
+    commit(AllMutationTypes.root.SET_EXTENSION_PRESENT, true, { root: true });
     if (!rootState.savedScreen) {
-      commit('setScreen', 'wallet');
+      commit(AllMutationTypes.root.SET_SCREEN, 'wallet', { root: true });
     }
     if (accounts.length) {
       commit(MutationTypes.SET_ACCOUNT_LIST, accounts);

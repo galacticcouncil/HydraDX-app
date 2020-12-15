@@ -2,14 +2,18 @@ import { ActionContext } from 'vuex';
 type BN = import('bn.js');
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import { MutationTypes as WalletMTypes } from './modules/wallet/mutation-types';
-import { ActionTypes as WalletATypes } from './modules/wallet/action-types';
-import { MutationTypes as RootMTypes } from './modules/root/mutation-types';
-import { ActionTypes as RootATypes } from './modules/root/action-types';
+import { MutationTypes as WalletMTypes } from '@/store/modules/wallet/mutation-types';
+import { ActionTypes as WalletATypes } from '@/store/modules/wallet/action-types';
+import { MutationTypes as RootMTypes } from '@/store/modules/root/mutation-types';
+import { ActionTypes as RootATypes } from '@/store/modules/root/action-types';
 
 export interface IRootState {
   blockHash: string | null;
   blockNumber: number;
+  currentScreen: string;
+  savedScreen: boolean;
+  extensionInitialized: boolean;
+  extensionPresent: boolean;
 }
 // TODO refactor from here CounterStateTypes -> AccountStateTypes
 export interface IMergedState extends IRootState {
@@ -19,11 +23,24 @@ export interface IMergedState extends IRootState {
 export interface IRootGettersTypes {
   getBlockHash(state: IRootState): string | null;
   getBlockNumber(state: IRootState): number;
+  blockInfo(
+    state: IRootState
+  ): { blockHash: string | null; blockNumber: number };
+  currentScreen(state: IRootState): string;
+  extensionInfo(
+    state: IRootState
+  ): { extensionInitialized: boolean; extensionPresent: boolean };
 }
 
 export type RootMutationsTypes<S = IRootState> = {
   [RootMTypes.SET_BLOCK_NUMBER](state: S, payload: number): void;
   [RootMTypes.SET_BLOCK_HASH](state: S, payload: string | null): void;
+  [RootMTypes.SET_EXTENSION_PRESENT](state: S, extensionPresent: boolean): void;
+  [RootMTypes.SET_EXTENSION_INITIALIZED](
+    state: S,
+    extensionInitialized: boolean
+  ): void;
+  [RootMTypes.SET_SCREEN](state: S, screen: string): void;
 };
 
 type AugmentedActionContextRoot = {
@@ -45,20 +62,20 @@ export interface RootActionsTypes {
 }
 
 /*********************** WALLET MODULE TYPES  ***********************/
-// type AccountInfo = {
-//   name: string;
-//   address: string;
-// };
-// type AssetBalance = {
-//   assetId: number;
-//   balance: BN;
-//   balanceFormatted: string;
-// };
-// type AssetRecord = {
-//   assetId: number;
-//   name: string;
-//   icon?: string;
-// };
+type AccountInfo = {
+  name: string;
+  address: string;
+};
+type AssetBalance = {
+  assetId: number;
+  balance: BN;
+  balanceFormatted: string;
+};
+type AssetRecord = {
+  assetId: number;
+  name: string;
+  icon?: string;
+};
 
 export interface WalletStateTypes {
   account: string | null;
@@ -93,11 +110,18 @@ export type AugmentedActionContextWallet = {
 
 export interface WalletActionsTypes {
   [WalletATypes.CHANGE_ACCOUNT](
-    { commit }: AugmentedActionContextWallet,
+    // { commit }: AugmentedActionContextWallet,
+    { commit }: ActionContext<WalletStateTypes, IRootState>,
     account: string | null
   ): void;
   [WalletATypes.UPDATE_WALLET_INFO](
-    { commit, dispatch, state, rootState }: AugmentedActionContextWallet,
+    // { commit, dispatch, state, rootState }: AugmentedActionContextWallet,
+    {
+      commit,
+      dispatch,
+      state,
+      rootState,
+    }: ActionContext<WalletStateTypes, IRootState>,
     accountsWithMeta: InjectedAccountWithMeta[]
   ): void;
 }

@@ -1,10 +1,10 @@
 import { createStore } from 'vuex';
 import { IRootState } from '@/store/interfaces';
 
-import { WalletStoreModuleTypes } from './modules/wallet/types';
-import { RootStoreModuleTypes } from './modules/root/types';
+import { WalletStoreModuleTypes } from '@/store/modules/wallet/types';
+import { RootStoreModuleTypes } from '@/store/modules/root/types';
 
-import root from './modules/root';
+import root from '@/store/modules/root';
 
 export const store = createStore<IRootState>(root);
 

@@ -1,4 +1,4 @@
-import { MutationTypes as walletTypes } from './modules/wallet/mutation-types';
-import { MutationTypes as rootTypes } from './modules/root/mutation-types';
+import { MutationTypes as walletTypes } from '@/store/modules/wallet/mutation-types';
+import { MutationTypes as rootTypes } from '@/store/modules/root/mutation-types';
 
-export const AllMutationTypes = { ...walletTypes, ...rootTypes };
+export const AllMutationTypes = { wallet: walletTypes, root: rootTypes };
