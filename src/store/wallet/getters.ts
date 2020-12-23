@@ -1,15 +1,9 @@
 import { GetterTree } from 'vuex';
-import {
-  WalletGettersTypes,
-  WalletStateTypes,
-  IRootState,
-} from '@/store/interfaces';
 
-export const getters: GetterTree<WalletStateTypes, IRootState> &
-  WalletGettersTypes = {
+export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
   account: ({ account }) => account,
   accountInfo: ({ account, accountList }) => {
-    return accountList.find(x => x.address === account);
+    return accountList.find(x => x.address === account) || null;
   },
   accountList: ({ accountList }) => accountList,
   assetBalances: ({ assetList, assetBalances, shareTokenIds, poolInfo }) => {

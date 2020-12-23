@@ -1,17 +1,17 @@
-import { createStore } from 'vuex';
-import { IRootState } from '@/store/interfaces';
+import { createStore, createLogger, ModuleTree } from 'vuex';
 
-import { WalletStoreModuleTypes } from '@/store/modules/wallet/types';
-import { RootStoreModuleTypes } from '@/store/modules/root/types';
+import { general } from '@/store/general';
+import { wallet } from '@/store/wallet';
 
-import root from '@/store/modules/root';
+const modules: ModuleTree<MergedState> = { general, wallet };
 
-export const store = createStore<IRootState>(root);
+export const store = createStore({
+  plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
+  modules,
+});
 
-type StoreModules = {
-  wallet: WalletStoreModuleTypes;
-  root: RootStoreModuleTypes;
-};
+export function useStore(): GeneralStore {
+  return store as GeneralStore;
+}
 
-export type Store = WalletStoreModuleTypes<Pick<StoreModules, 'wallet'>> &
-  RootStoreModuleTypes<Pick<StoreModules, 'root'>>;
+export default store;

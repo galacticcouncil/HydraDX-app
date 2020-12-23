@@ -1,13 +1,11 @@
-import { IRootState } from '@/store/interfaces';
-
 const savedScreen = localStorage.getItem('screen');
 
-export const state: IRootState = {
+export const state: GeneralState = {
   blockHash: null,
   blockNumber: 0,
 
   currentScreen: savedScreen ? savedScreen : 'initial',
-  savedScreen: savedScreen ? true : false,
+  savedScreen: !!savedScreen,
   extensionInitialized: false,
   extensionPresent: true,
 };

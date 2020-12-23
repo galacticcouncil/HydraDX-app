@@ -1,11 +1,8 @@
-import { WalletStateTypes } from '@/store/interfaces';
-
 const savedAccount = localStorage.getItem('account');
 
-export const state: WalletStateTypes = {
+export const state: WalletState = {
   account: savedAccount || null,
   accountList: [],
-
   assetBalances: [],
   assetList: [],
 };
