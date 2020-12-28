@@ -1,5 +1,10 @@
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import Api from '@/api';
 
+import { bnToBn } from '@polkadot/util';
+// import { bnToDec, decToBn } from '@/services/utils';
+import { formatBalance } from '@polkadot/util';
+// import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
 
 export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
@@ -33,5 +38,58 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       dispatch('changeAccountSMWallet', null);
       commit('SET_ACCOUNT_LIST__WALLET', []);
     }
+  },
+  async syncAssetBalancesSMWallet(context) {
+    const api = Api.getApi();
+    const account = context.state.account;
+    const balances: AssetBalance[] = [];
+
+    if (account && api) {
+      const multiTokenInfo = await api.query.tokens.accounts.entries(account);
+      const baseTokenInfo = await api.query.system.account(account);
+      const baseTokenBalance = bnToBn(baseTokenInfo.data.free);
+
+      balances[0] = {
+        assetId: 0,
+        balance: baseTokenBalance,
+        balanceFormatted: formatBalance(baseTokenBalance),
+      };
+      multiTokenInfo.forEach(record => {
+        let assetId = 99999;
+
+        const assetInfo = record[0].toHuman();
+        if (Array.isArray(assetInfo) && typeof assetInfo[1] === 'string') {
+          assetId = parseInt(assetInfo[1]);
+        }
+
+        const assetBalances = api.createType('AccountData', record[1]);
+        const balance = bnToBn(assetBalances.free);
+        const balanceFormatted = formatBalance(balance);
+
+        balances[assetId] = {
+          assetId,
+          balance,
+          balanceFormatted,
+        };
+      });
+    }
+
+    context.commit('SET_ASSET_BALANCES__WALLET', balances);
+  },
+  async syncAssetListSMWallet(context) {
+    const api = Api.getApi();
+    if (!api) return;
+    const assetIds = await api.query.assetRegistry.assetIds.entries();
+    const assetList: AssetRecord[] = [{ assetId: 0, name: 'HDX' }];
+
+    // TODO: Better way to parse mapped records
+    assetIds.forEach(([assetName, id]) => {
+      const assetId = parseInt(api.createType('Option<u32>', id).toString());
+      const name = assetName.toHuman()?.toString() || '0xERR';
+
+      assetList[assetId] = { assetId, name };
+    });
+
+    context.commit('SET_ASSET_LIST__WALLET', assetList);
   },
 };

@@ -7,6 +7,7 @@ type GeneralState = {
   savedScreen: boolean;
   extensionInitialized: boolean;
   extensionPresent: boolean;
+  actions: string[];
 };
 
 // ================================ GETTERS ====================================
@@ -18,6 +19,7 @@ type GeneralGetters = {
     state: GeneralState
   ): { blockHash: string | null; blockNumber: number };
   currentScreen(state: GeneralState): string;
+  actions(state: GeneralState): string[];
   extensionInfo(
     state: GeneralState
   ): { extensionInitialized: boolean; extensionPresent: boolean };
@@ -28,22 +30,29 @@ type GeneralGetters = {
 type GeneralMutations = {
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;
-  SET_EXTENSION_PRESENT__GENERAL(
+  SET_BLOCK_INFO__GENERAL(
+    state: GeneralState,
+    payload: { blockNumber: number; blockHash: string | null }
+  ): void;
+  SET_EXTENSION_PRESENT__GENERAL( //setExtensionPresent
     state: GeneralState,
     extensionPresent: boolean
   ): void;
-  SET_EXTENSION_INITIALIZED__GENERAL(
+  SET_EXTENSION_INITIALIZED__GENERAL( //setExtensionInitialized
     state: GeneralState,
     extensionInitialized: boolean
   ): void;
   SET_SCREEN__GENERAL(state: GeneralState, screen: string): void;
+
+  ADD_ACTION__GENERAL(state: GeneralState, actions: string[]): void;
+  CLEAR_ACTION__GENERAL(state: GeneralState, actionsForRemove: string[]): void;
 };
 
 // =============================== ACTIONS =====================================
 
 type GeneralActionAugments = Omit<
   ActionContext<GeneralState, MergedState>,
-  'commit' | 'state' | 'dispatch'
+  'commit' | 'state' | 'dispatch' | 'rootState'
 > & {
   commit<K extends keyof MergedMutations>(
     key: K,
@@ -52,10 +61,12 @@ type GeneralActionAugments = Omit<
 } & {
   dispatch<K extends keyof MergedActions>(
     key: K,
-    payload: Parameters<MergedActions[K]>[1]
+    payload?: Parameters<MergedActions[K]>[1]
   ): ReturnType<MergedActions[K]>;
 } & {
   state: GeneralState;
+} & {
+  rootState: MergedState;
 };
 
 type GeneralActions = {

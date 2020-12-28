@@ -11,4 +11,7 @@ export const mutations: MutationTree<WalletState> & WalletMutations = {
   SET_ASSET_BALANCES__WALLET(state, assetBalances) {
     state.assetBalances = assetBalances;
   },
+  SET_ASSET_LIST__WALLET(state, assetList) {
+    state.assetList = assetList;
+  },
 };

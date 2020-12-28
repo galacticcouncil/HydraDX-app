@@ -32,7 +32,11 @@ type WalletGetters = {
   account(state: WalletState): string | null;
   accountInfo(state: WalletState): AccountInfo | null;
   accountList(state: WalletState): AccountInfo[];
-  assetBalances(state: WalletState): AssetBalance[];
+  assetBalances(
+    state: WalletState,
+    getters: MergedGetters,
+    rootState: MergedState
+  ): AssetBalance[];
   assetList(state: WalletState): AssetRecord[];
 };
 
@@ -48,13 +52,14 @@ type WalletMutations = {
     state: WalletState,
     assetBalances: AssetBalance[]
   ): void;
+  SET_ASSET_LIST__WALLET(state: WalletState, assetList: AssetRecord[]): void;
 };
 
 // =============================== ACTIONS =====================================
 
 type WalletActionAugments = Omit<
   ActionContext<WalletState, MergedState>,
-  'commit' | 'dispatch' | 'state'
+  'commit' | 'dispatch' | 'state' | 'rootState'
 > & {
   commit<K extends keyof MergedMutations>(
     key: K,
@@ -63,10 +68,12 @@ type WalletActionAugments = Omit<
 } & {
   dispatch<K extends keyof MergedActions>(
     key: K,
-    payload: Parameters<MergedActions[K]>[1]
+    payload?: Parameters<MergedActions[K]>[1]
   ): ReturnType<MergedActions[K]>;
 } & {
-  state: GeneralState;
+  state: WalletState;
+} & {
+  rootState: MergedState;
 };
 
 type WalletActions = {
@@ -78,6 +85,8 @@ type WalletActions = {
     context: WalletActionAugments,
     accountsWithMeta: InjectedAccountWithMeta[]
   ): void;
+  syncAssetBalancesSMWallet(context: WalletActionAugments): Promise;
+  syncAssetListSMWallet(context: WalletActionAugments): Promise;
 };
 
 // ================================ STORE ======================================

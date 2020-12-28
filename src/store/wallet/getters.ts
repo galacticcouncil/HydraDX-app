@@ -6,19 +6,22 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
     return accountList.find(x => x.address === account) || null;
   },
   accountList: ({ accountList }) => accountList,
-  assetBalances: ({ assetList, assetBalances, shareTokenIds, poolInfo }) => {
+  assetBalances: ({ assetList, assetBalances }, getters, rootState) => {
     if (!assetList) return [];
 
     // TODO: Faster algo
-    const balances = assetList.map(assetRecord => {
+    return assetList.map(assetRecord => {
       const tokenInfo = assetBalances.find(
         x => x && x.assetId == assetRecord.assetId
       );
       let name = assetRecord.name;
-      const shareToken = shareTokenIds.includes(assetRecord.assetId);
+      const shareToken = rootState.trade.shareTokenIds.includes(
+        assetRecord.assetId
+      );
       if (shareToken) {
-        for (const key in poolInfo) {
-          const pool = poolInfo[key];
+        for (const key in rootState.pool.poolInfo) {
+          if (!rootState.pool.poolInfo.hasOwnProperty(key)) break;
+          const pool = rootState.pool.poolInfo[key];
           if (pool.shareToken === assetRecord.assetId) {
             name = pool.poolAssets
               .map(asset => assetList.find(x => x && x.assetId == asset))
@@ -39,7 +42,6 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
         balanceFormatted: balanceFormatted || 0,
       };
     });
-    return balances;
   },
   assetList: ({ assetList }) => assetList,
 };

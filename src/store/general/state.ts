@@ -8,4 +8,5 @@ export const state: GeneralState = {
   savedScreen: !!savedScreen,
   extensionInitialized: false,
   extensionPresent: true,
+  actions: [],
 };
