@@ -20,14 +20,17 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
       );
       if (shareToken) {
         for (const key in rootState.pool.poolInfo) {
-          if (!rootState.pool.poolInfo.hasOwnProperty(key)) break;
-          const pool = rootState.pool.poolInfo[key];
-          if (pool.shareToken === assetRecord.assetId) {
-            name = pool.poolAssets
-              .map(asset => assetList.find(x => x && x.assetId == asset))
-              .map(x => x?.name)
-              .join(' | ');
-            break;
+          if (
+            Object.prototype.hasOwnProperty.call(rootState.pool.poolInfo, key)
+          ) {
+            const pool = rootState.pool.poolInfo[key];
+            if (pool.shareToken === assetRecord.assetId) {
+              name = pool.poolAssets
+                .map(asset => assetList.find(x => x && x.assetId == asset))
+                .map(x => x?.name)
+                .join(' | ');
+              break;
+            }
           }
         }
       }
@@ -39,7 +42,7 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
         name,
         shareToken,
         balance: balance || 0,
-        balanceFormatted: balanceFormatted || 0,
+        balanceFormatted: balanceFormatted || '0',
       };
     });
   },

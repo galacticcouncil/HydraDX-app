@@ -22,4 +22,7 @@ export const getters: GetterTree<GeneralState, MergedState> & GeneralGetters = {
       extensionPresent,
     };
   },
+  actions: state => {
+    return state.actions;
+  },
 };

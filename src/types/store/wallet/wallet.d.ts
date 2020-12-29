@@ -12,6 +12,8 @@ type AssetBalance = {
   assetId: number;
   balance: BN;
   balanceFormatted: string;
+  name?: string;
+  shareToken?: boolean;
 };
 type AssetRecord = {
   assetId: number;

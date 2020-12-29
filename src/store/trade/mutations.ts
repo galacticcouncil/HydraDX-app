@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { formatBalanceAmount } from '@/services/utils';
-import Vue from 'vue';
+// import Vue from 'vue';
 
 export const mutations: MutationTree<TradeState> & TradeMutations = {
   SET_SELL_PRICE_TIMER__TRADE(state, timer) {
@@ -26,8 +26,9 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
       let transactionData;
       if (transaction.index != null) {
         transactionData = { ...state.unpairedTransactions[transaction.index] };
+        //TODO Should be enough with new reactivity logic in Vue 3
         delete state.unpairedTransactions[transaction.index];
-        Vue.delete(state.unpairedTransactions, transaction.index);
+        // Vue.delete(state.unpairedTransactions, transaction.index);
       }
 
       // We could get unsorted transaction data the progress should always be the highest (errors being 4 and 5)
@@ -44,12 +45,14 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
         progress,
       };
 
+      //TODO Should be enough with new reactivity logic in Vue 3
       state.transactions = {
         ...state.transactions,
         [transaction.id]: transactionData,
       };
       // Vue.set(state.transactions, transaction.id, transactionData);
     } else if (transaction.index != null) {
+      //TODO Should be enough with new reactivity logic in Vue 3
       state.unpairedTransactions = {
         ...state.transactions,
         [transaction.index]: {

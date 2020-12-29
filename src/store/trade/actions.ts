@@ -4,7 +4,7 @@ import { bnToBn } from '@polkadot/util';
 // import { bnToDec, decToBn } from '@/services/utils';
 import { formatBalance } from '@polkadot/util';
 // import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
@@ -49,8 +49,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         asset1 = state.tradeProperties.asset1;
         asset2 = state.tradeProperties.asset2;
       } else if (currentScreen === 'liquidity') {
-        asset1 = state.liquidityProperties.asset1;
-        asset2 = state.liquidityProperties.asset2;
+        asset1 = rootState.pool.liquidityProperties.asset1;
+        asset2 = rootState.pool.liquidityProperties.asset2;
       } else {
         return;
       }
@@ -139,7 +139,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           //TODO: CALCULATE LIMITS FROM SPOT PRICE
           .buy(asset1, asset2, amount, bnToBn('100000000000000000'), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) context.commit('setPendingAction', true);
+            if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
             dispatch('updateTransactionsSMTrade', {
               events,
               currentIndex,
@@ -159,7 +159,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           //TODO: CALCULATE LIMITS FROM SPOT PRICE
           .sell(asset1, asset2, amount, bnToBn(1000), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) context.commit('setPendingAction', true);
+            if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
             dispatch('updateTransactionsSMTrade', {
               events,
               currentIndex,
