@@ -22,15 +22,15 @@
     <div class="menu">
       <label :class="{ selected: screenState === 'select' }">
         <input
-          v-model="screenState"
+          @change.prevent="() => onWalletScreenChange('select')"
           type="radio"
           name="screenState"
           value="select"
-        />{{ accountInfo ? "CHANGE ACCOUNT" : "SELECT ACCOUNT" }}</label
+        />{{ accountInfo ? 'CHANGE ACCOUNT' : 'SELECT ACCOUNT' }}</label
       >
       <label :class="{ selected: screenState === 'tokens' }">
         <input
-          v-model="screenState"
+          @change.prevent="() => onWalletScreenChange('tokens')"
           type="radio"
           name="screenState"
           value="tokens"
@@ -45,13 +45,17 @@
       </div>
       <div class="accountList" v-if="accountList.length > 0">
         <div
-          v-for="accountRecord in accountList"
-          v-bind:key="accountRecord.address"
+          v-for="accountRecord in accountList.filter(
+            item => item !== currentAccount
+          )"
+          :key="accountRecord.address"
         >
-          <div class="accountRecord" v-if="account !== accountRecord.address">
+          <div class="accountRecord">
             <label>
               <input
-                v-model="account"
+                @change.prevent="
+                  () => onChangeAccountClick(accountRecord.address)
+                "
                 type="radio"
                 name="account"
                 :value="accountRecord.address"
@@ -78,12 +82,14 @@
           v-for="assetRecord in [...assetBalances].sort(
             (a, b) => Number(b.balance) - Number(a.balance)
           )"
-          v-bind:key="assetRecord.assetId"
+          :key="assetRecord.assetId"
         >
           <div class="name">{{ assetRecord.name }}</div>
           <div class="balance">{{ assetRecord.balanceFormatted }}</div>
           <div class="faceut" v-if="!assetRecord.shareToken">
-            <button @click="mintAsset(assetRecord.assetId)">++GET++</button>
+            <button @click.prevent="mintAsset(assetRecord.assetId)">
+              ++GET++
+            </button>
           </div>
         </div>
       </div>
@@ -92,34 +98,41 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import { mapGetters } from "vuex";
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { useStore } from '@/store';
 
-// TODO: nicer
-const account = localStorage.getItem("account");
+export default defineComponent({
+  name: 'Wallet',
+  setup() {
+    const { getters, dispatch } = useStore();
+    const screenState = ref('tokens');
 
-export default Vue.extend({
-  name: "Wallet",
-  data: () => {
-    return {
-      screenState: account ? "tokens" : "select",
+    onMounted(() => {
+      screenState.value = localStorage.getItem('account') ? 'tokens' : 'select';
+    });
+
+    const mintAsset = (assetId: number) => {
+      dispatch('mintAssetSMWallet', assetId);
     };
-  },
-  methods: {
-    mintAsset: function (value: number) {
-      this.$store.dispatch("mintAsset", value);
-    },
-  },
-  computed: {
-    account: {
-      get() {
-        return this.$store.state.account;
-      },
-      set(value) {
-        this.$store.dispatch("changeAccount", value);
-      },
-    },
-    ...mapGetters(["accountList", "accountInfo", "assetBalances"]),
+
+    const onChangeAccountClick = (accountAddress: string) => {
+      dispatch('changeAccountSMWallet', accountAddress);
+    };
+
+    const onWalletScreenChange = (selectedScreen: string) => {
+      screenState.value = selectedScreen;
+    };
+
+    return {
+      accountList: computed(() => getters.accountListSMWallet),
+      accountInfo: computed(() => getters.accountInfoSMWallet),
+      assetBalances: computed(() => getters.assetBalancesSMWallet),
+      currentAccount: computed(() => getters.accountSMWallet),
+      screenState,
+      mintAsset,
+      onChangeAccountClick,
+      onWalletScreenChange,
+    };
   },
 });
 </script>

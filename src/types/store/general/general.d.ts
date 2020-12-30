@@ -13,14 +13,14 @@ type GeneralState = {
 // ================================ GETTERS ====================================
 
 type GeneralGetters = {
-  getBlockHash(state: GeneralState): string | null;
-  getBlockNumber(state: GeneralState): number;
-  blockInfo(
+  getBlockHashSMGeneral(state: GeneralState): string | null;
+  getBlockNumberSMGeneral(state: GeneralState): number;
+  blockInfoSMGeneral(
     state: GeneralState
   ): { blockHash: string | null; blockNumber: number };
-  currentScreen(state: GeneralState): string;
-  actions(state: GeneralState): string[];
-  extensionInfo(
+  currentScreenSMGeneral(state: GeneralState): string;
+  actionsSMGeneral(state: GeneralState): string[];
+  extensionInfoSMGeneral(
     state: GeneralState
   ): { extensionInitialized: boolean; extensionPresent: boolean };
 };
@@ -92,7 +92,7 @@ type GeneralStore<S = GeneralState> = Omit<
     P extends Parameters<GeneralMutations[K]>[1]
   >(
     key: K,
-    payload: P,
+    payload?: P,
     options?: CommitOptions
   ): ReturnType<GeneralMutations[K]>;
 } & {
@@ -102,7 +102,7 @@ type GeneralStore<S = GeneralState> = Omit<
 } & {
   dispatch<K extends keyof GeneralActions>(
     key: K,
-    payload: Parameters<GeneralActions[K]>[1],
+    payload?: Parameters<GeneralActions[K]>[1],
     options?: DispatchOptions
   ): ReturnType<GeneralActions[K]>;
 };

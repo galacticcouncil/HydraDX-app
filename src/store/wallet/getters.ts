@@ -1,12 +1,12 @@
 import { GetterTree } from 'vuex';
 
 export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
-  account: ({ account }) => account,
-  accountInfo: ({ account, accountList }) => {
+  accountSMWallet: ({ account }) => account,
+  accountInfoSMWallet: ({ account, accountList }) => {
     return accountList.find(x => x.address === account) || null;
   },
-  accountList: ({ accountList }) => accountList,
-  assetBalances: ({ assetList, assetBalances }, getters, rootState) => {
+  accountListSMWallet: ({ accountList }) => accountList,
+  assetBalancesSMWallet: ({ assetList, assetBalances }, getters, rootState) => {
     if (!assetList) return [];
 
     // TODO: Faster algo
@@ -46,5 +46,5 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
       };
     });
   },
-  assetList: ({ assetList }) => assetList,
+  assetListSMWallet: ({ assetList }) => assetList,
 };

@@ -1,28 +1,28 @@
 import { GetterTree } from 'vuex';
 
 export const getters: GetterTree<GeneralState, MergedState> & GeneralGetters = {
-  getBlockHash: state => {
+  getBlockHashSMGeneral: state => {
     return state.blockHash;
   },
-  getBlockNumber: state => {
+  getBlockNumberSMGeneral: state => {
     return state.blockNumber;
   },
-  blockInfo: ({ blockNumber, blockHash }) => {
+  blockInfoSMGeneral: ({ blockNumber, blockHash }) => {
     return {
       blockNumber,
       blockHash,
     };
   },
-  currentScreen: state => {
+  currentScreenSMGeneral: state => {
     return state.currentScreen;
   },
-  extensionInfo: ({ extensionInitialized, extensionPresent }) => {
+  extensionInfoSMGeneral: ({ extensionInitialized, extensionPresent }) => {
     return {
       extensionInitialized,
       extensionPresent,
     };
   },
-  actions: state => {
+  actionsSMGeneral: state => {
     return state.actions;
   },
 };

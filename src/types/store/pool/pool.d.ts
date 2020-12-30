@@ -33,12 +33,15 @@ type PoolState = {
 // ================================ GETTERS ====================================
 
 type PoolGetters = {
-  poolInfo(
+  poolInfoSMPool(
     state: PoolState,
     getters: MergedGetters,
     rootState: MergedState
   ): PoolInfo;
-  pendingAction(state: PoolState): boolean;
+  pendingActionSMPool(state: PoolState): boolean;
+  liquidityAmountSMPool(state: PoolState): BN;
+  selectedPoolSMPool(state: PoolState): string | null;
+  liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
 };
 
 // =============================== MUTATION ====================================
@@ -96,7 +99,7 @@ type PoolStore<S = PoolState> = Omit<
     P extends Parameters<PoolMutations[K]>[1]
   >(
     key: K,
-    payload: P,
+    payload?: P,
     options?: CommitOptions
   ): ReturnType<PoolMutations[K]>;
 } & {
@@ -106,7 +109,7 @@ type PoolStore<S = PoolState> = Omit<
 } & {
   dispatch<K extends keyof PoolActions>(
     key: K,
-    payload: Parameters<PoolActions[K]>[1],
+    payload?: Parameters<PoolActions[K]>[1],
     options?: DispatchOptions
   ): ReturnType<PoolActions[K]>;
 };

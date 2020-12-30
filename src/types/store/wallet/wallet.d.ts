@@ -31,15 +31,15 @@ type WalletState = {
 // ================================ GETTERS ====================================
 
 type WalletGetters = {
-  account(state: WalletState): string | null;
-  accountInfo(state: WalletState): AccountInfo | null;
-  accountList(state: WalletState): AccountInfo[];
-  assetBalances(
+  accountSMWallet(state: WalletState): string | null;
+  accountInfoSMWallet(state: WalletState): AccountInfo | null;
+  accountListSMWallet(state: WalletState): AccountInfo[];
+  assetBalancesSMWallet(
     state: WalletState,
     getters: MergedGetters,
     rootState: MergedState
   ): AssetBalance[];
-  assetList(state: WalletState): AssetRecord[];
+  assetListSMWallet(state: WalletState): AssetRecord[];
 };
 
 // =============================== MUTATION ====================================
@@ -89,6 +89,7 @@ type WalletActions = {
   ): void;
   syncAssetBalancesSMWallet(context: WalletActionAugments): Promise;
   syncAssetListSMWallet(context: WalletActionAugments): Promise;
+  mintAssetSMWallet(context: WalletActionAugments, mintAsset: number): void;
 };
 
 // ================================ STORE ======================================
@@ -102,7 +103,7 @@ type WalletStore<S = WalletState> = Omit<
     P extends Parameters<WalletMutations[K]>[1]
   >(
     key: K,
-    payload: P,
+    payload?: P,
     options?: CommitOptions
   ): ReturnType<WalletMutations[K]>;
 } & {
@@ -112,7 +113,7 @@ type WalletStore<S = WalletState> = Omit<
 } & {
   dispatch<K extends keyof WalletActions>(
     key: K,
-    payload: Parameters<WalletActions[K]>[1],
+    payload?: Parameters<WalletActions[K]>[1],
     options?: DispatchOptions
   ): ReturnType<WalletActions[K]>;
 };

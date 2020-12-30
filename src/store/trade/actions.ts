@@ -23,19 +23,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       dispatch('getSpotPriceSMTrade');
     }
   },
-  async mintAssetSMTrade({ commit, rootState }, assetId) {
-    const api = Api.getApi();
-    const account = rootState.wallet.account;
-    if (api && account) {
-      const signer = await Api.getSinger(account);
-      api.tx.faucet
-        .mint(assetId, 100000000000000)
-        .signAndSend(account, { signer: signer }, ({ events, status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
-          // TODO:STUFF
-        });
-    }
-  },
   getSpotPriceSMTrade({ state, rootState, commit }) {
     const api = Api.getApi();
     if (state.polling.spot) clearTimeout(state.polling.spot);

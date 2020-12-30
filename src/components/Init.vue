@@ -17,12 +17,19 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import { mapGetters } from "vuex";
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
 
-export default Vue.extend({
-  name: "Init",
-  computed: mapGetters(["blockInfo", "extensionInfo"]),
+export default defineComponent({
+  name: 'Init',
+  setup() {
+    const store = useStore();
+
+    return {
+      blockInfo: computed(() => store.getters.blockInfoSMGeneral),
+      extensionInfo: computed(() => store.getters.extensionInfoSMGeneral),
+    }
+  },
 });
 </script>
 
@@ -33,6 +40,6 @@ export default Vue.extend({
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  background-image: url("../assets/logo-anim.gif");
+  background-image: url('../assets/logo-anim.gif');
 }
 </style>

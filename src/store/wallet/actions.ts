@@ -24,7 +24,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       };
     });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
-    if (!rootState.savedScreen) {
+    if (!rootState.general.savedScreen) {
       commit('SET_SCREEN__GENERAL', 'wallet');
     }
     if (accounts.length) {
@@ -91,5 +91,18 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     });
 
     context.commit('SET_ASSET_LIST__WALLET', assetList);
+  },
+  async mintAssetSMWallet({ commit, rootState }, assetId) {
+    const api = Api.getApi();
+    const account = rootState.wallet.account;
+    if (api && account) {
+      const signer = await Api.getSinger(account);
+      api.tx.faucet
+        .mint(assetId, 100000000000000)
+        .signAndSend(account, { signer: signer }, ({ events, status }) => {
+          if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+          // TODO:STUFF
+        });
+    }
   },
 };

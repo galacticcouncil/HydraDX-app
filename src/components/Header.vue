@@ -19,7 +19,7 @@
     <div class="menu">
       <label :class="{ selected: currentScreen === 'trade' }">
         <input
-          v-model="currentScreen"
+          @change.prevent="() => onScreenChangeClick('trade')"
           type="radio"
           name="screen"
           value="trade"
@@ -27,7 +27,7 @@
       >
       <label :class="{ selected: currentScreen === 'liquidity' }">
         <input
-          v-model="currentScreen"
+          @change.prevent="() => onScreenChangeClick('liquidity')"
           type="radio"
           name="screen"
           value="liquidity"
@@ -35,7 +35,7 @@
       >
       <label :class="{ selected: currentScreen === 'wallet' }">
         <input
-          v-model="currentScreen"
+          @change.prevent="() => onScreenChangeClick('wallet')"
           type="radio"
           name="screen"
           value="wallet"
@@ -46,21 +46,24 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import { mapGetters } from "vuex";
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
 
-export default Vue.extend({
-  name: "Header",
-  computed: {
-    currentScreen: {
-      get() {
-        return this.$store.state.currentScreen;
-      },
-      set(screen) {
-        this.$store.commit("setScreen", screen);
-      },
-    },
-    ...mapGetters(["blockInfo", "accountInfo"]),
+export default defineComponent({
+  name: 'Header',
+  setup() {
+    const { getters, commit } = useStore();
+
+    const onScreenChangeClick = (screen: string) => {
+      commit('SET_SCREEN__GENERAL', screen);
+    };
+
+    return {
+      currentScreen: computed(() => getters.currentScreenSMGeneral),
+      blockInfo: computed(() => getters.blockInfoSMGeneral),
+      accountInfo: computed(() => getters.accountInfoSMWallet),
+      onScreenChangeClick,
+    };
   },
 });
 </script>
@@ -90,7 +93,7 @@ h1 {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("../assets/logo-anim.gif");
+  background-image: url('../assets/logo-anim.gif');
 }
 
 .accountInfo {

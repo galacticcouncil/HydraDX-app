@@ -7,13 +7,13 @@
       @input="onInput($event)"
       @keypress="onKeyPress($event)"
     />
-    <select class="range" v-model="range">
+    <select class="range" v-model="compState.range">
       <option value="1e-15">femto</option>
       <option value="1e-12">pico</option>
       <option value="1e-9">nano</option>
       <option value="1e-6">micro</option>
       <option value="1e-3">mili</option>
-      <option value="1" selected>{{ options ? options.units : "" }}</option>
+      <option value="1" selected>{{ options ? options.units : '' }}</option>
       <option value="1e3">kilo</option>
       <option value="1e6">mega</option>
       <option value="1e9">giga</option>
@@ -24,83 +24,97 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import BigNumber from "bignumber.js";
-import * as BN from "bn.js";
-import { decToBn } from "../store/util";
+import { defineComponent, computed, reactive, watch } from 'vue';
 
-const formatInput = (value: BN, range: string): string => {
-  BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
-  const formattedValue = new BigNumber(value.toString(), 10);
-  const decimalFormattedValue = formattedValue
-    .dividedBy(1e12)
-    .dividedBy(range)
-    .toString();
-  return decimalFormattedValue;
-};
-const unformatInput = (value: string, range: string): BN => {
-  BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
-  const unformattedValue = new BigNumber(value, 10);
-  const decimalUnormattedValue = unformattedValue
-    .multipliedBy(1e12)
-    .multipliedBy(range);
-  const bnUnformatted = decToBn(decimalUnormattedValue);
-  return bnUnformatted;
-};
+import BigNumber from 'bignumber.js';
+import * as BN from 'bn.js';
+import { decToBn } from '@/services/utils';
 
-export default Vue.extend({
-  name: "BalanceInput",
+
+export default defineComponent({
+  name: 'BalanceInput',
   props: {
     value: { type: Object, required: true },
     options: { type: Object, required: false },
+    onChange: { type: Function, required: true },
   },
-  data: () => {
-    return { range: "1" };
-  },
-  computed: {
-    formattedValue() {
-      return formatInput(this.value, this.range);
-    },
-  },
-  watch: {
-    range: function (oldVal, newVal) {
-      const value = new BigNumber(this.range).dividedBy(newVal);
-      const rangeFixedValue = value.multipliedBy(this.value.toString());
-      const bnFixedValue = decToBn(rangeFixedValue);
-      this.updateValue(bnFixedValue);
-    },
-  },
-  methods: {
-    onKeyPress($event: KeyboardEvent) {
+  setup(props) {
+    const compState = reactive({
+      range: '1',
+    });
+
+    const formatInput = (value: BN, range: string): string => {
+      BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
+      const formattedValue = new BigNumber(value.toString(), 10);
+      const decimalFormattedValue = formattedValue
+        .dividedBy(1e12)
+        .dividedBy(range)
+        .toString();
+      return decimalFormattedValue;
+    };
+    const unformatInput = (value: string, range: string): BN => {
+      BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
+      const unformattedValue = new BigNumber(value, 10);
+      const decimalUnormattedValue = unformattedValue
+        .multipliedBy(1e12)
+        .multipliedBy(range);
+      const bnUnformatted = decToBn(decimalUnormattedValue);
+      return bnUnformatted;
+    };
+
+    const onKeyPress = ($event: KeyboardEvent) => {
       const target = $event.target as HTMLInputElement;
       if (
-        (target.value.indexOf(".") !== -1 && $event.key === ".") || //Don't allow 2 .
+        (target.value.indexOf('.') !== -1 && $event.key === '.') || //Don't allow 2 .
         (!/\d/.test($event.key) && //Numbers
-          $event.key !== "." && //.
-          $event.key !== "8" && //Backspace
-          $event.key !== "46") //Delete
+          $event.key !== '.' && //.
+          $event.key !== '8' && //Backspace
+          $event.key !== '46') //Delete
       ) {
         $event.preventDefault();
         $event.stopPropagation();
       }
-    },
-    onInput($event: InputEvent) {
+    };
+
+    const onInput = ($event: InputEvent) => {
       const target = $event.target as HTMLInputElement;
       const value = target.value;
 
       if (
         !value.length ||
-        value.endsWith(".") ||
-        (value.indexOf(".") !== -1 && value.endsWith("0"))
+        value.endsWith('.') ||
+        (value.indexOf('.') !== -1 && value.endsWith('0'))
       )
         return;
 
-      const unformattedValue = unformatInput(value, this.range);
-      this.updateValue(unformattedValue);
-    },
-    updateValue(value: BN) {
-      this.$emit("input", value);
-    },
+      const unformattedValue = unformatInput(value, compState.range);
+      updateValue(unformattedValue);
+    };
+
+    const updateValue = (value: BN) => {
+      props.onChange(value);
+    };
+
+    watch(
+      () => compState.range,
+      newRange => {
+        const value = new BigNumber(compState.range).dividedBy(newRange);
+        const rangeFixedValue = value.multipliedBy(
+          props.value.value.toString()
+        );
+        const bnFixedValue = decToBn(rangeFixedValue);
+        updateValue(bnFixedValue);
+      }
+    );
+
+    return {
+      formattedValue: computed(() =>
+        formatInput(props.value.value, compState.range)
+      ),
+      compState,
+      onKeyPress,
+      onInput,
+    };
   },
 });
 </script>

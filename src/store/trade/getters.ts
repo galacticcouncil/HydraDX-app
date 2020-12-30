@@ -1,13 +1,13 @@
 import { GetterTree } from 'vuex';
 
 export const getters: GetterTree<TradeState, MergedState> & TradeGetters = {
-  spotPrice: ({ spotPrice }) => spotPrice,
-  tokenTradeMap: ({ tokenTradeMap }) => {
+  spotPriceSMTrade: ({ spotPrice }) => spotPrice,
+  tokenTradeMapSMTrade: ({ tokenTradeMap }) => {
     return tokenTradeMap;
   },
-  tradeAmount: ({ tradeAmount }) => tradeAmount,
-  sellPrice: ({ sellPrice }) => sellPrice,
-  transactionList: ({ transactions, unpairedTransactions }) => {
+  tradeAmountSMTrade: ({ tradeAmount }) => tradeAmount,
+  sellPriceSMTrade: ({ sellPrice }) => sellPrice,
+  transactionListSMTrade: ({ transactions, unpairedTransactions }) => {
     const allTransactions = { ...transactions };
     for (const transaction in unpairedTransactions) {
       const id = 'unpaired' + Math.random();
@@ -18,5 +18,5 @@ export const getters: GetterTree<TradeState, MergedState> & TradeGetters = {
 
     return allTransactions;
   },
-  tradeProperties: ({ tradeProperties }) => tradeProperties,
+  tradePropertiesSMTrade: ({ tradeProperties }) => tradeProperties,
 };

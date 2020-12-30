@@ -12,8 +12,8 @@ export const store = createStore({
   modules,
 });
 
-export function useStore(): GeneralStore {
-  return store as GeneralStore;
+export function useStore(): RootStore {
+  return store as RootStore;
 }
 
 export default store;

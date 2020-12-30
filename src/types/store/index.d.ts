@@ -20,7 +20,7 @@ type MergedActions = GeneralActions &
   PoolActions &
   TradeActions;
 
-type GeneralStore = GeneralStore<Pick<MergedState, 'general'>> &
+type RootStore = GeneralStore<Pick<MergedState, 'general'>> &
   WalletStore<Pick<MergedState, 'wallet'>> &
   PoolStore<Pick<MergedState, 'pool'>> &
   TradeStore<Pick<MergedState, 'trade'>>;

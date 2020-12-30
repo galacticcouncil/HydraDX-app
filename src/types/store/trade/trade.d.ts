@@ -40,12 +40,12 @@ type TradeState = {
 // ================================ GETTERS ====================================
 
 type TradeGetters = {
-  spotPrice(state: TradeState): AssetAmount;
-  tokenTradeMap(state: TradeState): TokenTradeMap;
-  tradeAmount(state: TradeState): BN;
-  sellPrice(state: TradeState): AssetAmount;
-  transactionList(state: TradeState): Transactions;
-  tradeProperties(state: TradeState): TradeProperties;
+  spotPriceSMTrade(state: TradeState): AssetAmount;
+  tokenTradeMapSMTrade(state: TradeState): TokenTradeMap;
+  tradeAmountSMTrade(state: TradeState): BN;
+  sellPriceSMTrade(state: TradeState): AssetAmount;
+  transactionListSMTrade(state: TradeState): Transactions;
+  tradePropertiesSMTrade(state: TradeState): TradeProperties;
 };
 
 // =============================== MUTATION ====================================
@@ -104,7 +104,6 @@ type TradeActions = {
     context: TradeActionAugments,
     tradeProperties: TradeProperties
   ): void;
-  mintAssetSMTrade(context: TradeActionAugments, mintAsset): void;
   getSpotPriceSMTrade(context: TradeActionAugments): void;
   getSellPriceSMTrade(context: TradeActionAugments): void;
   swapSMTrade(context: TradeActionAugments): void;
@@ -133,7 +132,7 @@ type TradeStore<S = TradeState> = Omit<
     P extends Parameters<TradeMutations[K]>[1]
   >(
     key: K,
-    payload: P,
+    payload?: P,
     options?: CommitOptions
   ): ReturnType<TradeMutations[K]>;
 } & {
@@ -143,7 +142,7 @@ type TradeStore<S = TradeState> = Omit<
 } & {
   dispatch<K extends keyof TradeActions>(
     key: K,
-    payload: Parameters<TradeActions[K]>[1],
+    payload?: Parameters<TradeActions[K]>[1],
     options?: DispatchOptions
   ): ReturnType<TradeActions[K]>;
 };

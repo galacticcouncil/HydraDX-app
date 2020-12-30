@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 
 export const getters: GetterTree<PoolState, MergedState> & PoolGetters = {
-  poolInfo: ({ poolInfo }, getters, rootState) => {
+  poolInfoSMPool: ({ poolInfo }, getters, rootState) => {
     for (const pool in poolInfo) {
       poolInfo[pool].poolAssetNames = [];
       poolInfo[pool].poolAssetNames[0] =
@@ -11,5 +11,8 @@ export const getters: GetterTree<PoolState, MergedState> & PoolGetters = {
     }
     return poolInfo;
   },
-  pendingAction: ({ pendingAction }) => pendingAction,
+  pendingActionSMPool: ({ pendingAction }) => pendingAction,
+  liquidityAmountSMPool: ({ liquidityAmount }) => liquidityAmount,
+  liquidityPropertiesSMPool: ({ liquidityProperties }) => liquidityProperties,
+  selectedPoolSMPool: ({ selectedPool }) => selectedPool,
 };

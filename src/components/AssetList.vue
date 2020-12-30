@@ -1,10 +1,10 @@
 <template>
   <div class="assetList">
-    <div class="assetRecord" v-for="(asset, key) in assetList" v-bind:key="key">
+    <div class="assetRecord" v-for="(asset, key) in assetList" :key="key">
       <div class="listItem">
         <label :class="{ selected: value == asset.assetId }">
           <input
-            @input="updateValue"
+            @input="onUpdateValue"
             type="radio"
             :name="name"
             :checked="value == asset.assetId"
@@ -18,20 +18,24 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
 
-export default Vue.extend({
-  name: "AssetList",
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'AssetList',
   props: {
     name: { type: String, required: true },
     value: { type: String, required: false },
     assetList: { type: Array, required: true },
   },
-  methods: {
-    updateValue($event: Event) {
+  setup(props, { emit }) {
+    const onUpdateValue = ($event: Event) => {
       const target = $event.target as HTMLInputElement;
-      this.$emit("input", target.value);
-    },
+      emit('input', target.value);
+    };
+    return {
+      onUpdateValue,
+    };
   },
 });
 </script>
