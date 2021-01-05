@@ -4,8 +4,8 @@
     <div class="legend inverted">
       <button @click="isShown = !isShown">
         <div class="name">
-          {{ isShown ? "↓" : "↑" }} TRADES {{ transactionLenght }}
-          {{ isShown ? "↓" : "↑" }}
+          {{ isShown ? '↓' : '↑' }} TRADES {{ transactionLength }}
+          {{ isShown ? '↓' : '↑' }}
         </div>
       </button>
     </div>
@@ -26,24 +26,25 @@
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import { mapGetters } from "vuex";
+import { defineComponent, computed, ref } from 'vue';
+import { useStore } from '@/store';
 
-export default Vue.extend({
-  name: "Trade",
-  data: function () {
+export default defineComponent({
+  name: 'Trade',
+  setup() {
+    const { getters } = useStore();
+    const isShown = ref(false);
+    const transactionLength = computed(() => {
+      const txList = getters.transactionListSMTrade;
+      return Object.keys(txList).length;
+    });
+
     return {
-      isShown: false,
+      assetList: computed(() => getters.assetListSMWallet),
+      transactionList: computed(() => getters.transactionListSMTrade),
+      isShown,
+      transactionLength,
     };
-  },
-  computed: {
-    ...mapGetters(["assetList", "transactionList"]),
-    transactionLenght: {
-      get() {
-        const txList = this.$store.getters.transactionList;
-        return Object.keys(txList).length;
-      },
-    },
   },
 });
 </script>
@@ -94,7 +95,7 @@ button {
 }
 
 .transactionRecord::before {
-  content: " ";
+  content: ' ';
   display: inline-block;
   font-size: 0.8em;
   width: 1em;

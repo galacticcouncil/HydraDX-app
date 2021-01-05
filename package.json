@@ -16,7 +16,7 @@
     "core-js": "^3.6.5",
     "lodash.difference": "^4.5.0",
     "register-service-worker": "^1.7.1",
-    "vue": "^3.0.0",
+    "vue": "^3.0.5",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },

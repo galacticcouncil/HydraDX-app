@@ -1,10 +1,18 @@
 <template>
-  <div id="app">
+  <div>
     <AppLayout>
       <router-view />
     </AppLayout>
   </div>
 </template>
+
+<script>
+import { defineComponent } from 'vue';
+
+export default {
+  name: 'App',
+};
+</script>
 
 <style lang="scss">
 @font-face {

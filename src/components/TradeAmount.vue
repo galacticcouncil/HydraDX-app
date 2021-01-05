@@ -1,59 +1,58 @@
 <template>
   <label class="amount">
     {{ assetList[asset1].name }} TO
-    {{ actionType === "sell" ? "SELL" : "BUY" }}
+    {{ actionType === 'sell' ? 'SELL' : 'BUY' }}
     <BalanceInput v-model="tradeAmount" :options="tradeAmountOptions" />
     <div class="computed">
       {{ assetList[asset2].name }} TO
-      {{ actionType === "sell" ? "BUY" : "SELL" }}:
+      {{ actionType === 'sell' ? 'BUY' : 'SELL' }}:
       {{ sellPrice.amountFormatted }}
     </div>
   </label>
 </template>
 
 <script lang="ts">
-import Vue from "../vue-typed/vue-typed";
-import { mapGetters } from "vuex";
-import BalanceInput from "./BalanceInput.vue";
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
+import BalanceInput from './BalanceInput.vue';
 
-export default Vue.extend({
-  name: "TradeAmount",
+export default defineComponent({
+  name: 'TradeAmount',
   components: { BalanceInput },
-  computed: {
-    tradeAmountOptions: {
-      get() {
-        if (this.$store.state.tradeProperties.asset1) {
-          return {
-            units: this.assetList[this.$store.state.tradeProperties.asset1]
+  setup() {
+    const { getters, dispatch } = useStore();
+
+    const tradeAmountOptions = computed(() => {
+      if (getters.tradePropertiesSMTrade.asset1) {
+        return {
+          units:
+            getters.assetListSMWallet[getters.tradePropertiesSMTrade.asset1]
               .name,
-          };
-        } else return { units: "" };
+        };
+      } else return { units: '' };
+    });
+
+    const tradeAmount = computed({
+      get: () => getters.tradeAmountSMTrade,
+      set: tradeAmount => {
+        dispatch('changeTradeAmountSMTrade', tradeAmount);
       },
-    },
-    tradeAmount: {
-      get() {
-        return this.$store.state.tradeAmount;
-      },
-      set(tradeAmount) {
-        this.$store.dispatch("changeTradeAmount", tradeAmount);
-      },
-    },
-    asset1: {
-      get() {
-        return this.$store.state.tradeProperties.asset1;
-      },
-    },
-    asset2: {
-      get() {
-        return this.$store.state.tradeProperties.asset2;
-      },
-    },
-    actionType: {
-      get() {
-        return this.$store.state.tradeProperties.actionType;
-      },
-    },
-    ...mapGetters(["assetList", "sellPrice"]),
+    });
+    const asset1 = computed(() => getters.tradePropertiesSMTrade.asset1);
+    const asset2 = computed(() => getters.tradePropertiesSMTrade.asset2);
+    const actionType = computed(
+      () => getters.tradePropertiesSMTrade.actionType
+    );
+
+    return {
+      sellPrice: computed(() => getters.sellPriceSMTrade),
+      assetList: computed(() => getters.assetListSMWallet),
+      tradeAmountOptions,
+      tradeAmount,
+      asset1,
+      asset2,
+      actionType,
+    };
   },
 });
 </script>

@@ -93,7 +93,7 @@ h1 {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url('../assets/logo-anim.gif');
+  background-image: url('../../assets/images/logo-anim.gif');
 }
 
 .accountInfo {

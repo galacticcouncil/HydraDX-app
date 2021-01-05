@@ -30,15 +30,14 @@ import BigNumber from 'bignumber.js';
 import * as BN from 'bn.js';
 import { decToBn } from '@/services/utils';
 
-
 export default defineComponent({
   name: 'BalanceInput',
   props: {
     value: { type: Object, required: true },
     options: { type: Object, required: false },
-    onChange: { type: Function, required: true },
+    // onChange: { type: Function, required: true },
   },
-  setup(props) {
+  setup(props, context) {
     const compState = reactive({
       range: '1',
     });
@@ -92,9 +91,11 @@ export default defineComponent({
     };
 
     const updateValue = (value: BN) => {
-      props.onChange(value);
+      // props.onChange(value);
+      context.emit('input', value);
     };
 
+    //TODO check functionality
     watch(
       () => compState.range,
       newRange => {
