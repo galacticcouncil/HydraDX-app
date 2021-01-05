@@ -78,6 +78,7 @@ type GeneralActions = {
     context: GeneralActionAugments,
     payload: number
   ): void;
+  initializeApiSMGeneral(context: GeneralActionAugments): void;
 };
 
 // ================================ STORE ======================================

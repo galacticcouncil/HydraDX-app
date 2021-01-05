@@ -18,6 +18,7 @@ export const mutations: MutationTree<GeneralState> & GeneralMutations = {
     state.extensionInitialized = extensionInitialized;
   },
   SET_SCREEN__GENERAL(state, screen) {
+    localStorage.setItem('screen', screen);
     state.currentScreen = screen;
   },
   ADD_ACTION__GENERAL(state, actions) {

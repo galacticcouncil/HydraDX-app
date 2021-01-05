@@ -11,9 +11,16 @@ import LayoutInitial from '@/layouts/LayoutInitial';
 
 // import { shallowReactive, watch } from 'vue';
 // import { useRoute } from 'vue-router';
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { useStore } from '@/store';
 
-export default {
+export default defineComponent({
   name: 'AppLayout',
+  setup() {
+    const { dispatch } = useStore();
+
+    dispatch('initializeApiSMGeneral');
+  },
   // setup() {
   //   const route = useRoute();
   //   const layout = shallowReactive(LayoutDefault);
@@ -61,5 +68,5 @@ export default {
       },
     },
   },
-};
+});
 </script>

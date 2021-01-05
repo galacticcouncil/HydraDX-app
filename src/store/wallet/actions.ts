@@ -6,6 +6,7 @@ import { formatBalance } from '@polkadot/util';
 // import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
+import router from '@/router';
 
 export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   changeAccountSMWallet({ commit }, account: string | null) {
@@ -24,9 +25,12 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       };
     });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
+
     if (!rootState.general.savedScreen) {
       commit('SET_SCREEN__GENERAL', 'wallet');
     }
+    router.push('/wallet');
+
     if (accounts.length) {
       commit('SET_ACCOUNT_LIST__WALLET', accounts);
       if (state.account && !accounts.find(x => x.address === state.account)) {
