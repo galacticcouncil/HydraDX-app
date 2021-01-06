@@ -1,0 +1,18 @@
+$hdx-bgr-gray: #f5f6fa;
+
+
+$hdx-global-transition: 100ms;
+
+
+// Grid breakpoints
+//
+// Define the minimum dimensions at which your layout will change,
+// adapting to different screen sizes, for use in media queries.
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px
+) !default;

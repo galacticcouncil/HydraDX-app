@@ -4,6 +4,7 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 import AppLayout from '@/layouts/AppLayout.vue';
+import '@/assets/styles/scss/main.scss';
 
 createApp(App)
   .use(store)
