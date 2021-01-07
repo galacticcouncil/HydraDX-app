@@ -26,12 +26,22 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
       let transactionData;
       if (transaction.index != null) {
         transactionData = { ...state.unpairedTransactions[transaction.index] };
+
         //TODO Should be enough with new reactivity logic in Vue 3
-        delete state.unpairedTransactions[transaction.index];
-        // Vue.delete(state.unpairedTransactions, transaction.index);
+
+        //Vue.delete(state.unpairedTransactions, transaction.index);
+
+        const currentUnpairedTransactionsScope = {
+          ...state.unpairedTransactions,
+        };
+        delete currentUnpairedTransactionsScope[transaction.index];
+        state.unpairedTransactions = currentUnpairedTransactionsScope;
       }
 
-      // We could get unsorted transaction data the progress should always be the highest (errors being 4 and 5)
+      /**
+       * We could get unsorted transaction data the progress should always be
+       * the highest (errors being 4 and 5)
+       */
       const progress = Math.max(
         transaction.progress,
         transactionData?.progress || 0,
