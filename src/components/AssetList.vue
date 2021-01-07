@@ -2,12 +2,12 @@
   <div class="assetList">
     <div class="assetRecord" v-for="(asset, key) in assetList" :key="key">
       <div class="listItem">
-        <label :class="{ selected: value == asset.assetId }">
+        <label :class="{ selected: modelValue == asset.assetId }">
           <input
             @input="onUpdateValue"
             type="radio"
             :name="name"
-            :checked="value == asset.assetId"
+            :checked="modelValue == asset.assetId"
             :value="asset.assetId"
           />
           {{ assetList[key].name }}
@@ -18,20 +18,20 @@
 </template>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'AssetList',
   props: {
     name: { type: String, required: true },
-    value: { type: String, required: false },
+    modelValue: { type: String, required: false },
     assetList: { type: Array, required: true },
   },
+  emits: ['update:modelValue'],
   setup(props, { emit }) {
     const onUpdateValue = ($event: Event) => {
       const target = $event.target as HTMLInputElement;
-      emit('input', target.value);
+      emit('update:modelValue', target.value);
     };
     return {
       onUpdateValue,
