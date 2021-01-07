@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@polkadot/api": "^2.4.1",
+    "@polkadot/api": "^3.3.2",
     "@polkadot/extension-dapp": "^0.34.1",
     "bignumber.js": "^9.0.1",
     "bn.js": "^5.1.3",
