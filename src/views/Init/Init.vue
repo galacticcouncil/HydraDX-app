@@ -8,7 +8,7 @@
     <div class="information" v-if="!extensionInfo.extensionPresent">
       Please use Chrome or Firefox with respective polkadot{.js}
       <a href="https://github.com/polkadot-js/extension#installation"
-      >extension</a
+        >extension</a
       >
       installed and authorize HACK.HydraDX.io to access your address list.
     </div>
@@ -17,17 +17,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, watch } from 'vue';
 import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Init',
   setup() {
-    const store = useStore();
+    const { getters } = useStore();
+    const router = useRouter();
+
+    /**
+     * If Polkadot extension has been connected in previous sessions, we need
+     * redirect user to Wallet page.
+     */
+    if (getters.accountSMWallet) router.push('/wallet');
+    watch(
+      () => getters.accountSMWallet,
+      newAccountVal => {
+        if (newAccountVal) router.push('/wallet');
+      }
+    );
 
     return {
-      blockInfo: computed(() => store.getters.blockInfoSMGeneral),
-      extensionInfo: computed(() => store.getters.extensionInfoSMGeneral),
+      blockInfo: computed(() => getters.blockInfoSMGeneral),
+      extensionInfo: computed(() => getters.extensionInfoSMGeneral),
     };
   },
 });

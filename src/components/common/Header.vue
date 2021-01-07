@@ -17,30 +17,6 @@
 
     <!-- MENU -->
     <nav class="menu">
-      <!--      <label :class="{ selected: currentScreen === 'trade' }">-->
-      <!--        <input-->
-      <!--          @change.prevent="() => onScreenChangeClick('trade')"-->
-      <!--          type="radio"-->
-      <!--          name="screen"-->
-      <!--          value="trade"-->
-      <!--        />TRADE</label-->
-      <!--      >-->
-      <!--      <label :class="{ selected: currentScreen === 'liquidity' }">-->
-      <!--        <input-->
-      <!--          @change.prevent="() => onScreenChangeClick('liquidity')"-->
-      <!--          type="radio"-->
-      <!--          name="screen"-->
-      <!--          value="liquidity"-->
-      <!--        />LIQUIDITY</label-->
-      <!--      >-->
-      <!--      <label :class="{ selected: currentScreen === 'wallet' }">-->
-      <!--        <input-->
-      <!--          @change.prevent="() => onScreenChangeClick('wallet')"-->
-      <!--          type="radio"-->
-      <!--          name="screen"-->
-      <!--          value="wallet"-->
-      <!--        />WALLET</label-->
-      <!--      >-->
       <ul>
         <li class="menu-nav-link-wrapper">
           <router-link class="menu-nav-link" to="/trade">TRADE</router-link>
@@ -72,7 +48,6 @@ export default defineComponent({
     };
 
     return {
-      currentScreen: computed(() => getters.currentScreenSMGeneral),
       blockInfo: computed(() => getters.blockInfoSMGeneral),
       accountInfo: computed(() => getters.accountInfoSMWallet),
       onScreenChangeClick,

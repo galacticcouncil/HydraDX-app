@@ -4,7 +4,7 @@
     <div class="menu">
       <label :class="{ selected: actionType === 'add' }">
         <input
-          @change.prevent="() => onSetActionType('add')"
+          v-model="actionType"
           type="radio"
           name="actionType"
           value="add"
@@ -12,7 +12,7 @@
       >
       <label :class="{ selected: actionType === 'withdraw' }">
         <input
-          @change.prevent="() => onSetActionType('withdraw')"
+          v-model="actionType"
           type="radio"
           name="actionType"
           value="withdraw"
@@ -20,7 +20,7 @@
       >
       <label :class="{ selected: actionType === 'create' }">
         <input
-          @change.prevent="() => onSetActionType('create')"
+          v-model="actionType"
           type="radio"
           name="actionType"
           value="create"
@@ -95,7 +95,7 @@
             <div v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[0] }} AMOUNT:
             </div>
-            <BalanceInput v-model="liquidityAmount" :value="liquidityAmount" />
+            <BalanceInput v-model="liquidityAmount" />
             <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
               {{ spotPrice.amount }}
@@ -178,6 +178,7 @@ export default defineComponent({
     const liquidityAmount = computed({
       get: () => getters.liquidityAmountSMPool,
       set: liquidityAmount => {
+        console.log('liquidityAmount - ', liquidityAmount)
         commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
       },
     });

@@ -6,6 +6,8 @@ import { formatBalance } from '@polkadot/util';
 // import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
 // import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
+import router from '@/router';
+
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -27,15 +29,14 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const api = Api.getApi();
     if (state.polling.spot) clearTimeout(state.polling.spot);
     if (api) {
-      const currentScreen = rootState.general.currentScreen;
 
       let asset1: number | null = null;
       let asset2: number | null = null;
 
-      if (currentScreen === 'trade') {
+      if (router.currentRoute.value.path === '/trade') {
         asset1 = state.tradeProperties.asset1;
         asset2 = state.tradeProperties.asset2;
-      } else if (currentScreen === 'liquidity') {
+      } else if (router.currentRoute.value.path === '/liquidity') {
         asset1 = rootState.pool.liquidityProperties.asset1;
         asset2 = rootState.pool.liquidityProperties.asset2;
       } else {

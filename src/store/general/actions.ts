@@ -10,7 +10,8 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockNumberSMGeneral({ commit }, payload: number) {
     commit('SET_BLOCK_NUMBER__GENERAL', payload);
   },
-  async initializeApiSMGeneral({ commit, dispatch }) {
+  async initializeApiSMGeneral(context) {
+    const { commit, dispatch } = context;
     try {
       const apiInstance = await Api.initialize();
 

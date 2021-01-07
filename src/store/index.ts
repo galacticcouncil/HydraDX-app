@@ -8,7 +8,7 @@ import { trade } from '@/store/trade';
 const modules: ModuleTree<MergedState> = { general, wallet, pool, trade };
 
 export const store = createStore({
-  plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
+  // plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
   modules,
 });
 

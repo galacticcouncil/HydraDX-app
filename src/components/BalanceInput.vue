@@ -33,16 +33,20 @@ import { decToBn } from '@/services/utils';
 export default defineComponent({
   name: 'BalanceInput',
   props: {
-    value: { type: Object, required: true },
+    // value: { type: Object, required: true },
+    modelValue: { type: Object, required: true },
     options: { type: Object, required: false },
     // onChange: { type: Function, required: true },
   },
+  emits: ['update:modelValue'],
   setup(props, context) {
     const compState = reactive({
       range: '1',
     });
 
     const formatInput = (value: BN, range: string): string => {
+      if (!value) return '';
+
       BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
       const formattedValue = new BigNumber(value.toString(), 10);
       const decimalFormattedValue = formattedValue
@@ -51,7 +55,7 @@ export default defineComponent({
         .toString();
       return decimalFormattedValue;
     };
-    const unformatInput = (value: string, range: string): BN => {
+    const unformatInput = (value = '0', range: string): BN => {
       BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
       const unformattedValue = new BigNumber(value, 10);
       const decimalUnormattedValue = unformattedValue
@@ -92,16 +96,17 @@ export default defineComponent({
 
     const updateValue = (value: BN) => {
       // props.onChange(value);
-      context.emit('input', value);
+      context.emit('update:modelValue', value);
     };
 
     //TODO check functionality
     watch(
       () => compState.range,
       newRange => {
+        const currentValue = props.modelValue;
         const value = new BigNumber(compState.range).dividedBy(newRange);
         const rangeFixedValue = value.multipliedBy(
-          props.value.value.toString()
+          currentValue.toString()
         );
         const bnFixedValue = decToBn(rangeFixedValue);
         updateValue(bnFixedValue);
@@ -109,9 +114,9 @@ export default defineComponent({
     );
 
     return {
-      formattedValue: computed(() =>
-        formatInput(props.value.value, compState.range)
-      ),
+      formattedValue: computed(() => {
+        return formatInput(props.modelValue as BN, compState.range);
+      }),
       compState,
       onKeyPress,
       onInput,

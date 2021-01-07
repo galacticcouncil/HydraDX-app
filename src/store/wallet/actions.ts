@@ -26,21 +26,24 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
 
-    if (!rootState.general.savedScreen) {
-      commit('SET_SCREEN__GENERAL', 'wallet');
-    }
-    router.push('/wallet');
+    // if (!rootState.general.savedScreen) {
+    //   commit('SET_SCREEN__GENERAL', 'wallet');
+    // }     router.push('/wallet');
 
     if (accounts.length) {
       commit('SET_ACCOUNT_LIST__WALLET', accounts);
       if (state.account && !accounts.find(x => x.address === state.account)) {
         localStorage.removeItem('account');
         dispatch('changeAccountSMWallet', null);
+        router.push('/wallet');
+      } else if (!state.account) {
+        router.push('/wallet');
       }
     } else {
       localStorage.removeItem('account');
       dispatch('changeAccountSMWallet', null);
       commit('SET_ACCOUNT_LIST__WALLET', []);
+      router.push('/wallet');
     }
   },
   async syncAssetBalancesSMWallet(context) {
