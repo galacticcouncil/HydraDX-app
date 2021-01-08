@@ -8,6 +8,7 @@ type GeneralState = {
   extensionInitialized: boolean;
   extensionPresent: boolean;
   actions: string[];
+  pendingAction: boolean;
 };
 
 // ================================ GETTERS ====================================
@@ -23,11 +24,13 @@ type GeneralGetters = {
   extensionInfoSMGeneral(
     state: GeneralState
   ): { extensionInitialized: boolean; extensionPresent: boolean };
+  pendingActionSMGeneral(state: GeneralState): boolean;
 };
 
 // =============================== MUTATION ====================================
 
 type GeneralMutations = {
+  SET_PENDING_ACTION__GENERAL(state: GeneralState, pending: boolean): void;
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;
   SET_BLOCK_INFO__GENERAL(

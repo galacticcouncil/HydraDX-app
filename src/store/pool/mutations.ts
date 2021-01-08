@@ -1,9 +1,6 @@
 import { MutationTree } from 'vuex';
 
 export const mutations: MutationTree<PoolState> & PoolMutations = {
-  SET_PENDING_ACTION__POOL(state, pending) {
-    state.pendingAction = pending;
-  },
   SET_SELECTED_POOL__POOL(state, poolId) {
     state.selectedPool = poolId;
   },
@@ -19,5 +16,4 @@ export const mutations: MutationTree<PoolState> & PoolMutations = {
   SET_POOL_INFO__POOL(state, poolInfo) {
     state.poolInfo = poolInfo;
   },
-
 };

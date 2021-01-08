@@ -26,10 +26,6 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
 
-    // if (!rootState.general.savedScreen) {
-    //   commit('SET_SCREEN__GENERAL', 'wallet');
-    // }     router.push('/wallet');
-
     if (accounts.length) {
       commit('SET_ACCOUNT_LIST__WALLET', accounts);
       if (state.account && !accounts.find(x => x.address === state.account)) {
@@ -107,7 +103,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       api.tx.faucet
         .mint(assetId, 100000000000000)
         .signAndSend(account, { signer: signer }, ({ events, status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           // TODO:STUFF
         });
     }

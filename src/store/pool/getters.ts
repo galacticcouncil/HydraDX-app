@@ -11,7 +11,6 @@ export const getters: GetterTree<PoolState, MergedState> & PoolGetters = {
     }
     return poolInfo;
   },
-  pendingActionSMPool: ({ pendingAction }) => pendingAction,
   liquidityAmountSMPool: ({ liquidityAmount }) => liquidityAmount,
   liquidityPropertiesSMPool: ({ liquidityProperties }) => liquidityProperties,
   selectedPoolSMPool: ({ selectedPool }) => selectedPool,

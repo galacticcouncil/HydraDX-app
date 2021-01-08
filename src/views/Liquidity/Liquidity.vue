@@ -137,7 +137,6 @@ import BalanceInput from '@/components/BalanceInput.vue';
 
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
-type BN = import('bn.js');
 
 export default defineComponent({
   name: 'Liquidity',
@@ -178,7 +177,7 @@ export default defineComponent({
     const liquidityAmount = computed({
       get: () => getters.liquidityAmountSMPool,
       set: liquidityAmount => {
-        console.log('liquidityAmount - ', liquidityAmount)
+        console.log('liquidityAmount - ', liquidityAmount);
         commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
       },
     });
@@ -194,32 +193,6 @@ export default defineComponent({
       },
     });
 
-    // const onSetLiquidityAmount = (liquidityAmount: BN) => {
-    //   commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
-    // };
-
-    // const onSelectPool = (poolId: string) => {
-    //   const asset1 = poolInfo.value[poolId].poolAssets[0];
-    //   const asset2 = poolInfo.value[poolId].poolAssets[1];
-    //
-    //   commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-    //     actionType: liquidityProperties.value.actionType,
-    //     asset1,
-    //     asset2,
-    //   });
-    //   dispatch('getSpotPriceSMTrade');
-    //   dispatch('changeSelectedPoolSMPool', poolId);
-    // };
-
-    // const onSetActionType = (actionType: string) => {
-    //   commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-    //     asset1: liquidityProperties.value.asset1,
-    //     asset2: liquidityProperties.value.asset2,
-    //     actionType,
-    //   });
-    //   dispatch('getSpotPriceSMTrade');
-    // };
-
     return {
       assetBalances: computed(() => getters.assetBalancesSMWallet),
       spotPrice: computed(() => getters.spotPriceSMTrade),
@@ -229,9 +202,6 @@ export default defineComponent({
       poolInfo,
       addLiquidity,
       withdrawLiquidity,
-      // onSetLiquidityAmount,
-      // onSelectPool,
-      // onSetActionType,
     };
   },
 });

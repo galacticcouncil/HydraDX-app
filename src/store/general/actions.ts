@@ -66,7 +66,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         dispatch('syncAssetBalancesSMWallet');
         dispatch('syncAssetListSMWallet');
         dispatch('syncPoolsSMPool');
-        commit('SET_PENDING_ACTION__POOL', false);
+        commit('SET_PENDING_ACTION__GENERAL', false);
         commit('SET_BLOCK_INFO__GENERAL', {
           blockNumber: header.number.toNumber(),
           blockHash: header.hash.toString(),

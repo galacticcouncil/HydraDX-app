@@ -26,7 +26,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       api.tx.amm
         .addLiquidity(asset1, asset2, amount, maxSellPrice)
         .signAndSend(account, { signer: signer }, ({ status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('getSpotPriceSMTrade');
         });
     }
@@ -50,12 +50,12 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       api.tx.amm
         .removeLiquidity(asset1, asset2, liquidityToRemove)
         .signAndSend(account, { signer: signer }, ({ status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('getSpotPriceSMTrade');
         });
     }
   },
-  async syncPoolsSMPool({commit}) {
+  async syncPoolsSMPool({ commit }) {
     const api = Api.getApi();
     if (!api) return;
     const allPools = await api.query.amm.poolAssets.entries();

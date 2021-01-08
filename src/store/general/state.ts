@@ -9,4 +9,5 @@ export const state: GeneralState = {
   extensionInitialized: false,
   extensionPresent: true,
   actions: [],
+  pendingAction: false,
 };

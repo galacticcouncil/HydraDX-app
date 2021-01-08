@@ -10,10 +10,10 @@
       </button>
     </div>
     <div class="transactionData">
-      <div v-for="transaction in transactionList" v-bind:key="transaction.id">
+      <div v-for="(transaction, key) in transactionList" :key="key">
         <div
           v-if="transaction.tokenIn != null && transaction.tokenOut != null"
-          :class="'transactionRecord p' + transaction.progress"
+          :class="`transactionRecord p${transaction.progress}`"
         >
           {{ transaction.type }} {{ transaction.amountIn }}
           {{ assetList[transaction.tokenIn].name }} FOR

@@ -1,8 +1,9 @@
 @import 'abstracts/variables';
 @import 'abstracts/mixins';
-@import "abstracts/breakpoints";
 
 @import 'vendors/imports';
+
+@import 'layout/misc';
 
 @import 'base/reset';
 @import 'base/typography';

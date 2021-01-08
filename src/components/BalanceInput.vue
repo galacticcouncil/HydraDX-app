@@ -105,9 +105,7 @@ export default defineComponent({
       newRange => {
         const currentValue = props.modelValue;
         const value = new BigNumber(compState.range).dividedBy(newRange);
-        const rangeFixedValue = value.multipliedBy(
-          currentValue.toString()
-        );
+        const rangeFixedValue = value.multipliedBy(currentValue.toString());
         const bnFixedValue = decToBn(rangeFixedValue);
         updateValue(bnFixedValue);
       }

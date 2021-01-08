@@ -7,7 +7,7 @@
       <div v-if="accountList.length < 1">
         PLEASE ADD ACCOUNT WITH polkadot{.js}
         <a href="https://github.com/polkadot-js/extension#installation"
-        >EXTENSION</a
+          >EXTENSION</a
         >
       </div>
       <div class="accountRecord" v-if="accountInfo">

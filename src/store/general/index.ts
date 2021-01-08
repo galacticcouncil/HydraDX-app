@@ -6,7 +6,6 @@ import { actions } from '@/store/general/actions.ts';
 import { getters } from '@/store/general/getters.ts';
 
 export const general: Module<GeneralState, MergedState> = {
-  // namespaced: true,
   state,
   mutations,
   actions,

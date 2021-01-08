@@ -9,6 +9,14 @@
   border-width: 0px;
 }
 
+#app {
+  font-family: Pexico-Regular, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #5eafe1;
+}
+
 html,
 body {
   width: 100%;
@@ -41,11 +49,6 @@ a,
   color: #5eafe1;
 }
 
-.inverted {
-  background-color: #5eafe1;
-  color: #0d106e;
-}
-
 button {
   outline: none;
   background: transparent;
@@ -63,48 +66,8 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-#app button:disabled,
-#app input:disabled {
+button:disabled,
+input:disabled {
   color: #aaa;
   border-color: #aaa;
-}
-
-.disabled {
-  color: #aaa;
-  border-color: #aaa;
-}
-
-.noPools,
-.noTokens {
-  padding: 3em;
-  font-size: 1.5em;
-  border-width: 3px;
-}
-
-#app {
-  font-family: Pexico-Regular, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #5eafe1;
-}
-
-.pendingAction .headerInfo,
-.pendingAction button,
-.pendingAction .legend {
-  animation: filter-animation 1s infinite;
-}
-
-@keyframes filter-animation {
-  0% {
-    filter: hue-rotate(80deg);
-  }
-
-  50% {
-    filter: hue-rotate(210deg);
-  }
-
-  100% {
-    filter: hue-rotate(80deg);
-  }
 }

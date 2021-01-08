@@ -78,9 +78,6 @@
 </template>
 
 <script lang="ts">
-// import Vue from "../vue-typed/vue-typed";
-// import { mapGetters } from 'vuex';
-
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
 

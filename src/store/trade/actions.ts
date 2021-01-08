@@ -8,7 +8,6 @@ import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
-
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
     commit('SET_TRADE_AMOUNT__TRADE', tradeAmount);
@@ -29,7 +28,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const api = Api.getApi();
     if (state.polling.spot) clearTimeout(state.polling.spot);
     if (api) {
-
       let asset1: number | null = null;
       let asset2: number | null = null;
 
@@ -127,7 +125,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           //TODO: CALCULATE LIMITS FROM SPOT PRICE
           .buy(asset1, asset2, amount, bnToBn('100000000000000000'), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
             dispatch('updateTransactionsSMTrade', {
               events,
               currentIndex,
@@ -147,7 +145,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           //TODO: CALCULATE LIMITS FROM SPOT PRICE
           .sell(asset1, asset2, amount, bnToBn(1000), false)
           .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) commit('SET_PENDING_ACTION__POOL', true);
+            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
             dispatch('updateTransactionsSMTrade', {
               events,
               currentIndex,

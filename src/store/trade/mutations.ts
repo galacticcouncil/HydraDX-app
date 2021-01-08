@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { formatBalanceAmount } from '@/services/utils';
-// import Vue from 'vue';
+import Vue from 'vue';
 
 export const mutations: MutationTree<TradeState> & TradeMutations = {
   SET_SELL_PRICE_TIMER__TRADE(state, timer) {
@@ -31,11 +31,20 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
 
         //Vue.delete(state.unpairedTransactions, transaction.index);
 
-        const currentUnpairedTransactionsScope = {
-          ...state.unpairedTransactions,
-        };
-        delete currentUnpairedTransactionsScope[transaction.index];
-        state.unpairedTransactions = currentUnpairedTransactionsScope;
+        const updatedUnpairedTransactionsScope: Transactions = {};
+        // const currentUnpairedTransactionsScope = {
+        //   ...state.unpairedTransactions,
+        // };
+        // delete currentUnpairedTransactionsScope[transaction.index];
+        // state.unpairedTransactions = currentUnpairedTransactionsScope;
+
+        for (const itemIndex in state.unpairedTransactions) {
+          if (itemIndex != transaction.index) {
+            updatedUnpairedTransactionsScope[itemIndex] =
+              state.unpairedTransactions[itemIndex];
+          }
+        }
+        state.unpairedTransactions = updatedUnpairedTransactionsScope;
       }
 
       /**

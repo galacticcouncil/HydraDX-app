@@ -1,6 +1,9 @@
 import { MutationTree } from 'vuex';
 
 export const mutations: MutationTree<GeneralState> & GeneralMutations = {
+  SET_PENDING_ACTION__GENERAL(state, pending) {
+    state.pendingAction = pending;
+  },
   SET_BLOCK_HASH__GENERAL(state, payload) {
     state.blockHash = payload;
   },

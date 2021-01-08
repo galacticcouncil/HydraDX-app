@@ -6,7 +6,6 @@ import { actions } from '@/store/trade/actions.ts';
 import { getters } from '@/store/trade/getters.ts';
 
 export const trade: Module<TradeState, MergedState> = {
-  // namespaced: true,
   state,
   mutations,
   actions,

@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default">
+  <div class="layout-default" :class="{ 'pending-action': pendingAction }">
     <Header />
     <slot />
   </div>
@@ -7,12 +7,20 @@
 
 <script>
 import Header from '@/components/common/Header.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
 
 export default defineComponent({
   name: 'LayoutDefault',
   components: {
     Header,
+  },
+  setup() {
+    const { getters } = useStore();
+
+    return {
+      pendingAction: computed(() => getters.pendingActionSMGeneral),
+    };
   },
 });
 </script>

@@ -21,7 +21,6 @@ type LiquidityProperties = {
 type PoolState = {
   liquidityAmount: BN;
   liquidityProperties: LiquidityProperties;
-  pendingAction: boolean;
   // polling: {
   //   spot: NodeJS.Timeout | null;
   //   real: NodeJS.Timeout | null;
@@ -38,7 +37,6 @@ type PoolGetters = {
     getters: MergedGetters,
     rootState: MergedState
   ): PoolInfo;
-  pendingActionSMPool(state: PoolState): boolean;
   liquidityAmountSMPool(state: PoolState): BN;
   selectedPoolSMPool(state: PoolState): string | null;
   liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
@@ -47,7 +45,6 @@ type PoolGetters = {
 // =============================== MUTATION ====================================
 
 type PoolMutations = {
-  SET_PENDING_ACTION__POOL(state: PoolState, pending: boolean): void;
   SET_SELECTED_POOL__POOL(state: PoolState, poolId: string | null): void;
   SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolInfo): void; //updatePoolInfo
   SET_LIQUIDITY_AMOUNT__POOL(state: PoolState, liquidityAmount: BN): void;

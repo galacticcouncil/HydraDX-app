@@ -1,4 +1,4 @@
-import { bnToBn } from "@polkadot/util";
+import { bnToBn } from '@polkadot/util';
 
 export const state: PoolState = {
   liquidityAmount: bnToBn(0),
@@ -7,7 +7,6 @@ export const state: PoolState = {
     asset1: null,
     asset2: null,
   },
-  pendingAction: false,
   poolInfo: {},
   selectedPool: null,
 };

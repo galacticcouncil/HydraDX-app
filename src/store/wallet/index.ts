@@ -6,7 +6,6 @@ import { actions } from '@/store/wallet/actions.ts';
 import { getters } from '@/store/wallet/getters.ts';
 
 export const wallet: Module<WalletState, MergedState> = {
-  // namespaced: true,
   state,
   mutations,
   actions,

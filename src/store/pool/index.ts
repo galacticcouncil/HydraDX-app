@@ -6,7 +6,6 @@ import { actions } from '@/store/pool/actions.ts';
 import { getters } from '@/store/pool/getters.ts';
 
 export const pool: Module<PoolState, MergedState> = {
-  // namespaced: true,
   state,
   mutations,
   actions,
