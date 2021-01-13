@@ -18,6 +18,14 @@
           value="withdraw"
         />WITHDRAW</label
       >
+      <label :class="{ selected: actionType === 'create' }">
+        <input
+          v-model="actionType"
+          type="radio"
+          name="actionType"
+          value="create"
+        />CREATE</label
+      >
     </div>
 
     <div class="noPools" v-if="!Object.keys(poolInfo).length">
@@ -32,7 +40,7 @@
         <div
           class="assetRecord"
           v-for="(pool, poolId) in poolInfo"
-          v-bind:key="poolId"
+          :key="poolId"
         >
           <div class="listItem">
             <label :class="{ selected: selectedPool === poolId }">
@@ -87,30 +95,25 @@
             <div v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[0] }} AMOUNT:
             </div>
-            <input
-              type="number"
-              class="amountInput"
-              v-model="liquidityAmount"
-            />
+            <BalanceInput v-model="liquidityAmount" />
             <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
-              <input
-                type="number"
-                class="amountInput"
-                :value="spotPrice.inputAmount * liquidityAmount"
-                disabled
-              />
+              {{ spotPrice.amount }}
             </div>
           </label>
 
           <!-- ADD LIQUIDITY -->
-          <button @click="add" class="addButton" v-if="actionType === 'add'">
+          <button
+            @click.prevent="addLiquidity"
+            class="addButton"
+            v-if="actionType === 'add'"
+          >
             ADD
           </button>
 
           <!-- REMOVE LIQUIDITY -->
           <button
-            @click="withdraw"
+            @click.prevent="withdrawLiquidity"
             class="withdrawButton"
             :disabled="liquidityAmount > 100 || liquidityAmount < 0"
             v-if="actionType === 'withdraw'"
@@ -130,51 +133,77 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters } from "vuex";
+import BalanceInput from '@/components/BalanceInput.vue';
 
-export default Vue.extend({
-  name: "Head",
-  methods: {
-    add: function() {
-      this.$store.dispatch("addLiquidity");
-    },
-    withdraw: function() {
-      this.$store.dispatch("withdrawLiquidity");
-    }
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
+
+export default defineComponent({
+  name: 'Liquidity',
+  components: { BalanceInput },
+  setup() {
+    const { getters, commit, dispatch } = useStore();
+
+    const addLiquidity = () => {
+      dispatch('addLiquiditySMPool');
+    };
+
+    const withdrawLiquidity = () => {
+      dispatch('withdrawLiquiditySMPool');
+    };
+
+    // --- Computed ---
+    const poolInfo = computed(() => getters.poolInfoSMPool);
+    const liquidityProperties = computed(
+      () => getters.liquidityPropertiesSMPool
+    );
+    const selectedPool = computed({
+      get: () => getters.selectedPoolSMPool,
+      set: poolId => {
+        const newPoolId = poolId as string;
+        const asset1 = poolInfo.value[newPoolId].poolAssets[0];
+        const asset2 = poolInfo.value[newPoolId].poolAssets[1];
+
+        commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+          actionType: liquidityProperties.value.actionType,
+          asset1,
+          asset2,
+        });
+        dispatch('getSpotPriceSMTrade');
+        dispatch('changeSelectedPoolSMPool', poolId);
+      },
+    });
+
+    const liquidityAmount = computed({
+      get: () => getters.liquidityAmountSMPool,
+      set: liquidityAmount => {
+        console.log('liquidityAmount - ', liquidityAmount);
+        commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
+      },
+    });
+    const actionType = computed({
+      get: () => getters.liquidityPropertiesSMPool.actionType,
+      set: (actionType: string) => {
+        commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+          asset1: liquidityProperties.value.asset1,
+          asset2: liquidityProperties.value.asset2,
+          actionType,
+        });
+        dispatch('getSpotPriceSMTrade');
+      },
+    });
+
+    return {
+      assetBalances: computed(() => getters.assetBalancesSMWallet),
+      spotPrice: computed(() => getters.spotPriceSMTrade),
+      liquidityAmount,
+      selectedPool,
+      actionType,
+      poolInfo,
+      addLiquidity,
+      withdrawLiquidity,
+    };
   },
-  computed: {
-    liquidityAmount: {
-      get() {
-        return this.$store.state.liquidityAmount.inputAmount;
-      },
-      set(liquidityAmount) {
-        this.$store.commit("setLiquidityAmount", liquidityAmount);
-      }
-    },
-    selectedPool: {
-      get() {
-        return this.$store.state.selectedPool;
-      },
-      set(poolId: string) {
-        const token1 = this.poolInfo[poolId].poolAssets[0];
-        const token2 = this.poolInfo[poolId].poolAssets[1];
-        this.$store.commit("setLiquidityProperties", { token1, token2 });
-        this.$store.dispatch("getSpotPrice");
-        this.$store.dispatch("changeSelectedPool", poolId);
-      }
-    },
-    actionType: {
-      get() {
-        return this.$store.state.liquidityProperties.actionType;
-      },
-      set(actionType) {
-        this.$store.commit("setLiquidityProperties", { actionType });
-        this.$store.dispatch("getSpotPrice");
-      }
-    },
-    ...mapGetters(["poolInfo", "assetBalances", "spotPrice"])
-  }
 });
 </script>
 
@@ -225,13 +254,7 @@ label {
 
 .amount {
   text-align: left;
-  padding: 0;
-  margin-left: 10%;
-}
-
-.amountInput {
-  width: 80%;
-  text-align: right;
+  padding: 10%;
 }
 
 .computed {

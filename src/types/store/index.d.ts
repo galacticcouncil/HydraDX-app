@@ -1,96 +1,26 @@
-type AccountInfo = {
-  name: string;
-  address: string;
+type MergedState = {
+  general: GeneralState;
+  wallet: WalletState;
+  pool: PoolState;
+  trade: TradeState;
 };
 
-type AssetRecord = {
-  assetId: number;
-  name: string;
-  icon?: string;
-};
+type MergedGetters = GeneralGetters &
+  WalletGetters &
+  PoolGetters &
+  TradeGetters;
 
-type AssetBalance = {
-  assetId: number;
-  balance: BN;
-  balanceFormatted: string;
-};
+type MergedMutations = GeneralMutations &
+  WalletMutations &
+  PoolMutations &
+  TradeMutations;
 
-type AssetAmount = {
-  amount: BN;
-  inputAmount: number;
-  amountFormatted: string;
-};
+type MergedActions = GeneralActions &
+  WalletActions &
+  PoolActions &
+  TradeActions;
 
-// TRANSACTION PROGRESS
-// 0 = initiated
-// 1 = pending
-// 2 = inBlock
-// 3 = finalized
-// 4 = failed
-// 5 = canceled
-type Transaction = {
-  id?: string;
-  index?: number;
-  accountId: string;
-  progress: number;
-  block?: number;
-  type: string;
-  tokenIn: number;
-  tokenOut: number;
-  amountIn: string;
-  amountOut?: string;
-  expectedOut?: string;
-  matchIn?: number;
-  matchOut?: number;
-};
-
-type TokenTradeMap = number[][];
-
-type State = {
-  actions: [];
-  account: string | null;
-  accountList: AccountInfo[];
-  assetBalances: AssetBalance[];
-  assetList: AssetRecord[];
-  blockHash: string | null;
-  blockNumber: number;
-  currentScreen: string;
-  extensionInitialized: boolean;
-  extensionPresent: boolean;
-  poolInfo: {
-    [key: string]: {
-      poolAssets: number[];
-      poolAssetNames: string[];
-      shareToken: number;
-    };
-  };
-  savedScreen: boolean;
-  subscriptions: [];
-  shareTokenIds: number[];
-  selectedPool: string | null;
-  sellPrice: AssetAmount;
-  spotPrice: AssetAmount;
-  tokenTradeMap: TokenTradeMap;
-  liquidityAmount: AssetAmount;
-  tradeAmount: AssetAmount;
-  liquidityProperties: {
-    token1: number | null;
-    token2: number | null;
-    actionType: string;
-  };
-  tradeProperties: {
-    token1: number | null;
-    token2: number | null;
-    actionType: string;
-  };
-  polling: {
-    spot: NodeJS.Timeout | null;
-    real: NodeJS.Timeout | null;
-  };
-  transactions: {
-    [key: string]: Transaction;
-  };
-  unpairedTransactions: {
-    [key: string]: Transaction;
-  };
-};
+type RootStore = GeneralStore<Pick<MergedState, 'general'>> &
+  WalletStore<Pick<MergedState, 'wallet'>> &
+  PoolStore<Pick<MergedState, 'pool'>> &
+  TradeStore<Pick<MergedState, 'trade'>>;

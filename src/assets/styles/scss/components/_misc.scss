@@ -1,0 +1,63 @@
+.menu {
+  display: flex;
+  height: auto;
+
+  label {
+    box-sizing: border-box;
+    font-size: 1.2em;
+    font-weight: 600;
+    flex-basis: 100%;
+    padding: 1em;
+    border-right-width: 1px;
+    border-top-width: 1px;
+
+    &:hover {
+      box-shadow: 0 0 15px #f653a2 inset;
+    }
+  }
+
+  input {
+    display: none;
+  }
+
+  .selected {
+    background-color: #0c36a1;
+  }
+
+  //---------------------------
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0;
+  }
+
+  .menu-nav-link-wrapper {
+    flex: 1;
+  }
+
+  .menu-nav-link {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    box-sizing: border-box;
+    font-size: 1.2em;
+    font-weight: 600;
+    flex-basis: 100%;
+    padding: 1em;
+    border-right-width: 1px;
+    border-top-width: 1px;
+
+    &:hover {
+      box-shadow: 0 0 15px #f653a2 inset;
+    }
+
+    &.active {
+      background-color: #0c36a1;
+    }
+  }
+
+
+}

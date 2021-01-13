@@ -22,15 +22,15 @@
     <div class="menu">
       <label :class="{ selected: screenState === 'select' }">
         <input
-          v-model="screenState"
+          @change.prevent="() => onWalletScreenChange('select')"
           type="radio"
           name="screenState"
           value="select"
-        />{{ accountInfo ? "CHANGE ACCOUNT" : "SELECT ACCOUNT" }}</label
+        />{{ accountInfo ? 'CHANGE ACCOUNT' : 'SELECT ACCOUNT' }}</label
       >
       <label :class="{ selected: screenState === 'tokens' }">
         <input
-          v-model="screenState"
+          @change.prevent="() => onWalletScreenChange('tokens')"
           type="radio"
           name="screenState"
           value="tokens"
@@ -45,13 +45,17 @@
       </div>
       <div class="accountList" v-if="accountList.length > 0">
         <div
-          v-for="accountRecord in accountList"
-          v-bind:key="accountRecord.address"
+          v-for="accountRecord in accountList.filter(
+            item => item !== currentAccount
+          )"
+          :key="accountRecord.address"
         >
-          <div class="accountRecord" v-if="account !== accountRecord.address">
+          <div class="accountRecord">
             <label>
               <input
-                v-model="account"
+                @change.prevent="
+                  () => onChangeAccountClick(accountRecord.address)
+                "
                 type="radio"
                 name="account"
                 :value="accountRecord.address"
@@ -66,9 +70,7 @@
 
     <!-- TOKEN SCREEN -->
     <div class="tokenScreen" v-if="screenState === 'tokens'">
-      <div class="noTokens" v-if="!assetBalances">
-        HUH?... UNHELPFUL ERROR
-      </div>
+      <div class="noTokens" v-if="!assetBalances">HUH?... UNHELPFUL ERROR</div>
       <div class="tokenList" v-if="assetBalances && assetBalances.length">
         <div class="legend inverted">
           <div class="name">TOKEN</div>
@@ -80,12 +82,12 @@
           v-for="assetRecord in [...assetBalances].sort(
             (a, b) => Number(b.balance) - Number(a.balance)
           )"
-          v-bind:key="assetRecord.assetId"
+          :key="assetRecord.assetId"
         >
           <div class="name">{{ assetRecord.name }}</div>
           <div class="balance">{{ assetRecord.balanceFormatted }}</div>
           <div class="faceut" v-if="!assetRecord.shareToken">
-            <button @click="mintAsset(assetRecord.assetId)">
+            <button @click.prevent="mintAsset(assetRecord.assetId)">
               ++GET++
             </button>
           </div>
@@ -96,35 +98,42 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters } from "vuex";
+import { defineComponent, ref, computed, onMounted } from 'vue';
+import { useStore } from '@/store';
 
-// TODO: nicer
-const account = localStorage.getItem("account");
+export default defineComponent({
+  name: 'Wallet',
+  setup() {
+    const { getters, dispatch } = useStore();
+    const screenState = ref('tokens');
 
-export default Vue.extend({
-  name: "Wallet",
-  data: () => {
+    onMounted(() => {
+      screenState.value = localStorage.getItem('account') ? 'tokens' : 'select';
+    });
+
+    const mintAsset = (assetId: number) => {
+      dispatch('mintAssetSMWallet', assetId);
+    };
+
+    const onChangeAccountClick = (accountAddress: string) => {
+      dispatch('changeAccountSMWallet', accountAddress);
+    };
+
+    const onWalletScreenChange = (selectedScreen: string) => {
+      screenState.value = selectedScreen;
+    };
+
     return {
-      screenState: account ? "tokens" : "select"
+      accountList: computed(() => getters.accountListSMWallet),
+      accountInfo: computed(() => getters.accountInfoSMWallet),
+      assetBalances: computed(() => getters.assetBalancesSMWallet),
+      currentAccount: computed(() => getters.accountSMWallet),
+      screenState,
+      mintAsset,
+      onChangeAccountClick,
+      onWalletScreenChange,
     };
   },
-  methods: {
-    mintAsset: function(value: number) {
-      this.$store.dispatch("mintAsset", value);
-    }
-  },
-  computed: {
-    account: {
-      get() {
-        return this.$store.state.account;
-      },
-      set(value) {
-        this.$store.dispatch("changeAccount", value);
-      }
-    },
-    ...mapGetters(["accountList", "accountInfo", "assetBalances"])
-  }
 });
 </script>
 
@@ -223,13 +232,10 @@ label:hover {
 }
 
 .tokenList button {
-  outline: none;
   width: 100%;
   height: 3em;
   padding: 1em;
   font-size: 1em;
-  background: transparent;
-  text-decoration: underline;
   color: #5eafe1;
 }
 

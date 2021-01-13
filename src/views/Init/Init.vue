@@ -17,12 +17,33 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters } from "vuex";
+import { defineComponent, computed, watch } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 
-export default Vue.extend({
-  name: "Init",
-  computed: mapGetters(["blockInfo", "extensionInfo"])
+export default defineComponent({
+  name: 'Init',
+  setup() {
+    const { getters } = useStore();
+    const router = useRouter();
+
+    /**
+     * If Polkadot extension has been connected in previous sessions, we need
+     * redirect user to Wallet page.
+     */
+    if (getters.accountSMWallet) router.push('/wallet');
+    watch(
+      () => getters.accountSMWallet,
+      newAccountVal => {
+        if (newAccountVal) router.push('/wallet');
+      }
+    );
+
+    return {
+      blockInfo: computed(() => getters.blockInfoSMGeneral),
+      extensionInfo: computed(() => getters.extensionInfoSMGeneral),
+    };
+  },
 });
 </script>
 
@@ -33,6 +54,6 @@ export default Vue.extend({
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  background-image: url("../assets/logo-anim.gif");
+  background-image: url('../../assets/images/logo-anim.gif');
 }
 </style>

@@ -3,12 +3,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters } from "vuex";
+import { defineComponent } from 'vue';
 
-export default Vue.extend({
-  name: "PoolList",
-  computed: mapGetters(["poolInfo"])
+export default defineComponent({
+  name: 'PoolList',
 });
 </script>
 

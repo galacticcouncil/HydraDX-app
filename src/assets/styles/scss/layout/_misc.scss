@@ -1,0 +1,36 @@
+.noPools,
+.noTokens {
+  padding: 3em;
+  font-size: 1.5em;
+  border-width: 3px;
+}
+
+.pending-action .headerInfo,
+.pending-action button,
+.pending-action .legend {
+  animation: filter-animation 1s infinite;
+}
+
+@keyframes filter-animation {
+  0% {
+    filter: hue-rotate(80deg);
+  }
+
+  50% {
+    filter: hue-rotate(210deg);
+  }
+
+  100% {
+    filter: hue-rotate(80deg);
+  }
+}
+
+.disabled {
+  color: #aaa;
+  border-color: #aaa;
+}
+
+.inverted {
+  background-color: #5eafe1;
+  color: #0d106e;
+}

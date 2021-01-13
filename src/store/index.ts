@@ -1,129 +1,19 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import Api from "../api";
+import { createStore, createLogger, ModuleTree } from 'vuex';
 
-import { bnToBn } from "@polkadot/util";
-import { formatBalance } from "@polkadot/util";
+import { general } from '@/store/general';
+import { wallet } from '@/store/wallet';
+import { pool } from '@/store/pool';
+import { trade } from '@/store/trade';
 
-import { actions } from "./actions";
-import { getters } from "./getters";
-import { mutations } from "./mutations";
+const modules: ModuleTree<MergedState> = { general, wallet, pool, trade };
 
-Vue.use(Vuex);
-
-const savedAccount = localStorage.getItem("account");
-const savedScreen = localStorage.getItem("screen");
-
-const store = new Vuex.Store<State>({
-  state: {
-    account: savedAccount || null,
-    accountList: [],
-    actions: [],
-    assetBalances: [],
-    assetList: [],
-    blockHash: null,
-    blockNumber: 0,
-    currentScreen: savedScreen ? savedScreen : "initial",
-    extensionInitialized: false,
-    extensionPresent: true,
-    liquidityAmount: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
-    liquidityProperties: {
-      actionType: "add",
-      token1: null,
-      token2: null
-    },
-    polling: {
-      real: null,
-      spot: null
-    },
-    poolInfo: {},
-    savedScreen: savedScreen ? true : false,
-    selectedPool: null,
-    sellPrice: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
-    shareTokenIds: [],
-    spotPrice: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
-    subscriptions: [],
-    tokenTradeMap: [],
-    tradeAmount: {
-      amount: bnToBn(0),
-      amountFormatted: "0",
-      inputAmount: 0
-    },
-    tradeProperties: {
-      actionType: "buy",
-      token1: null,
-      token2: null
-    },
-    transactions: {},
-    unpairedTransactions: {}
-  },
-  actions,
-  getters,
-  mutations
+export const store = createStore({
+  // plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
+  modules,
 });
 
-// API INITIALIZATION
-Api.initialize().then(async api => {
-  // INITIALIZE HELPERS
-  formatBalance.setDefaults({
-    decimals: 12,
-    unit: ""
-  });
-
-  // INITIALIZE WALLET
-  store.commit("setExtensionPresent", false);
-  Api.syncWallets(payload => {
-    store.dispatch("updateWalletInfo", payload);
-  }).then(async accountSubscription => {
-    if (accountSubscription) {
-      store.commit("setExtensionPresent", true);
-    }
-    store.commit("setExtensionInitialized", true);
-  });
-
-  api.query.system.events(events => {
-    // const eventsMap = events.map(record => {
-    //   // Extract the phase, event and the event types
-    //   const { event, phase } = record;
-    //   const types = event.typeDef;
-    //   //if (event.section === "exchange") {
-    //   // Show what we are busy with
-    //   console.log(
-    //     `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
-    //   );
-    //   console.log(`\t\t${event.meta.documentation.toString()}`);
-    //   // Loop through each of the parameters, displaying the type and data
-    //   // event.data.forEach((data, index) => {
-    //   //   console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-    //   // });
-    //   //}
-    //   return event;
-    // });
-    console.log("eventsMap", events);
-    store.dispatch("updateTransactions", { events: events });
-  });
-
-  api.rpc.chain.subscribeNewHeads(header => {
-    store.dispatch("syncAssetBalances");
-    store.dispatch("syncAssetList");
-    store.dispatch("syncPools");
-    store.commit("updateBlockInfo", {
-      blockNumber: header.number.toNumber(),
-      blockHash: header.hash.toString()
-    });
-  });
-});
+export function useStore(): RootStore {
+  return store as RootStore;
+}
 
 export default store;
