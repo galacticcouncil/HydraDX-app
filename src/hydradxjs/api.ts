@@ -1,5 +1,4 @@
-import { ApiPromise, WsProvider } from '../hydradxjs';
-// import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { Signer } from '@polkadot/api/types';
 import {
   web3Enable,
@@ -8,9 +7,9 @@ import {
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-let api: ApiPromise | null = null;
+let api: ApiPromise;
 
-const getApi = (): ApiPromise | null => {
+const getApi = (): ApiPromise => {
   return api;
 };
 
