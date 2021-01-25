@@ -219,7 +219,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         }
       }
       if (method === 'IntentionResolvedDirectTrade') {
-        //const account = context.state.account;
         //TODO: add amounts matched
         const parsedData = data.toJSON();
         /**
@@ -232,10 +231,10 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
             id: parsedData[3]?.toString(),
             progress: 3,
           });
-          // commit('UPDATE_TRANSACTIONS__TRADE', {
-          //   id: parsedData[3]?.toString(),
-          //   progress: 3,
-          // });
+          commit('UPDATE_TRANSACTIONS__TRADE', {
+            id: parsedData[4]?.toString(),
+            progress: 3,
+          });
         }
       }
     });
