@@ -1,5 +1,4 @@
-
-import Api from '../api';
+import Api from '../../api';
 import { bnToBn, formatBalance } from "@polkadot/util";
 
 async function syncAssetBalancesSMWallet(account: any) {
@@ -41,7 +40,7 @@ async function syncAssetBalancesSMWallet(account: any) {
 
   async function syncAssetListSMWallet() {
     const api = Api.getApi();
-    if (!api) return;
+    if (!api) return [];
     const assetIds = await api.query.assetRegistry.assetIds.entries();
     const assetList: AssetRecord[] = [{ assetId: 0, name: 'HDX' }];
 
@@ -56,7 +55,22 @@ async function syncAssetBalancesSMWallet(account: any) {
     return assetList;
   };
 
+  async function mintAssetSMWallet(account: any, assetId: any) {
+    const api = Api.getApi();
+    
+    if (api && account) {
+      const signer = await Api.getSinger(account);
+      api.tx.faucet
+        .mint(assetId, 100000000000000)
+        .signAndSend(account, { signer: signer }, ({ events, status }) => {
+          if (status.isReady) return Promise.resolve();
+          // TODO:STUFF
+        });
+    }
+  }
+
   export {
     syncAssetBalancesSMWallet,
     syncAssetListSMWallet,
+    mintAssetSMWallet,
   }

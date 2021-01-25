@@ -7,9 +7,17 @@ import {
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-let api: ApiPromise;
+import * as asset from './api/asset';
+import * as pool from './api/pool';
+import * as trade from './api/trade';
 
-const getApi = (): ApiPromise => {
+interface HydraApiPromise extends ApiPromise {
+  hydraDx?: any,
+}
+
+let api: HydraApiPromise;
+
+const getApi = (): HydraApiPromise => {
   return api;
 };
 
@@ -33,14 +41,14 @@ const syncWallets = async (
   }
 };
 
-const initialize = async (): Promise<ApiPromise> => {
+const initialize = async (apiUrl?: string): Promise<HydraApiPromise> => {
   const local =
     window.location.hostname === '127.0.0.1' ||
     window.location.hostname === 'localhost';
 
   const serverAddress = local
     ? 'ws://127.0.0.1:9944'
-    : 'wss://hack.hydradx.io:9944';
+    : (apiUrl || 'wss://hack.hydradx.io:9944');
 
   const wsProvider = new WsProvider(serverAddress);
 
@@ -133,6 +141,12 @@ const initialize = async (): Promise<ApiPromise> => {
       Price: 'Balance',
     },
   });
+
+  api.hydraDx = {
+    ...asset,
+    ...pool,
+    ...trade,
+  };
 
   return api;
 };

@@ -40,7 +40,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         console.log(e);
       }
 
-      apiInstance.query.system.events(events => {
+      apiInstance.query.system.events((events: any) => {
         // const eventsMap = events.map(record => {
         //   // Extract the phase, event and the event types
         //   const { event, phase } = record;
@@ -62,7 +62,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         dispatch('updateTransactionsSMTrade', { events: events });
       });
 
-      await apiInstance.rpc.chain.subscribeNewHeads(header => {
+      await apiInstance.rpc.chain.subscribeNewHeads((header: any) => {
         dispatch('syncAssetBalancesSMWallet');
         dispatch('syncAssetListSMWallet');
         dispatch('syncPoolsSMPool');
