@@ -44,7 +44,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
               state.unpairedTransactions[itemIndex];
           }
         }
-        state.unpairedTransactions = updatedUnpairedTransactionsScope;
+        state.unpairedTransactions = { ...updatedUnpairedTransactionsScope };
       }
 
       /**
@@ -73,7 +73,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
     } else if (transaction.index != null) {
       //TODO Should be enough with new reactivity logic in Vue 3
       state.unpairedTransactions = {
-        ...state.transactions,
+        ...state.unpairedTransactions,
         [transaction.index]: {
           ...state.unpairedTransactions[transaction.index],
           ...transaction,

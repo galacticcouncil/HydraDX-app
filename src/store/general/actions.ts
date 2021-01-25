@@ -59,7 +59,10 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         //   return event;
         // });
         console.log('eventsMap', events);
-        dispatch('updateTransactionsSMTrade', { events: events });
+        dispatch('updateTransactionsSMTrade', {
+          events: events,
+          instanceOwner: 'Global events listener',
+        });
       });
 
       await apiInstance.rpc.chain.subscribeNewHeads(header => {

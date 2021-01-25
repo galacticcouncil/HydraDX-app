@@ -41,13 +41,13 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         return;
       }
 
-      console.log(
-        asset1,
-        state.tradeProperties.asset1,
-        asset2,
-        state.tradeProperties.asset2,
-        state.tradeAmount
-      );
+      // console.log(
+      //   asset1,
+      //   state.tradeProperties.asset1,
+      //   asset2,
+      //   state.tradeProperties.asset2,
+      //   state.tradeAmount
+      // );
 
       const timeout = setTimeout(async () => {
         const amountData =
@@ -130,6 +130,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
               events,
               currentIndex,
               status,
+              instanceOwner: 'Transaction callback listener',
             });
             dispatch('getSpotPriceSMTrade');
             dispatch('getSellPriceSMTrade');
@@ -150,6 +151,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
               events,
               currentIndex,
               status,
+              instanceOwner: 'Transaction callback listener',
             });
             dispatch('getSpotPriceSMTrade');
             dispatch('getSellPriceSMTrade');
@@ -163,15 +165,24 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
     }
   },
-  updateTransactionsSMTrade({ commit }, { events, currentIndex, status }) {
+  updateTransactionsSMTrade(
+    { commit },
+    { events, currentIndex, status, instanceOwner }
+  ) {
     if (!events) return;
     //TODO: BETTER HANDLING | SPLIT LOGIC
 
     events.forEach(({ event: { data, method } }) => {
-      console.log('status', status?.toHuman(), method, currentIndex);
+      console.log(`=========== ${instanceOwner} ==========`);
+      console.log('---- status', status?.toHuman(), method, currentIndex);
+
       if (method === 'IntentionRegistered') {
         if (status && status.isInBlock) {
           const parsedData = data.toJSON();
+          /**
+           * parsedData: <Array> [AccountId, AssetId, AssetId, Balance, IntentionType, IntentionID]
+           *                     [who, asset a, asset b, amount, intention type, intention id]
+           */
           if (Array.isArray(parsedData) && parsedData.length === 6) {
             const id = parsedData[5]?.toString();
             commit('UPDATE_TRANSACTIONS__TRADE', {
@@ -195,6 +206,10 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
       if (method === 'IntentionResolvedAMMTrade') {
         const parsedData = data.toJSON();
+        /**
+         * parsedData: <Array> [AccountId, IntentionType, IntentionID, Balance, Balance]
+         *                     [who, intention type, intention id, amount, amount sold/bought]
+         */
         if (Array.isArray(parsedData)) {
           const id = parsedData[2]?.toString();
           commit('UPDATE_TRANSACTIONS__TRADE', {
@@ -207,15 +222,20 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         //const account = context.state.account;
         //TODO: add amounts matched
         const parsedData = data.toJSON();
+        /**
+         * parsedData: <Array> [AccountId, AccountId, IntentionID, IntentionID, Balance, Balance]
+         *                     [User1 accid, User1 accid, intention id 1, intention id 2, amount 1, amount 2]
+         */
+
         if (Array.isArray(parsedData)) {
           commit('UPDATE_TRANSACTIONS__TRADE', {
             id: parsedData[3]?.toString(),
             progress: 3,
           });
-          commit('UPDATE_TRANSACTIONS__TRADE', {
-            id: parsedData[3]?.toString(),
-            progress: 3,
-          });
+          // commit('UPDATE_TRANSACTIONS__TRADE', {
+          //   id: parsedData[3]?.toString(),
+          //   progress: 3,
+          // });
         }
       }
     });

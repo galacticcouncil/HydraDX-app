@@ -29,6 +29,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('getSpotPriceSMTrade');
         });
+      //TODO Add error handler and notifications
     }
   },
   async withdrawLiquiditySMPool({ dispatch, commit, state, rootState }) {
