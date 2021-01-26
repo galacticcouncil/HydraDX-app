@@ -1,7 +1,7 @@
 
 import Api from '../../api';
 import { bnToBn } from '@polkadot/util';
-import { bnToDec, decToBn } from '@/services/utils';
+import { bnToDec, decToBn } from '../../utils';
 
 async function addLiquiditySMPool(account: string, asset1: string, asset2: string, amount: any, spotPrice: number) {
     return new Promise(async (resolve) => {
