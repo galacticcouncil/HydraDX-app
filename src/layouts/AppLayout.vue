@@ -17,7 +17,9 @@ export default defineComponent({
   setup() {
     const { dispatch } = useStore();
 
-    dispatch('initializeApiSMGeneral');
+    onMounted(() => {
+      dispatch('initializeApiSMGeneral');
+    });
   },
   data() {
     return {

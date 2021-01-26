@@ -27,16 +27,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
       if (transaction.index != null) {
         transactionData = { ...state.unpairedTransactions[transaction.index] };
 
-        //TODO Should be enough with new reactivity logic in Vue 3
-
-        //Vue.delete(state.unpairedTransactions, transaction.index);
-
         const updatedUnpairedTransactionsScope: Transactions = {};
-        // const currentUnpairedTransactionsScope = {
-        //   ...state.unpairedTransactions,
-        // };
-        // delete currentUnpairedTransactionsScope[transaction.index];
-        // state.unpairedTransactions = currentUnpairedTransactionsScope;
 
         for (const itemIndex in state.unpairedTransactions) {
           if (itemIndex != transaction.index) {
@@ -44,7 +35,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
               state.unpairedTransactions[itemIndex];
           }
         }
-        state.unpairedTransactions = updatedUnpairedTransactionsScope;
+        state.unpairedTransactions = { ...updatedUnpairedTransactionsScope };
       }
 
       /**
@@ -64,25 +55,18 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
         progress,
       };
 
-      //TODO Should be enough with new reactivity logic in Vue 3
       state.transactions = {
         ...state.transactions,
         [transaction.id]: transactionData,
       };
-      // Vue.set(state.transactions, transaction.id, transactionData);
     } else if (transaction.index != null) {
-      //TODO Should be enough with new reactivity logic in Vue 3
       state.unpairedTransactions = {
-        ...state.transactions,
+        ...state.unpairedTransactions,
         [transaction.index]: {
           ...state.unpairedTransactions[transaction.index],
           ...transaction,
         },
       };
-      // Vue.set(state.unpairedTransactions, transaction.index, {
-      //   ...state.unpairedTransactions[transaction.index],
-      //   ...transaction,
-      // });
     }
   },
 

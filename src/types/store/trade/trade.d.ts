@@ -113,10 +113,12 @@ type TradeActions = {
       events,
       currentIndex,
       status,
+      instanceOwner,
     }: {
       events: EventRecord[];
       currentIndex?: number;
       status?: ExtrinsicStatus;
+      instanceOwner?: string;
     }
   ): void;
 };
