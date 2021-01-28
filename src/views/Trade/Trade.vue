@@ -78,12 +78,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 
 import TradeList from '@/components/TradeList.vue';
 import TradeAmount from '@/components/TradeAmount.vue';
 import AssetList from '@/components/AssetList.vue';
+import notifications from '@/variables/notifications';
+import { useToast } from 'vue-toastification';
 
 export default defineComponent({
   name: 'Trade',
@@ -91,6 +94,8 @@ export default defineComponent({
 
   setup() {
     const { getters, dispatch } = useStore();
+    const router = useRouter();
+    const toast = useToast();
 
     const asset1 = computed({
       get: () => getters.tradePropertiesSMTrade.asset1,
@@ -147,7 +152,12 @@ export default defineComponent({
     });
 
     const swap = () => {
-      dispatch('swapSMTrade');
+      if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
+        dispatch('swapSMTrade');
+      } else {
+        toast.error(notifications.connectAccountIsRequired);
+        router.push('/wallet');
+      }
     };
 
     return {

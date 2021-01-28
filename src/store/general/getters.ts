@@ -26,4 +26,6 @@ export const getters: GetterTree<GeneralState, MergedState> & GeneralGetters = {
     return state.actions;
   },
   pendingActionSMGeneral: ({ pendingAction }) => pendingAction,
+  generalLoadingSMGeneral: ({ generalLoading }) => generalLoading,
+  apiConnectionValidSMGeneral: ({ apiConnectionValid }) => apiConnectionValid,
 };

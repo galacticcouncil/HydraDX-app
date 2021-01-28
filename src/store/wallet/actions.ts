@@ -31,16 +31,14 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       if (state.account && !accounts.find(x => x.address === state.account)) {
         localStorage.removeItem('account');
         dispatch('changeAccountSMWallet', null);
-        router.push('/wallet');
       } else if (!state.account) {
-        router.push('/wallet');
       }
     } else {
       localStorage.removeItem('account');
       dispatch('changeAccountSMWallet', null);
       commit('SET_ACCOUNT_LIST__WALLET', []);
-      router.push('/wallet');
     }
+    // router.push('/wallet');
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();

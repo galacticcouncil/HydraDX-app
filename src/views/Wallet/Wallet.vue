@@ -66,6 +66,28 @@
           </div>
         </div>
       </div>
+      <NoticeMessage error v-if="!extensionInfo.extensionPresent">
+        <p>
+          Please use Chrome or Firefox with respective polkadot{.js}
+          <a href="https://github.com/polkadot-js/extension#installation"
+            >extension</a
+          >
+          installed and authorize HACK.HydraDX.io to access your address list.
+        </p>
+        <p>
+          If you rejected access HyrdraDX application to Polkadot.js extension
+          before, but you want allow access now, you can do next steps:
+        </p>
+        <ul>
+          <li>Open Polkadot.js extension</li>
+          <li>Find in Settings "Manage Website Access" option</li>
+          <li>Find in existing list necessary resource and allow access</li>
+          <li>
+            Close/Open HydraDX app page or just make hard reload of the page
+          </li>
+          <li>Enjoy! (~˘▾˘)~</li>
+        </ul>
+      </NoticeMessage>
     </div>
 
     <!-- TOKEN SCREEN -->
@@ -100,19 +122,28 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
+import notifications from '@/variables/notifications';
+import { useToast } from 'vue-toastification';
 
 export default defineComponent({
   name: 'Wallet',
   setup() {
     const { getters, dispatch } = useStore();
     const screenState = ref('tokens');
+    const toast = useToast();
 
     onMounted(() => {
       screenState.value = localStorage.getItem('account') ? 'tokens' : 'select';
+      dispatch('initializePolkadotExtensionSMGeneral');
     });
 
     const mintAsset = (assetId: number) => {
-      dispatch('mintAssetSMWallet', assetId);
+      if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
+        dispatch('mintAssetSMWallet', assetId);
+      } else {
+        toast.error(notifications.connectAccountIsRequired);
+        screenState.value = 'select';
+      }
     };
 
     const onChangeAccountClick = (accountAddress: string) => {
@@ -128,6 +159,7 @@ export default defineComponent({
       accountInfo: computed(() => getters.accountInfoSMWallet),
       assetBalances: computed(() => getters.assetBalancesSMWallet),
       currentAccount: computed(() => getters.accountSMWallet),
+      extensionInfo: computed(() => getters.extensionInfoSMGeneral),
       screenState,
       mintAsset,
       onChangeAccountClick,

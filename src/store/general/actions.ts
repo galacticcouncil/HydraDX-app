@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import Api from '@/api';
 import { formatBalance } from '@polkadot/util';
-import { bnToBn } from '@polkadot/util';
+import router from '@/router';
 
 export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockHashSMGeneral({ commit }, payload: string | null) {
@@ -9,6 +9,33 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   },
   updateBlockNumberSMGeneral({ commit }, payload: number) {
     commit('SET_BLOCK_NUMBER__GENERAL', payload);
+  },
+  async initializePolkadotExtensionSMGeneral({ commit, dispatch }) {
+    try {
+      // INITIALIZE WALLET
+      commit('SET_EXTENSION_PRESENT__GENERAL', false);
+
+      const accountSubscription = await Api.syncWallets(
+        payload => {
+          dispatch('updateWalletInfoSMWallet', payload);
+        },
+        () => {
+          //TODO Add error notice
+          console.log('error PD extension connect');
+        }
+      );
+
+      if (accountSubscription) {
+        commit('SET_EXTENSION_PRESENT__GENERAL', true);
+      }
+
+      commit('SET_GENERAL_LOADING__GENERAL', false);
+      commit('SET_EXTENSION_INITIALIZED__GENERAL', true);
+    } catch (e) {
+      console.log(e);
+
+      //TODO Add error notice
+    }
   },
   async initializeApiSMGeneral(context) {
     const { commit, dispatch } = context;
@@ -23,22 +50,6 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
 
       const int = apiInstance.createType('FixedU128', '100000000000000');
       console.log(int.toHuman());
-
-      // INITIALIZE WALLET
-      commit('SET_EXTENSION_PRESENT__GENERAL', false);
-
-      try {
-        const accountSubscription = await Api.syncWallets(payload => {
-          dispatch('updateWalletInfoSMWallet', payload);
-        });
-
-        if (accountSubscription) {
-          commit('SET_EXTENSION_PRESENT__GENERAL', true);
-        }
-        commit('SET_EXTENSION_INITIALIZED__GENERAL', true);
-      } catch (e) {
-        console.log(e);
-      }
 
       apiInstance.query.system.events(events => {
         // const eventsMap = events.map(record => {
@@ -75,8 +86,16 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
           blockHash: header.hash.toString(),
         });
       });
+      // TODO Should be moved to success callback of Hydra.js API call ->
+      commit('SET_GENERAL_LOADING__GENERAL', false);
+      commit('SET_API_CONNECTION_VALID__GENERAL', true);
+
+      // if (router.currentRoute.value.path === '/') {
+      //   await router.push('/wallet');
+      // }
     } catch (e) {
       console.log(e);
+      commit('SET_GENERAL_LOADING__GENERAL', false);
     }
   },
 };

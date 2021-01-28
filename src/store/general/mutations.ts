@@ -4,6 +4,12 @@ export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state, pending) {
     state.pendingAction = pending;
   },
+  SET_API_CONNECTION_VALID__GENERAL(state, status) {
+    state.apiConnectionValid = status;
+  },
+  SET_GENERAL_LOADING__GENERAL(state, loading) {
+    state.generalLoading = loading;
+  },
   SET_BLOCK_HASH__GENERAL(state, payload) {
     state.blockHash = payload;
   },

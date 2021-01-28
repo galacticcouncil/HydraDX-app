@@ -135,17 +135,27 @@
 <script lang="ts">
 import BalanceInput from '@/components/BalanceInput.vue';
 
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import notifications from '@/variables/notifications';
 
 export default defineComponent({
   name: 'Liquidity',
   components: { BalanceInput },
   setup() {
     const { getters, commit, dispatch } = useStore();
+    const router = useRouter();
+    const toast = useToast();
 
     const addLiquidity = () => {
-      dispatch('addLiquiditySMPool');
+      if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
+        dispatch('addLiquiditySMPool');
+      } else {
+        toast.error(notifications.connectAccountIsRequired);
+        router.push('/wallet');
+      }
     };
 
     const withdrawLiquidity = () => {

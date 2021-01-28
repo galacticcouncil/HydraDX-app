@@ -19,16 +19,20 @@ const getSinger = async (account: string): Promise<Signer> => {
 };
 
 const syncWallets = async (
-  updateFunction: (accounts: InjectedAccountWithMeta[]) => void
+  updateFunction: (accounts: InjectedAccountWithMeta[]) => void,
+  errorHandler: () => void = () => {
+    return null;
+  }
 ): Promise<null> => {
   // returns an array of all the injected sources
   // (this needs to be called first, before other requests)
   const allInjected = await web3Enable('HACK.HydraDX.io');
 
   if (!allInjected.length) {
+    errorHandler();
     return null;
   } else {
-    web3AccountsSubscribe(updateFunction);
+    await web3AccountsSubscribe(updateFunction);
     return null;
   }
 };

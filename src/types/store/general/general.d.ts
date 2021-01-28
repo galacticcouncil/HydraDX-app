@@ -5,10 +5,12 @@ type GeneralState = {
   blockNumber: number;
   currentScreen: string;
   savedScreen: boolean;
-  extensionInitialized: boolean;
-  extensionPresent: boolean;
   actions: string[];
   pendingAction: boolean;
+  generalLoading: boolean;
+  extensionInitialized: boolean;
+  extensionPresent: boolean;
+  apiConnectionValid: boolean;
 };
 
 // ================================ GETTERS ====================================
@@ -25,12 +27,16 @@ type GeneralGetters = {
     state: GeneralState
   ): { extensionInitialized: boolean; extensionPresent: boolean };
   pendingActionSMGeneral(state: GeneralState): boolean;
+  generalLoadingSMGeneral(state: GeneralState): boolean;
+  apiConnectionValidSMGeneral(state: GeneralState): boolean;
 };
 
 // =============================== MUTATION ====================================
 
 type GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state: GeneralState, pending: boolean): void;
+  SET_API_CONNECTION_VALID__GENERAL(state: GeneralState, status: boolean): void;
+  SET_GENERAL_LOADING__GENERAL(state: GeneralState, loading: boolean): void;
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;
   SET_BLOCK_INFO__GENERAL(
@@ -81,7 +87,8 @@ type GeneralActions = {
     context: GeneralActionAugments,
     payload: number
   ): void;
-  initializeApiSMGeneral(context: GeneralActionAugments): void;
+  initializeApiSMGeneral(context: GeneralActionAugments): Promise;
+  initializePolkadotExtensionSMGeneral(context: GeneralActionAugments): Promise;
 };
 
 // ================================ STORE ======================================
