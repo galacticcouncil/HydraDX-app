@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent;
+  background-color: rgba($hdx-blue, 0.8);
   z-index: 100;
   @include crt-effect();
 
@@ -20,6 +20,11 @@
     left: 50%;
     margin: -5px;
     transform: scale(0.7);
+  }
+
+  .loader-messages {
+    margin-top: 90px;
+    font-size: 14px;
   }
 
   @keyframes spin {

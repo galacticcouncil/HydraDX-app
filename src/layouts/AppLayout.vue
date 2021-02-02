@@ -14,16 +14,23 @@ import GeneralLoadingCover from '@/components/common/GeneralLoadingCover';
 import { defineComponent, computed, onMounted, markRaw } from 'vue';
 import { useStore } from '@/store';
 
+import notificationsVars from '@/variables/notifications';
+
 export default defineComponent({
   name: 'AppLayout',
   components: {
     GeneralLoadingCover,
   },
   setup() {
-    const { getters, dispatch } = useStore();
+    const { getters, dispatch, commit } = useStore();
 
     onMounted(() => {
       setTimeout(() => {
+        commit('SET_GENERAL_LOADING__GENERAL', true);
+        commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+          action: 'add',
+          message: notificationsVars.loadingMsgApiConnection,
+        });
         dispatch('initializeApiSMGeneral');
       });
     });

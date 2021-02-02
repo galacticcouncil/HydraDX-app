@@ -2,6 +2,10 @@ import { ActionTree } from 'vuex';
 import Api from '@/api';
 import { formatBalance } from '@polkadot/util';
 import router from '@/router';
+import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import notifications from '@/variables/notifications';
+import notificationsVars from '@/variables/notifications';
 
 export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockHashSMGeneral({ commit }, payload: string | null) {
@@ -39,8 +43,43 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   },
   async initializeApiSMGeneral(context) {
     const { commit, dispatch } = context;
+    const toast = useToast();
+
     try {
-      const apiInstance = await Api.initialize();
+      const apiInstance = await Api.initialize({
+        error: e => {
+          console.log('on error listener - ', e);
+          commit('SET_GENERAL_LOADING__GENERAL', true);
+          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+            action: 'delete',
+            message: notificationsVars.loadingMsgApiConnection,
+          });
+          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+            action: 'add',
+            message: notificationsVars.loadingMsgApiConnectionErrorOccurred,
+          });
+        },
+        disconnected: () => {
+          console.log('on disconnected listener');
+          commit('SET_GENERAL_LOADING__GENERAL', true);
+          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+            action: 'add',
+            message: notificationsVars.loadingMsgApiConnection,
+          });
+        },
+        connected: () => {
+          console.log('on connected listener');
+          commit('SET_GENERAL_LOADING__GENERAL', false);
+        },
+        ready: apiInstance => {
+          console.log('on ready listener - ', apiInstance);
+          commit('SET_GENERAL_LOADING__GENERAL', false);
+        },
+      });
+
+      console.log('apiInstance - ', apiInstance);
+
+      if (!apiInstance) return 1;
 
       // INITIALIZE HELPERS
       formatBalance.setDefaults({
@@ -96,6 +135,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
     } catch (e) {
       console.log(e);
       commit('SET_GENERAL_LOADING__GENERAL', false);
+      toast.error(notifications.commonErrorOccurred);
     }
   },
 };

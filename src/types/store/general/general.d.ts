@@ -11,6 +11,7 @@ type GeneralState = {
   extensionInitialized: boolean;
   extensionPresent: boolean;
   apiConnectionValid: boolean;
+  generalLoadingMessages: string[];
 };
 
 // ================================ GETTERS ====================================
@@ -29,6 +30,7 @@ type GeneralGetters = {
   pendingActionSMGeneral(state: GeneralState): boolean;
   generalLoadingSMGeneral(state: GeneralState): boolean;
   apiConnectionValidSMGeneral(state: GeneralState): boolean;
+  generalLoadingMessagesSMGeneral(state: GeneralState): string[];
 };
 
 // =============================== MUTATION ====================================
@@ -37,6 +39,10 @@ type GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state: GeneralState, pending: boolean): void;
   SET_API_CONNECTION_VALID__GENERAL(state: GeneralState, status: boolean): void;
   SET_GENERAL_LOADING__GENERAL(state: GeneralState, loading: boolean): void;
+  SET_GENERAL_LOADING_MESSAGES__GENERAL(
+    state: GeneralState,
+    messageData: { action: string; message: string }
+  ): void;
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;
   SET_BLOCK_INFO__GENERAL(

@@ -14,4 +14,5 @@ export const state: GeneralState = {
   pendingAction: false,
 
   generalLoading: true,
+  generalLoadingMessages: [],
 };
