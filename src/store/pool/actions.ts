@@ -2,7 +2,7 @@
 // import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
 // import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
-import { Api } from '../../hydradxjs';
+import { Api } from 'hydradx-js';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeSelectedPoolSMPool({ commit, dispatch }, poolId) {
@@ -17,7 +17,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const asset2 = state.liquidityProperties.asset2;
     const spotPrice = rootState.trade.spotPrice.inputAmount;
     
-    api.hydraDx.addLiquiditySMPool(account, asset1, asset2, amount, spotPrice).then((status: any) => {
+    api.hydraDx.tx.addLiquiditySMPool(account, asset1, asset2, amount, spotPrice).then((status: any) => {
       if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
       dispatch('getSpotPriceSMTrade');
     });
@@ -34,7 +34,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       const liquidityBalance = rootState.wallet.assetBalances[shareToken].balance;
       const percentage = state.liquidityAmount;
 
-      api.hydraDx.withdrawLiquiditySMPool(account, asset1, asset2, liquidityBalance, selectedPool, percentage).then((status: any) => {
+      api.hydraDx.tx.withdrawLiquiditySMPool(account, asset1, asset2, liquidityBalance, selectedPool, percentage).then((status: any) => {
         if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
         dispatch('getSpotPriceSMTrade');
       });
@@ -43,7 +43,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   async syncPoolsSMPool({ commit }) {
     const api = Api.getApi();
     if (!api) return;
-    const { tokenTradeMap, shareTokenIds, poolInfo } = api.hydraDx.syncPoolsSMPool();
+    const { tokenTradeMap, shareTokenIds, poolInfo } = await api.hydraDx.query.syncPoolsSMPool();
 
     commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
     commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);

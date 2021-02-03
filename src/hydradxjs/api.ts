@@ -7,9 +7,8 @@ import {
 } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import * as asset from './api/asset';
-import * as pool from './api/pool';
-import * as trade from './api/trade';
+import * as query from './api/query';
+import * as tx from './api/tx';
 
 interface HydraApiPromise extends ApiPromise {
   hydraDx?: any,
@@ -42,113 +41,118 @@ const syncWallets = async (
 };
 
 const initialize = async (apiUrl?: string): Promise<HydraApiPromise> => {
-  const local =
+  return new Promise(async (resolve, reject) => {
+    const local =
     window.location.hostname === '127.0.0.1' ||
     window.location.hostname === 'localhost';
 
-  const serverAddress = local
-    ? 'ws://127.0.0.1:9944'
-    : (apiUrl || 'wss://hack.hydradx.io:9944');
+    const serverAddress = local
+      ? 'ws://127.0.0.1:9944'
+      : (apiUrl || 'wss://hack.hydradx.io:9944');
 
-  const wsProvider = new WsProvider(serverAddress);
+    const wsProvider = new WsProvider(serverAddress);
 
-  api = await ApiPromise.create({
-    provider: wsProvider,
-    rpc: {
-      amm: {
-        getSpotPrice: {
-          description: 'Get spot price',
-          params: [
-            {
-              name: 'asset1',
-              type: 'AssetId',
-            },
-            {
-              name: 'asset2',
-              type: 'AssetId',
-            },
-            {
-              name: 'amount',
-              type: 'Balance',
-            },
-          ],
-          type: 'BalanceInfo',
+    new ApiPromise({
+      provider: wsProvider,
+      rpc: {
+        amm: {
+          getSpotPrice: {
+            description: 'Get spot price',
+            params: [
+              {
+                name: 'asset1',
+                type: 'AssetId',
+              },
+              {
+                name: 'asset2',
+                type: 'AssetId',
+              },
+              {
+                name: 'amount',
+                type: 'Balance',
+              },
+            ],
+            type: 'BalanceInfo',
+          },
+          getSellPrice: {
+            description: 'Get AMM sell price',
+            params: [
+              {
+                name: 'asset1',
+                type: 'AssetId',
+              },
+              {
+                name: 'asset2',
+                type: 'AssetId',
+              },
+              {
+                name: 'amount',
+                type: 'Balance',
+              },
+            ],
+            type: 'BalanceInfo',
+          },
+          getBuyPrice: {
+            description: 'Get AMM buy price',
+            params: [
+              {
+                name: 'asset1',
+                type: 'AssetId',
+              },
+              {
+                name: 'asset2',
+                type: 'AssetId',
+              },
+              {
+                name: 'amount',
+                type: 'Balance',
+              },
+            ],
+            type: 'BalanceInfo',
+          },
         },
-        getSellPrice: {
-          description: 'Get AMM sell price',
-          params: [
-            {
-              name: 'asset1',
-              type: 'AssetId',
-            },
-            {
-              name: 'asset2',
-              type: 'AssetId',
-            },
-            {
-              name: 'amount',
-              type: 'Balance',
-            },
-          ],
-          type: 'BalanceInfo',
+      },
+      types: {
+        Amount: 'i128',
+        AmountOf: 'Amount',
+        Address: 'AccountId',
+        LookupSource: 'AccountId',
+        CurrencyId: 'AssetId',
+        CurrencyIdOf: 'AssetId',
+        BalanceInfo: {
+          amount: 'Balance',
+          assetId: 'AssetId',
         },
-        getBuyPrice: {
-          description: 'Get AMM buy price',
-          params: [
-            {
-              name: 'asset1',
-              type: 'AssetId',
-            },
-            {
-              name: 'asset2',
-              type: 'AssetId',
-            },
-            {
-              name: 'amount',
-              type: 'Balance',
-            },
-          ],
-          type: 'BalanceInfo',
+        IntentionID: 'Hash',
+        IntentionType: {
+          _enum: ['SELL', 'BUY'],
         },
+        Intention: {
+          who: 'AccountId',
+          asset_sell: 'AssetId',
+          asset_buy: 'AssetId',
+          amount_sell: 'Balance',
+          amount_buy: 'Balance',
+          trade_limit: 'Balance',
+          discount: 'bool',
+          sell_or_buy: 'IntentionType',
+          intention_id: 'IntentionID',
+        },
+        Price: 'Balance',
       },
-    },
-    types: {
-      Amount: 'i128',
-      AmountOf: 'Amount',
-      Address: 'AccountId',
-      LookupSource: 'AccountId',
-      CurrencyId: 'AssetId',
-      CurrencyIdOf: 'AssetId',
-      BalanceInfo: {
-        amount: 'Balance',
-        assetId: 'AssetId',
-      },
-      IntentionID: 'Hash',
-      IntentionType: {
-        _enum: ['SELL', 'BUY'],
-      },
-      Intention: {
-        who: 'AccountId',
-        asset_sell: 'AssetId',
-        asset_buy: 'AssetId',
-        amount_sell: 'Balance',
-        amount_buy: 'Balance',
-        trade_limit: 'Balance',
-        discount: 'bool',
-        sell_or_buy: 'IntentionType',
-        intention_id: 'IntentionID',
-      },
-      Price: 'Balance',
-    },
+    }).isReadyOrError
+    .then(apiResponse => {
+      api = apiResponse;
+      api.hydraDx = {
+        query,
+        tx,
+      };
+      resolve(api);
+    })
+    .catch(e => {
+      reject(e);
+    });
   });
-
-  api.hydraDx = {
-    ...asset,
-    ...pool,
-    ...trade,
-  };
-
-  return api;
 };
 
 export default {

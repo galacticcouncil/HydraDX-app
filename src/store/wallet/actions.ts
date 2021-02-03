@@ -6,7 +6,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
-import { Api } from '../../hydradxjs';
+import { Api } from 'hydradx-js';
 
 export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   changeAccountSMWallet({ commit }, account: string | null) {
@@ -44,17 +44,17 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();
-    const balances = await api.hydraDx?.syncAssetBalancesSMWallet(context.state.account);
+    const balances = await api.hydraDx?.query.syncAssetBalancesSMWallet(context.state.account);
     context.commit('SET_ASSET_BALANCES__WALLET', balances);
   },
   async syncAssetListSMWallet(context) {
     const api = Api.getApi();
-    const assetList = await api.hydraDx?.syncAssetListSMWallet();
+    const assetList = await api.hydraDx?.query.syncAssetListSMWallet();
     context.commit('SET_ASSET_LIST__WALLET', assetList);
   },
   async mintAssetSMWallet({ commit, rootState }, assetId) {
     const api = Api.getApi();
-    api.hydraDx?.mintAssetSMWallet(rootState.wallet.account, assetId).then(() => {
+    api.hydraDx?.tx.mintAssetSMWallet(rootState.wallet.account, assetId).then(() => {
       commit('SET_PENDING_ACTION__GENERAL', true);
     });
   },

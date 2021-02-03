@@ -1,5 +1,5 @@
 import { ActionTree } from 'vuex';
-import { Api, ApiPromise } from '../../hydradxjs';
+import { Api, ApiPromise } from 'hydradx-js';
 import { formatBalance } from '@polkadot/util';
 import { bnToBn } from '@polkadot/util';
 

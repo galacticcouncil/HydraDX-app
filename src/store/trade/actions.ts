@@ -1,4 +1,4 @@
-import { Api } from '../../hydradxjs';
+import { Api } from 'hydradx-js';
 
 import { bnToBn } from '@polkadot/util';
 // import { bnToDec, decToBn } from '@/services/utils';
@@ -42,7 +42,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
 
       const timeout = setTimeout(async () => {
-        const amount = await api.hydraDx?.getSpotPriceSMTrade(asset1, asset2);
+        const amount = await api.hydraDx?.query.getSpotPriceSMTrade(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -55,7 +55,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       const timeout = setTimeout(async () => {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount;
-        const amount = await api.hydraDx?.getSellPriceSMTrade(asset1, asset2, tradeAmount, actionType);
+        const amount = await api.hydraDx?.query.getSellPriceSMTrade(asset1, asset2, tradeAmount, actionType);
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);
@@ -83,7 +83,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         progress: 0,
       });
 
-      api.hydraDx?.swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
+      api.hydraDx?.tx.swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
         .then(({events, status}: { events: any; status: any }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('updateTransactionsSMTrade', {
