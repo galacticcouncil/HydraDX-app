@@ -1,5 +1,6 @@
 module.exports = {
   lintOnSave: true,
+  chainWebpack: config => config.resolve.symlinks(false),
   // productionTip: false,
   configureWebpack: {
     resolve: {

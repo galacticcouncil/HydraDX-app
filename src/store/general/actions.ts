@@ -1,5 +1,6 @@
 import { ActionTree } from 'vuex';
 import { Api, ApiPromise } from 'hydradx-js';
+import { ApiListeners } from 'hydradx-js/lib/types';
 import { formatBalance } from '@polkadot/util';
 import { bnToBn } from '@polkadot/util';
 
@@ -13,7 +14,20 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   async initializeApiSMGeneral(context) {
     const { commit, dispatch } = context;
     try {
-      const apiInstance = await Api.initialize();
+      const apiInstance = await Api.initialize({
+        error: e => {
+          console.log('on error listener - ', e);
+        },
+        disconnected: () => {
+          console.log('on disconnected listener');
+        },
+        connected: () => {
+          console.log('on connected listener');
+        },
+        ready: apiInstance => {
+          console.log('on ready listener - ', apiInstance);
+        },
+      });
 
       // INITIALIZE HELPERS
       formatBalance.setDefaults({
