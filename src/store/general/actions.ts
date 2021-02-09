@@ -1,11 +1,11 @@
 import { ActionTree } from 'vuex';
-import Api from '@/api';
+import { Api, ApiPromise } from 'hydradx-js';
+
 import { formatBalance } from '@polkadot/util';
-import router from '@/router';
-import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
 import notificationsVars from '@/variables/notifications';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockHashSMGeneral({ commit }, payload: string | null) {
@@ -20,14 +20,15 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       commit('SET_EXTENSION_PRESENT__GENERAL', false);
 
       const accountSubscription = await Api.syncWallets(
-        payload => {
+        (payload: InjectedAccountWithMeta[]) => {
           dispatch('updateWalletInfoSMWallet', payload);
-        },
-        () => {
-          //TODO Add error notice
-          console.log('error PD extension connect');
         }
       );
+
+      // () => {
+      //   //TODO Add error notice
+      //   console.log('error PD extension connect');
+      // }
 
       if (accountSubscription) {
         commit('SET_EXTENSION_PRESENT__GENERAL', true);
@@ -47,7 +48,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
 
     try {
       const apiInstance = await Api.initialize({
-        error: e => {
+        error: (e: Error) => {
           console.log('on error listener - ', e);
           commit('SET_GENERAL_LOADING__GENERAL', true);
           commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
@@ -71,7 +72,8 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
           console.log('on connected listener');
           commit('SET_GENERAL_LOADING__GENERAL', false);
         },
-        ready: apiInstance => {
+        //TODO add parameter to the hydra-js
+        ready: (apiInstance?: ApiPromise) => {
           console.log('on ready listener - ', apiInstance);
           commit('SET_GENERAL_LOADING__GENERAL', false);
         },
@@ -90,7 +92,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       const int = apiInstance.createType('FixedU128', '100000000000000');
       console.log(int.toHuman());
 
-      apiInstance.query.system.events(events => {
+      apiInstance.query.system.events((events: any) => {
         // const eventsMap = events.map(record => {
         //   // Extract the phase, event and the event types
         //   const { event, phase } = record;
@@ -115,7 +117,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         });
       });
 
-      await apiInstance.rpc.chain.subscribeNewHeads(header => {
+      await apiInstance.rpc.chain.subscribeNewHeads((header: any) => {
         dispatch('syncAssetBalancesSMWallet');
         dispatch('syncAssetListSMWallet');
         dispatch('syncPoolsSMPool');
@@ -128,10 +130,6 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       // TODO Should be moved to success callback of Hydra.js API call ->
       commit('SET_GENERAL_LOADING__GENERAL', false);
       commit('SET_API_CONNECTION_VALID__GENERAL', true);
-
-      // if (router.currentRoute.value.path === '/') {
-      //   await router.push('/wallet');
-      // }
     } catch (e) {
       console.log(e);
       commit('SET_GENERAL_LOADING__GENERAL', false);
