@@ -4,6 +4,28 @@ import { ApiListeners } from 'hydradx-js/lib/types';
 import { formatBalance } from '@polkadot/util';
 import { bnToBn } from '@polkadot/util';
 
+import {
+  web3Enable,
+  web3AccountsSubscribe,
+  web3FromAddress,
+} from '@polkadot/extension-dapp';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+
+const syncWallets = async (
+  updateFunction: (accounts: InjectedAccountWithMeta[]) => void
+): Promise<null> => {
+  // returns an array of all the injected sources
+  // (this needs to be called first, before other requests)
+  const allInjected = await web3Enable('HACK.HydraDX.io');
+
+  if (!allInjected.length) {
+    return null;
+  } else {
+    web3AccountsSubscribe(updateFunction);
+    return null;
+  }
+};
+
 export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockHashSMGeneral({ commit }, payload: string | null) {
     commit('SET_BLOCK_HASH__GENERAL', payload);
@@ -42,7 +64,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       commit('SET_EXTENSION_PRESENT__GENERAL', false);
 
       try {
-        const accountSubscription = await Api.syncWallets(payload => {
+        const accountSubscription = await syncWallets(payload => {
           dispatch('updateWalletInfoSMWallet', payload);
         });
 
