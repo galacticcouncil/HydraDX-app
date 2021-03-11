@@ -1,6 +1,8 @@
-import { Api } from 'hydradx-js';
-
 import { ActionTree } from 'vuex';
+import { Api, bnToDec, decToBn } from 'hydradx-js';
+import { bnToBn } from '@polkadot/util';
+
+import { getSigner } from '@/services/utils';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeSelectedPoolSMPool({ commit, dispatch }, poolId) {
@@ -14,12 +16,14 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const asset1 = state.liquidityProperties.asset1;
     const asset2 = state.liquidityProperties.asset2;
     const spotPrice = rootState.trade.spotPrice.inputAmount;
-    // const maxSellPrice = decToBn(bnToDec(amount).multipliedBy(spotPrice * 1.1));
+
+    const maxSellPrice = decToBn(bnToDec(amount).multipliedBy(spotPrice * 1.1));
 
     if (api && account) {
-      api.hydraDx.tx
-        .addLiquiditySMPool(account, asset1, asset2, amount, spotPrice)
-        .then((status: any) => {
+      const signer = await getSigner(account);
+      api.tx.amm
+        .addLiquidity(asset1, asset2, amount, maxSellPrice)
+        .signAndSend(account, { signer }, ({ status }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('getSpotPriceSMTrade');
         });
@@ -35,23 +39,26 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
 
     if (api && account && selectedPool) {
       const shareToken = state.poolInfo[selectedPool].shareToken;
+
       const liquidityBalance =
         rootState.wallet.assetBalances[shareToken].balance;
       const percentage = state.liquidityAmount;
 
-      api.hydraDx.tx
-        .withdrawLiquiditySMPool(
-          account,
-          asset1,
-          asset2,
-          liquidityBalance,
-          selectedPool,
-          percentage
-        )
-        .then((status: any) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          dispatch('getSpotPriceSMTrade');
-        });
+      const api = Api.getApi();
+
+      if (api && account && selectedPool) {
+        const signer = await getSigner(account);
+        const liquidityToRemove = liquidityBalance
+          .div(bnToBn(100))
+          .mul(percentage);
+
+        api.tx.amm
+          .removeLiquidity(asset1, asset2, liquidityToRemove)
+          .signAndSend(account, { signer: signer }, ({ status }) => {
+            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+            dispatch('getSpotPriceSMTrade');
+          });
+      }
     }
   },
   async syncPoolsSMPool({ commit }) {
@@ -62,7 +69,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       tokenTradeMap,
       shareTokenIds,
       poolInfo,
-    } = await api.hydraDx.query.syncPoolsSMPool();
+    } = await api.hydraDx.query.getPoolInfo();
 
     commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
     commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);
