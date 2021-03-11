@@ -1,11 +1,32 @@
 import { ActionTree } from 'vuex';
 import { Api, ApiPromise } from 'hydradx-js';
-
+import { ApiListeners } from 'hydradx-js/lib/types';
 import { formatBalance } from '@polkadot/util';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
 import notificationsVars from '@/variables/notifications';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+
+import {
+  web3Enable,
+  web3AccountsSubscribe,
+  web3FromAddress,
+} from '@polkadot/extension-dapp';
+
+const syncWallets = async (
+  updateFunction: (accounts: InjectedAccountWithMeta[]) => void
+): Promise<null> => {
+  // returns an array of all the injected sources
+  // (this needs to be called first, before other requests)
+  const allInjected = await web3Enable('HACK.HydraDX.io');
+
+  if (!allInjected.length) {
+    return null;
+  } else {
+    web3AccountsSubscribe(updateFunction);
+    return null;
+  }
+};
 
 export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   updateBlockHashSMGeneral({ commit }, payload: string | null) {
@@ -19,7 +40,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       // INITIALIZE WALLET
       commit('SET_EXTENSION_PRESENT__GENERAL', false);
 
-      const accountSubscription = await Api.syncWallets(
+      const accountSubscription = await syncWallets(
         (payload: InjectedAccountWithMeta[]) => {
           dispatch('updateWalletInfoSMWallet', payload);
         }
@@ -91,7 +112,23 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
 
       const int = apiInstance.createType('FixedU128', '100000000000000');
       console.log(int.toHuman());
-
+      //
+      // // INITIALIZE WALLET
+      // commit('SET_EXTENSION_PRESENT__GENERAL', false);
+      //
+      // try {
+      //   const accountSubscription = await syncWallets(payload => {
+      //     dispatch('updateWalletInfoSMWallet', payload);
+      //   });
+      //
+      //   if (accountSubscription) {
+      //     commit('SET_EXTENSION_PRESENT__GENERAL', true);
+      //   }
+      //   commit('SET_EXTENSION_INITIALIZED__GENERAL', true);
+      // } catch (e) {
+      //   console.log(e);
+      // }
+      //
       apiInstance.query.system.events((events: any) => {
         // const eventsMap = events.map(record => {
         //   // Extract the phase, event and the event types
