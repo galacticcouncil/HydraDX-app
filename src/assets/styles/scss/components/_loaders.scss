@@ -9,7 +9,6 @@
   align-items: center;
   background-color: rgba($hdx-blue, 0.8);
   z-index: 100;
-  @include crt-effect();
 
   .hdx-common-loader {
     animation: spin 1s linear infinite;

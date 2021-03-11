@@ -1,36 +1,35 @@
 <template>
   <div class="main-header">
-    <h1>HACK.HYDRA.DX</h1>
-    <!-- INFO + LOGO -->
-    <div class="headerInfo">
-      <div class="logo"></div>
-      <div>block #{{ blockInfo.blockNumber }}</div>
-      <div v-if="blockInfo.blockHash">
-        hash: {{ blockInfo.blockHash.slice(0, 6) }}...{{
-          blockInfo.blockHash.slice(-5)
-        }}
-      </div>
-      <div class="accountInfo" v-if="accountInfo">
-        Account: {{ accountInfo.name }}
-      </div>
+    <div class="header-logo-container">
+      <router-link class="logo-link" to="/">
+        <div class="logo"></div>
+        <h1>HACK.HYDRA.DX</h1>
+      </router-link>
     </div>
 
-    <!-- MENU -->
-    <nav class="menu">
-      <ul>
-        <li class="menu-nav-link-wrapper">
-          <router-link class="menu-nav-link" to="/trade">TRADE</router-link>
-        </li>
-        <li class="menu-nav-link-wrapper">
-          <router-link class="menu-nav-link" to="/liquidity"
-            >LIQUIDITY</router-link
-          >
-        </li>
-        <li class="menu-nav-link-wrapper">
-          <router-link class="menu-nav-link" to="/wallet">WALLET</router-link>
-        </li>
-      </ul>
-    </nav>
+    <div class="header-content-container">
+      <nav class="main-navigation">
+        <LinkWithStatus to="/trade" customClass="main-navigation-item"
+          >Trade</LinkWithStatus
+        >
+        <LinkWithStatus to="/liquidity" customClass="main-navigation-item"
+          >Liquidity</LinkWithStatus
+        >
+        <LinkWithStatus to="/wallet" customClass="main-navigation-item"
+          >Wallet</LinkWithStatus
+        >
+      </nav>
+      <div class="header-info-container">
+        <div class="chain-info">
+          <div class="block-number">block #{{ blockInfo.blockNumber }}</div>
+          <div v-if="blockInfo.blockHash" class="block-hash">
+            hash: {{ blockHashShort }}
+          </div>
+          <div v-if="accountInfo">Account: {{ accountInfo.name }}</div>
+        </div>
+        <div class="account-details-menu-container"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,9 +46,20 @@ export default defineComponent({
       commit('SET_SCREEN__GENERAL', screen);
     };
 
+    const blockInfo = computed(() => getters.blockInfoSMGeneral);
+
+    const blockHashShort = computed(() => {
+      if (!blockInfo.value.blockHash) return '';
+      return `${blockInfo.value.blockHash.slice(
+        0,
+        6
+      )}...${blockInfo.value.blockHash.slice(-5)}`;
+    });
+
     return {
-      blockInfo: computed(() => getters.blockInfoSMGeneral),
       accountInfo: computed(() => getters.accountInfoSMWallet),
+      blockInfo,
+      blockHashShort,
       onScreenChangeClick,
     };
   },

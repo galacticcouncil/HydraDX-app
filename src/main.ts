@@ -3,8 +3,10 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import AppLayout from '@/layouts/AppLayout.vue';
-import NoticeMessage from '@/components/common/NoticeMessage.vue';
 import Toast, { PluginOptions } from 'vue-toastification';
+
+import NoticeMessage from '@/components/common/NoticeMessage.vue';
+import LinkWithStatus from '@/components/common/LinkWithStatus.vue';
 
 const options: PluginOptions = {
   timeout: 6000,
@@ -20,4 +22,5 @@ createApp(App)
   .use(Toast, options)
   .component('AppLayout', AppLayout)
   .component('NoticeMessage', NoticeMessage)
+  .component('LinkWithStatus', LinkWithStatus)
   .mount('#app');
