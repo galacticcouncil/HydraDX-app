@@ -3,6 +3,7 @@
 
 @import 'vendors/imports';
 
+@import 'layout/default';
 @import 'layout/misc';
 
 @import 'base/reset';
@@ -11,6 +12,7 @@
 
 @import 'components/header';
 @import 'components/loaders';
+@import 'components/linksButtons';
 @import 'components/notifications';
 @import 'components/misc';
 

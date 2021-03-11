@@ -1,7 +1,11 @@
 <template>
   <div class="layout-default" :class="{ 'pending-action': pendingAction }">
-    <Header />
-    <slot />
+    <div class="layout-outer-container">
+      <div class="layout-inner-container">
+        <Header />
+        <slot />
+      </div>
+    </div>
   </div>
 </template>
 
