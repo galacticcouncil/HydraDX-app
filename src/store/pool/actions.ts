@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 import { Api, bnToDec, decToBn } from 'hydradx-js';
 import { bnToBn } from '@polkadot/util';
+import { Signer } from '@polkadot/api/types';
 
 import { getSigner } from '@/services/utils';
 
@@ -21,8 +22,10 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
 
     if (api && account) {
       const signer = await getSigner(account);
+
       api.tx.amm
         .addLiquidity(asset1, asset2, amount, maxSellPrice)
+        // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('getSpotPriceSMTrade');
@@ -54,7 +57,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
 
         api.tx.amm
           .removeLiquidity(asset1, asset2, liquidityToRemove)
-          .signAndSend(account, { signer: signer }, ({ status }) => {
+          // @ts-ignore
+          .signAndSend(account, { signer }, ({ status }) => {
             if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
             dispatch('getSpotPriceSMTrade');
           });
