@@ -1,0 +1,18 @@
+.hdx-link-with-status {
+  display: inline-block;
+  color: $hdx-light-blue;
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 15px 3px 15px;
+  border: 1px solid transparent;
+
+  &:hover {
+    color: $hdx-pink;
+    border: 1px solid $hdx-pink;
+  }
+
+  &.active {
+    color: $hdx-pink;
+    border: 1px solid $hdx-pink;
+  }
+}

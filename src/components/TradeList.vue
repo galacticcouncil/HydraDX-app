@@ -1,6 +1,6 @@
 <template>
   <!-- TRADES -->
-  <div class="actionList transaction" v-bind:class="{ isShown: isShown }">
+  <div class="actionList transaction" :class="{ isShown: isShown }">
     <div class="legend inverted">
       <button @click="isShown = !isShown">
         <div class="name">

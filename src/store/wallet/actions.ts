@@ -1,13 +1,7 @@
-import { bnToBn } from '@polkadot/util';
-// import { bnToDec, decToBn } from '@/services/utils';
-import { formatBalance } from '@polkadot/util';
-// import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
+import { Api } from 'hydradx-js';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
-import router from '@/router';
-import { Api } from 'hydradx-js';
-
-import { getSigner } from '../../utils';
+import { getSigner } from '@/services/utils';
 
 export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   changeAccountSMWallet({ commit }, account: string | null) {
@@ -16,7 +10,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
 
   updateWalletInfoSMWallet(
-    { commit, dispatch, state, rootState },
+    { commit, dispatch, state },
     accountsWithMeta: InjectedAccountWithMeta[]
   ) {
     const accounts = accountsWithMeta.map(account => {
@@ -32,20 +26,22 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       if (state.account && !accounts.find(x => x.address === state.account)) {
         localStorage.removeItem('account');
         dispatch('changeAccountSMWallet', null);
-        router.push('/wallet');
       } else if (!state.account) {
-        router.push('/wallet');
+        //TODO add handler
+        console.log(state.account);
       }
     } else {
       localStorage.removeItem('account');
       dispatch('changeAccountSMWallet', null);
       commit('SET_ACCOUNT_LIST__WALLET', []);
-      router.push('/wallet');
     }
+    // router.push('/wallet');
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();
-    const balances = await api.hydraDx.query.getAccountBalances(context.state.account);
+    const balances = await api.hydraDx.query.getAccountBalances(
+      context.state.account
+    );
     context.commit('SET_ASSET_BALANCES__WALLET', balances);
   },
   async syncAssetListSMWallet(context) {
@@ -57,10 +53,12 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     const account = rootState.wallet.account || '';
     const api = Api.getApi();
     const signer = await getSigner(account);
+
     api.tx.faucet
-    .mint(assetId, 100000000000000)
-    .signAndSend(account, { signer: signer }, ({ events, status }) => {
-      if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-    });
+      .mint(assetId, 100000000000000)
+      // @ts-ignore
+      .signAndSend(account, { signer }, ({ events, status }) => {
+        if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      });
   },
 };

@@ -1,10 +1,6 @@
 import { Api } from 'hydradx-js';
 
-import { bnToBn } from '@polkadot/util';
-// import { bnToDec, decToBn } from '@/services/utils';
 import { formatBalance } from '@polkadot/util';
-// import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
@@ -55,7 +51,12 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       const timeout = setTimeout(async () => {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount;
-        const amount = await api.hydraDx.query.getSellPrice(asset1, asset2, tradeAmount, actionType);
+        const amount = await api.hydraDx.query.getSellPrice(
+          asset1,
+          asset2,
+          tradeAmount,
+          actionType
+        );
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);
@@ -83,8 +84,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         progress: 0,
       });
 
-      api.hydraDx?.tx.swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
-        .then(({events, status}: { events: any; status: any }) => {
+      api.hydraDx?.tx
+        .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
+        .then(({ events, status }: { events: any; status: any }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
           dispatch('updateTransactionsSMTrade', {
             events,
@@ -94,7 +96,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           dispatch('getSpotPriceSMTrade');
           dispatch('getSellPriceSMTrade');
         })
-        .catch(() =>  {
+        .catch(() => {
           commit('UPDATE_TRANSACTIONS__TRADE', {
             index: currentIndex,
             progress: 5,
@@ -102,15 +104,24 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         });
     }
   },
-  updateTransactionsSMTrade({ commit }, { events, currentIndex, status }) {
+  updateTransactionsSMTrade(
+    { commit },
+    { events, currentIndex, status, instanceOwner }
+  ) {
     if (!events) return;
     //TODO: BETTER HANDLING | SPLIT LOGIC
 
     events.forEach(({ event: { data, method } }) => {
-      console.log('status', status?.toHuman(), method, currentIndex);
+      console.log(`=========== ${instanceOwner} ==========`);
+      console.log('---- status', status?.toHuman(), method, currentIndex);
+
       if (method === 'IntentionRegistered') {
         if (status && status.isInBlock) {
           const parsedData = data.toJSON();
+          /**
+           * parsedData: <Array> [AccountId, AssetId, AssetId, Balance, IntentionType, IntentionID]
+           *                     [who, asset a, asset b, amount, intention type, intention id]
+           */
           if (Array.isArray(parsedData) && parsedData.length === 6) {
             const id = parsedData[5]?.toString();
             commit('UPDATE_TRANSACTIONS__TRADE', {
@@ -134,6 +145,10 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
       if (method === 'IntentionResolvedAMMTrade') {
         const parsedData = data.toJSON();
+        /**
+         * parsedData: <Array> [AccountId, IntentionType, IntentionID, Balance, Balance]
+         *                     [who, intention type, intention id, amount, amount sold/bought]
+         */
         if (Array.isArray(parsedData)) {
           const id = parsedData[2]?.toString();
           commit('UPDATE_TRANSACTIONS__TRADE', {
@@ -143,16 +158,20 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         }
       }
       if (method === 'IntentionResolvedDirectTrade') {
-        //const account = context.state.account;
         //TODO: add amounts matched
         const parsedData = data.toJSON();
+        /**
+         * parsedData: <Array> [AccountId, AccountId, IntentionID, IntentionID, Balance, Balance]
+         *                     [User1 accid, User1 accid, intention id 1, intention id 2, amount 1, amount 2]
+         */
+
         if (Array.isArray(parsedData)) {
           commit('UPDATE_TRANSACTIONS__TRADE', {
             id: parsedData[3]?.toString(),
             progress: 3,
           });
           commit('UPDATE_TRANSACTIONS__TRADE', {
-            id: parsedData[3]?.toString(),
+            id: parsedData[4]?.toString(),
             progress: 3,
           });
         }

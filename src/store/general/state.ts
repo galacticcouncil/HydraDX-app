@@ -4,10 +4,15 @@ export const state: GeneralState = {
   blockHash: null,
   blockNumber: 0,
 
-  currentScreen: savedScreen ? savedScreen : 'initial',
-  savedScreen: !!savedScreen,
   extensionInitialized: false,
   extensionPresent: true,
+  apiConnectionValid: false,
+
+  currentScreen: savedScreen ? savedScreen : 'initial',
+  savedScreen: !!savedScreen,
   actions: [],
   pendingAction: false,
+
+  generalLoading: true,
+  generalLoadingMessages: [],
 };

@@ -2,6 +2,7 @@ module.exports = {
   lintOnSave: true,
   chainWebpack: config => config.resolve.symlinks(false),
   // productionTip: false,
+  chainWebpack: config => config.resolve.symlinks(false),
   configureWebpack: {
     resolve: {
       extensions: ['*', '.mjs', '.js', '.vue', '.json', '.wasm'],

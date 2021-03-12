@@ -1,8 +1,30 @@
 import { MutationTree } from 'vuex';
+import { uniq } from 'lodash';
 
 export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state, pending) {
     state.pendingAction = pending;
+  },
+  SET_API_CONNECTION_VALID__GENERAL(state, status) {
+    state.apiConnectionValid = status;
+  },
+  SET_GENERAL_LOADING__GENERAL(state, loading) {
+    state.generalLoading = loading;
+    if (!loading) state.generalLoadingMessages = [];
+  },
+  SET_GENERAL_LOADING_MESSAGES__GENERAL(
+    state,
+    { action = 'add', message = '' }
+  ) {
+    if (action === 'add') {
+      state.generalLoadingMessages = uniq(
+        [...state.generalLoadingMessages, message] || []
+      );
+    } else {
+      state.generalLoadingMessages = state.generalLoadingMessages.filter(
+        (msg: string) => msg !== message
+      );
+    }
   },
   SET_BLOCK_HASH__GENERAL(state, payload) {
     state.blockHash = payload;

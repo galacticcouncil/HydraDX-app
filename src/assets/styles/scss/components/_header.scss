@@ -1,11 +1,10 @@
 .main-header {
-  h1 {
-    margin: 0.5em 0 0 0;
-  }
+
 
   .headerInfo {
     width: 100%;
     height: 2.8em;
+    //padding-top: 25px;
   }
 
   .headerInfo div {
@@ -13,17 +12,6 @@
     padding: 0 1em;
     margin: 0;
     display: inline-block;
-  }
-
-  .logo {
-    height: 90%;
-    width: 3em;
-    position: relative;
-    left: 0;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('../../../assets/images/logo-anim.gif');
   }
 
   .accountInfo {
@@ -40,5 +28,80 @@
     .headerInfo div {
       height: auto;
     }
+  }
+
+  //-----------
+
+  .logo {
+    height: 50px;
+    width: 3em;
+    position: relative;
+    left: 0;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url('../../../assets/images/logo-anim.gif');
+  }
+
+  .header-logo-container {
+    position: relative;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .logo-link {
+      background-color: $hdx-bgr-blue;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 18px;
+      padding-right: 30px;
+      top: -30px;
+
+    }
+  }
+
+  .header-content-container {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 25px 30px 40px;
+
+    .main-navigation {
+      .main-navigation-item {
+        text-transform: capitalize;
+        font-size: 24px;
+        margin-right: 20px;
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+
+    }
+
+    .header-info-container {
+
+    }
+    .chain-info {
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .block-number {
+      margin-right: 20px;
+    }
+    .block-hash {
+      margin-right: 20px;
+    }
+
   }
 }
