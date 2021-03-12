@@ -1,6 +1,5 @@
 import { ActionTree } from 'vuex';
 import { Api, ApiPromise } from 'hydradx-js';
-import { ApiListeners } from 'hydradx-js/lib/types';
 import { formatBalance } from '@polkadot/util';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
@@ -10,7 +9,6 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import {
   web3Enable,
   web3AccountsSubscribe,
-  web3FromAddress,
 } from '@polkadot/extension-dapp';
 
 const syncWallets = async (
