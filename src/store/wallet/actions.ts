@@ -1,12 +1,7 @@
-import Api from '@/api';
-
-import { bnToBn } from '@polkadot/util';
-// import { bnToDec, decToBn } from '@/services/utils';
-import { formatBalance } from '@polkadot/util';
-// import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
+import { Api } from 'hydradx-js';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
-import router from '@/router';
+import { getSigner } from '@/services/utils';
 
 export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   changeAccountSMWallet({ commit }, account: string | null) {
@@ -15,7 +10,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
 
   updateWalletInfoSMWallet(
-    { commit, dispatch, state, rootState },
+    { commit, dispatch, state },
     accountsWithMeta: InjectedAccountWithMeta[]
   ) {
     const accounts = accountsWithMeta.map(account => {
@@ -31,81 +26,39 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       if (state.account && !accounts.find(x => x.address === state.account)) {
         localStorage.removeItem('account');
         dispatch('changeAccountSMWallet', null);
-        router.push('/wallet');
       } else if (!state.account) {
-        router.push('/wallet');
+        //TODO add handler
+        console.log(state.account);
       }
     } else {
       localStorage.removeItem('account');
       dispatch('changeAccountSMWallet', null);
       commit('SET_ACCOUNT_LIST__WALLET', []);
-      router.push('/wallet');
     }
+    // router.push('/wallet');
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();
-    const account = context.state.account;
-    const balances: AssetBalance[] = [];
-
-    if (account && api) {
-      const multiTokenInfo = await api.query.tokens.accounts.entries(account);
-      const baseTokenInfo = await api.query.system.account(account);
-      const baseTokenBalance = bnToBn(baseTokenInfo.data.free);
-
-      balances[0] = {
-        assetId: 0,
-        balance: baseTokenBalance,
-        balanceFormatted: formatBalance(baseTokenBalance),
-      };
-      multiTokenInfo.forEach(record => {
-        let assetId = 99999;
-
-        const assetInfo = record[0].toHuman();
-        if (Array.isArray(assetInfo) && typeof assetInfo[1] === 'string') {
-          assetId = parseInt(assetInfo[1]);
-        }
-
-        const assetBalances = api.createType('AccountData', record[1]);
-        const balance = bnToBn(assetBalances.free);
-        const balanceFormatted = formatBalance(balance);
-
-        balances[assetId] = {
-          assetId,
-          balance,
-          balanceFormatted,
-        };
-      });
-    }
-
+    const balances = await api.hydraDx.query.getAccountBalances(
+      context.state.account
+    );
     context.commit('SET_ASSET_BALANCES__WALLET', balances);
   },
   async syncAssetListSMWallet(context) {
     const api = Api.getApi();
-    if (!api) return;
-    const assetIds = await api.query.assetRegistry.assetIds.entries();
-    const assetList: AssetRecord[] = [{ assetId: 0, name: 'HDX' }];
-
-    // TODO: Better way to parse mapped records
-    assetIds.forEach(([assetName, id]) => {
-      const assetId = parseInt(api.createType('Option<u32>', id).toString());
-      const name = assetName.toHuman()?.toString() || '0xERR';
-
-      assetList[assetId] = { assetId, name };
-    });
-
+    const assetList = await api.hydraDx.query.getAssetList();
     context.commit('SET_ASSET_LIST__WALLET', assetList);
   },
   async mintAssetSMWallet({ commit, rootState }, assetId) {
+    const account = rootState.wallet.account || '';
     const api = Api.getApi();
-    const account = rootState.wallet.account;
-    if (api && account) {
-      const signer = await Api.getSinger(account);
-      api.tx.faucet
-        .mint(assetId, 100000000000000)
-        .signAndSend(account, { signer: signer }, ({ events, status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          // TODO:STUFF
-        });
-    }
+    const signer = await getSigner(account);
+
+    api.tx.faucet
+      .mint()
+      // @ts-ignore
+      .signAndSend(account, { signer }, ({ events, status }) => {
+        if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      });
   },
 };

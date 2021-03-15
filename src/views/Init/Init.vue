@@ -31,11 +31,12 @@ export default defineComponent({
      * If Polkadot extension has been connected in previous sessions, we need
      * redirect user to Wallet page.
      */
-    if (getters.accountSMWallet) router.push('/wallet');
+    if (getters.apiConnectionValidSMGeneral && getters.accountSMWallet)
+      router.push('/trade');
     watch(
-      () => getters.accountSMWallet,
-      newAccountVal => {
-        if (newAccountVal) router.push('/wallet');
+      () => getters.apiConnectionValidSMGeneral,
+      (isValidNew, isValidOld) => {
+        if (isValidNew && isValidNew !== isValidOld) router.push('/trade');
       }
     );
 

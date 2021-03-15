@@ -14,7 +14,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #5eafe1;
+  color: $hdx-light-blue;
 }
 
 html,
@@ -22,10 +22,12 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0d106e;
+  background-color: $hdx-bgr-blue;
+  color: $hdx-light-blue;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @include crt-effect();
 }
 
 div {
@@ -36,6 +38,7 @@ a {
   text-transform: none;
   transition: $hdx-global-transition;
   text-decoration: none;
+  color: inherit;
 
   &:hover {
     text-transform: none;
@@ -46,7 +49,7 @@ a {
 
 a,
 :visited {
-  color: #5eafe1;
+  color: $hdx-light-blue;
 }
 
 button {

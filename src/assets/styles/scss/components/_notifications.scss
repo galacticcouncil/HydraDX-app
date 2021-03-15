@@ -1,0 +1,42 @@
+.hdx-notice-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  .notice-content {
+    width: 80%;
+    text-align: left;
+    border-width: 10px;
+    border-style: double;
+    border-color: $hdx-light-blue;
+    padding: 10px;
+
+    a {
+      color: $hdx-blue;
+    }
+  }
+}
+
+
+.hdx-toast-container {
+  &.Vue-Toastification__toast--error {
+    background-color: $hdx-red;
+    color: $hdx-light-blue;
+    border-radius: 0;
+    //border-width: 10px;
+    //border-style: double;
+    //border-color: $hdx-light-blue;
+
+    .Vue-Toastification__close-button {
+      color: $hdx-blue;
+      opacity: 1;
+      text-decoration: none;
+    }
+
+    .Vue-Toastification__progress-bar {
+      background-color: $hdx-light-blue;
+    }
+  }
+}

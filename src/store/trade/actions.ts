@@ -1,10 +1,6 @@
-import Api from '@/api';
+import { Api } from 'hydradx-js';
 
-import { bnToBn } from '@polkadot/util';
-// import { bnToDec, decToBn } from '@/services/utils';
 import { formatBalance } from '@polkadot/util';
-// import { EventRecord, ExtrinsicStatus } from '@polkadot/types/interfaces';
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
@@ -41,20 +37,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         return;
       }
 
-      // console.log(
-      //   asset1,
-      //   state.tradeProperties.asset1,
-      //   asset2,
-      //   state.tradeProperties.asset2,
-      //   state.tradeAmount
-      // );
-
       const timeout = setTimeout(async () => {
-        const amountData =
-          // @ts-expect-error TS2339
-          await api.rpc.amm.getSpotPrice(asset1, asset2, 1000000000000);
-
-        const amount = amountData.amount;
+        const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -65,34 +49,15 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (state.polling.real) clearTimeout(state.polling.real);
     if (api) {
       const timeout = setTimeout(async () => {
-        let amount = bnToBn(0);
-
-        console.log(
-          state.tradeProperties.asset1,
-          state.tradeProperties.asset2,
-          state.tradeAmount
+        const { asset1, asset2, actionType } = state.tradeProperties;
+        const tradeAmount = state.tradeAmount;
+        const amount = await api.hydraDx.query.getSellPrice(
+          asset1,
+          asset2,
+          tradeAmount,
+          actionType
         );
-        if (state.tradeAmount) {
-          if (state.tradeProperties.actionType === 'sell') {
-            // @ts-expect-error TS2339
-            const amountData = await api.rpc.amm.getSellPrice(
-              state.tradeProperties.asset1,
-              state.tradeProperties.asset2,
-              state.tradeAmount
-            );
 
-            amount = amountData.amount;
-          } else {
-            // @ts-expect-error TS2339
-            const amountData = await api.rpc.amm.getBuyPrice(
-              state.tradeProperties.asset1,
-              state.tradeProperties.asset2,
-              state.tradeAmount
-            );
-
-            amount = amountData.amount;
-          }
-        }
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SELL_PRICE_TIMER__TRADE', timeout);
@@ -119,50 +84,24 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         progress: 0,
       });
 
-      const signer = await Api.getSinger(account);
-      if (actionType === 'buy') {
-        api.tx.exchange
-          //TODO: CALCULATE LIMITS FROM SPOT PRICE
-          .buy(asset1, asset2, amount, bnToBn('100000000000000000'), false)
-          .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-            dispatch('updateTransactionsSMTrade', {
-              events,
-              currentIndex,
-              status,
-              instanceOwner: 'Transaction callback listener',
-            });
-            dispatch('getSpotPriceSMTrade');
-            dispatch('getSellPriceSMTrade');
-          })
-          .catch(() => {
-            commit('UPDATE_TRANSACTIONS__TRADE', {
-              index: currentIndex,
-              progress: 5,
-            });
+      api.hydraDx?.tx
+        .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
+        .then(({ events, status }: { events: any; status: any }) => {
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+          dispatch('updateTransactionsSMTrade', {
+            events,
+            currentIndex,
+            status,
           });
-      } else {
-        api.tx.exchange
-          //TODO: CALCULATE LIMITS FROM SPOT PRICE
-          .sell(asset1, asset2, amount, bnToBn(1000), false)
-          .signAndSend(account, { signer: signer }, ({ events, status }) => {
-            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-            dispatch('updateTransactionsSMTrade', {
-              events,
-              currentIndex,
-              status,
-              instanceOwner: 'Transaction callback listener',
-            });
-            dispatch('getSpotPriceSMTrade');
-            dispatch('getSellPriceSMTrade');
-          })
-          .catch(() => {
-            commit('UPDATE_TRANSACTIONS__TRADE', {
-              index: currentIndex,
-              progress: 5,
-            });
+          dispatch('getSpotPriceSMTrade');
+          dispatch('getSellPriceSMTrade');
+        })
+        .catch(() => {
+          commit('UPDATE_TRANSACTIONS__TRADE', {
+            index: currentIndex,
+            progress: 5,
           });
-      }
+        });
     }
   },
   updateTransactionsSMTrade(

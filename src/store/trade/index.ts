@@ -1,9 +1,9 @@
 import { Module } from 'vuex';
 
-import { state } from '@/store/trade/state.ts';
-import { mutations } from '@/store/trade/mutations.ts';
-import { actions } from '@/store/trade/actions.ts';
-import { getters } from '@/store/trade/getters.ts';
+import { state } from '@/store/trade/state';
+import { mutations } from '@/store/trade/mutations';
+import { actions } from '@/store/trade/actions';
+import { getters } from '@/store/trade/getters';
 
 export const trade: Module<TradeState, MergedState> = {
   state,
