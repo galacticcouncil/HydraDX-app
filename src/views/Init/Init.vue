@@ -1,5 +1,5 @@
 <template>
-  <div class="init">
+  <div class="page-wrapper init">
     <h1>WELCOME TO HACK.HYDRA_DX</h1>
     <div class="logo"></div>
     <div class="blockInfo" v-if="!extensionInfo.extensionPresent">

@@ -1,5 +1,5 @@
 <template>
-  <div class="liquidity">
+  <div class="page-wrapper liquidity">
     <!-- MENU -->
     <div class="menu">
       <label :class="{ selected: actionType === 'add' }">

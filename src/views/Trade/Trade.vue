@@ -1,5 +1,5 @@
 <template>
-  <div class="trade">
+  <div class="page-wrapper trade">
     <!-- MENU -->
     <div class="menu">
       <label :class="{ selected: actionType === 'buy' }">

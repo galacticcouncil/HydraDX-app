@@ -1,5 +1,5 @@
 <template>
-  <div class="wallet">
+  <div class="page-wrapper wallet">
     <!-- CURRENT ACCOUNT INFO -->
     <div class="currentAccount inverted">
       <h3 v-if="accountInfo">SELECTED ACCOUNT</h3>

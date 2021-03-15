@@ -2,17 +2,29 @@
   display: inline-block;
   color: $hdx-light-blue;
   font-size: 18px;
-  line-height: 1;
+  line-height: 1.2;
   padding: 6px 15px 3px 15px;
-  border: 1px solid transparent;
+  border-style: inset;
+  border-color: $hdx-light-blue;
+  border-top-color: $hdx-blue;
+  border-left-color: $hdx-blue;
+  border-width: 3px;
+  text-transform: uppercase;
 
   &:hover {
     color: $hdx-pink;
-    border: 1px solid $hdx-pink;
+    border-style: outset;
+    text-transform: uppercase;
+    border-color: $hdx-light-blue;
+    border-bottom-color: $hdx-blue;
+    border-right-color: $hdx-blue;
   }
 
   &.active {
     color: $hdx-pink;
-    border: 1px solid $hdx-pink;
+    border-style: outset;
+    border-color: $hdx-light-blue;
+    border-bottom-color: $hdx-blue;
+    border-right-color: $hdx-blue;
   }
 }
