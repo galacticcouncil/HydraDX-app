@@ -55,7 +55,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     const signer = await getSigner(account);
 
     api.tx.faucet
-      .mint(assetId, 100000000000000)
+      .mint()
       // @ts-ignore
       .signAndSend(account, { signer }, ({ events, status }) => {
         if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
