@@ -4,7 +4,7 @@ module.exports = {
   // productionTip: false,
   configureWebpack: {
     resolve: {
-      extensions: ['*', '.mjs', '.js', '.vue', '.json', '.wasm'],
+      extensions: ['*', '.mjs', '.js', '.vue', '.json'],
     },
     module: {
       rules: [
@@ -12,11 +12,6 @@ module.exports = {
           test: /\.mjs$/,
           include: /node_modules/,
           type: 'javascript/auto',
-        },
-        {
-          test: /\.wasm$/,
-          type: 'javascript/auto',
-          use: 'base64-loader',
         },
       ],
     },
