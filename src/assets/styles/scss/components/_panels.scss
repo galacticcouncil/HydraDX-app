@@ -1,0 +1,37 @@
+.hdx-common-panels-container {
+  //height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  //align-items: center;
+  padding: 100px 0;
+
+  .hdx-common-panel-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    margin-left: 20px;
+    margin-right: 20px;
+    background-color: $hdx-blue;
+    box-shadow: 0.5em 0.5em rgba($hdx-bgr-blue, 0.9);
+    padding: 10px;
+    min-height: 600px;
+  }
+
+  .panel-header {
+    background-color: $hdx-bgr-blue;
+    color: $hdx-light-blue;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 20px;
+    text-align: left;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .panel-body {
+    height: 100%;
+  }
+}

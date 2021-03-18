@@ -38,6 +38,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
 
       const timeout = setTimeout(async () => {
+        console.log('asset1 - ', asset1, typeof asset1);
+        console.log('asset2 - ', asset2, typeof asset2);
+
         const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
@@ -51,7 +54,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       const timeout = setTimeout(async () => {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount;
-        const amount = await api.hydraDx.query.getSellPrice(
+        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount)
+        const amount = await api.hydraDx.query.getTradePrice(
           asset1,
           asset2,
           tradeAmount,

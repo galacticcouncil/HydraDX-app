@@ -1,0 +1,28 @@
+.hdx-trades-panel-container {
+  .empty-list-notice {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+}
+
+.hdx-trade-controls-panel-container {
+  .trade-type-controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 0;
+
+    .trade-action-type {
+      margin-right: 10px;
+      width: 130px;
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}

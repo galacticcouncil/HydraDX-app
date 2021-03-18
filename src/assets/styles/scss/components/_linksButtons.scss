@@ -1,6 +1,7 @@
-.hdx-link-with-status {
+.hdx-link-with-status,
+.hdx-button-with-status {
   display: inline-block;
-  color: $hdx-light-blue;
+  color: rgba($hdx-light-blue, 0.7);
   font-size: 18px;
   line-height: 1.2;
   padding: 6px 15px 3px 15px;
@@ -10,6 +11,7 @@
   border-left-color: $hdx-blue;
   border-width: 3px;
   text-transform: uppercase;
+  cursor: pointer;
 
   &:hover {
     color: $hdx-pink;
@@ -27,4 +29,8 @@
     border-bottom-color: $hdx-blue;
     border-right-color: $hdx-blue;
   }
+}
+
+.hdx-button-with-status {
+  padding: 7px 30px;
 }
