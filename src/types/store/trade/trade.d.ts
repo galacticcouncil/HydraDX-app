@@ -12,8 +12,8 @@ type AssetAmount = {
 type TokenTradeMap = { [key: number]: number[] };
 
 type TradeProperties = {
-  asset1: number | null;
-  asset2: number | null;
+  asset1: string | null;
+  asset2: string | null;
   actionType: string;
 };
 

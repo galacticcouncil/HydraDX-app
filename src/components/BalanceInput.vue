@@ -1,26 +1,27 @@
 <template>
-  <div class="balanceInputGroup">
-    <input
-      type="tel"
-      class="balanceInput"
-      :value="formattedValue"
-      @input="onInput($event)"
-      @keypress="onKeyPress($event)"
-    />
-    <select class="range" v-model="compState.range">
-      <option value="1e-15">femto</option>
-      <option value="1e-12">pico</option>
-      <option value="1e-9">nano</option>
-      <option value="1e-6">micro</option>
-      <option value="1e-3">mili</option>
-      <option value="1" selected>{{ options ? options.units : '' }}</option>
-      <option value="1e3">kilo</option>
-      <option value="1e6">mega</option>
-      <option value="1e9">giga</option>
-      <option value="1e12">tera</option>
-      <option value="1e15">peta</option>
-    </select>
-  </div>
+  <!--  <div class="hdx-balance-input-group">-->
+  <input
+    type="tel"
+    class="balance-input"
+    :value="formattedValue"
+    @input="onInput($event)"
+    @keypress="onKeyPress($event)"
+    :disabled="inputDisabled"
+  />
+  <select class="range" v-model="compState.range" :disabled="inputDisabled">
+    <option value="1e-15">femto</option>
+    <option value="1e-12">pico</option>
+    <option value="1e-9">nano</option>
+    <option value="1e-6">micro</option>
+    <option value="1e-3">mili</option>
+    <option value="1" selected>{{ options ? options.units : '' }}</option>
+    <option value="1e3">kilo</option>
+    <option value="1e6">mega</option>
+    <option value="1e9">giga</option>
+    <option value="1e12">tera</option>
+    <option value="1e15">peta</option>
+  </select>
+  <!--  </div>-->
 </template>
 
 <script lang="ts">
@@ -36,6 +37,7 @@ export default defineComponent({
     // value: { type: Object, required: true },
     modelValue: { type: Object, required: true },
     options: { type: Object, required: false },
+    inputDisabled: { type: Boolean, required: false },
     // onChange: { type: Function, required: true },
   },
   emits: ['update:modelValue'],
@@ -122,23 +124,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-input,
-select {
-  background-color: transparent;
-  color: #5eafe1;
-  border-width: 1px;
-  font-size: 1em;
-  border-color: #5eafe1;
-  outline: none;
-  vertical-align: bottom;
-}
-.range {
-  width: 35%;
-}
-.balanceInput {
-  width: 65%;
-  text-align: right;
-}
-</style>

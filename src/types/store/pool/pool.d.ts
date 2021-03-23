@@ -6,15 +6,15 @@
 
 type PoolInfo = {
   [key: string]: {
-    poolAssets: number[];
+    poolAssets: string[];
     poolAssetNames: string[];
     shareToken: number;
   };
 };
 
 type LiquidityProperties = {
-  asset1: number | null;
-  asset2: number | null;
+  asset1: string | null;
+  asset2: string | null;
   actionType: string;
 };
 

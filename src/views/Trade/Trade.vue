@@ -158,7 +158,7 @@ export default defineComponent({
         // const asset1 = asset1 as number | null;
         if (asset1.value) {
           return (
-            getters.tokenTradeMapSMTrade[asset1.value].findIndex(
+            getters.tokenTradeMapSMTrade[+asset1.value].findIndex(
               assetId => assetId === element.assetId
             ) >= 0
           );

@@ -1,8 +1,10 @@
 import { Api } from 'hydradx-js';
+import BN from 'bn.js';
 
 import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
+import { bnToDec } from '@/services/utils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -13,8 +15,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     commit('SET_TRADE_PROPERTIES__TRADE', tradeProperties);
 
     if (
-      state.tradeProperties.asset1 != null &&
-      state.tradeProperties.asset2 != null
+      state.tradeProperties.asset1 !== null &&
+      state.tradeProperties.asset2 !== null
     ) {
       dispatch('getSellPriceSMTrade');
       dispatch('getSpotPriceSMTrade');
@@ -24,8 +26,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const api = Api.getApi();
     if (state.polling.spot) clearTimeout(state.polling.spot);
     if (api) {
-      let asset1: number | null = null;
-      let asset2: number | null = null;
+      let asset1: string | null = null;
+      let asset2: string | null = null;
 
       if (router.currentRoute.value.path === '/trade') {
         asset1 = state.tradeProperties.asset1;
@@ -38,10 +40,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
 
       const timeout = setTimeout(async () => {
-        console.log('asset1 - ', asset1, typeof asset1);
-        console.log('asset2 - ', asset2, typeof asset2);
-
         const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
+        console.log('getSpotPriceSMTrade - ', amount);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -53,14 +53,18 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (api) {
       const timeout = setTimeout(async () => {
         const { asset1, asset2, actionType } = state.tradeProperties;
-        const tradeAmount = state.tradeAmount;
-        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount)
+        const tradeAmount = state.tradeAmount as BN;
+
+        console.log('tradeAmount - ', tradeAmount.toString(10).toString());
+        console.log(typeof tradeAmount.toString(10).toString());
+
         const amount = await api.hydraDx.query.getTradePrice(
           asset1,
           asset2,
-          tradeAmount,
+          tradeAmount.toString(10).toString(),
           actionType
         );
+        console.log('getSellPriceSMTrade - ', amount.toString());
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);

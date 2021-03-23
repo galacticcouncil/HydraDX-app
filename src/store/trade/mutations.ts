@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { formatBalanceAmount } from '@/services/utils';
-import Vue from 'vue';
+import BN from 'bn.js';
 
 export const mutations: MutationTree<TradeState> & TradeMutations = {
   SET_SELL_PRICE_TIMER__TRADE(state, timer) {
@@ -71,12 +71,26 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
   },
 
   UPDATE_SELL_PRICE__TRADE(state, sellPrice) {
-    // state.sellPrice = formatBalanceAmount(sellPrice);
-    state.sellPrice = sellPrice;
+    console.log('UPDATE_SELL_PRICE__TRADE - ', sellPrice);
+    // if (typeof sellPrice === 'string') {
+    //   state.sellPrice = formatBalanceAmount(new BN(sellPrice));
+    // } else {
+    //   state.sellPrice = formatBalanceAmount(sellPrice);
+    // }
+    state.sellPrice = formatBalanceAmount(sellPrice);
+    // state.sellPrice = sellPrice;
   },
   UPDATE_SPOT_PRICE__TRADE(state, spotPrice) {
     // state.spotPrice = formatBalanceAmount(spotPrice);
-    state.sellPrice = spotPrice;
+    console.log('UPDATE_SPOT_PRICE__TRADE - ', spotPrice);
+    console.log('typeof spotPrice - ', typeof spotPrice);
+    //
+    // if (typeof spotPrice === 'string') {
+    //   state.spotPrice = formatBalanceAmount(new BN(spotPrice));
+    // } else {
+    //   state.spotPrice = formatBalanceAmount(spotPrice);
+    // }
+    state.spotPrice = formatBalanceAmount(spotPrice);
   },
   UPDATE_TOKEN_TRADE_MAP__TRADE(state, tokenTradeMap) {
     state.tokenTradeMap = tokenTradeMap;

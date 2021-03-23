@@ -26,7 +26,7 @@ export default defineComponent({
       if (getters.tradePropertiesSMTrade.asset1) {
         return {
           units:
-            getters.assetListSMWallet[getters.tradePropertiesSMTrade.asset1]
+            getters.assetListSMWallet[+getters.tradePropertiesSMTrade.asset1]
               .name,
         };
       } else return { units: '' };
@@ -35,6 +35,7 @@ export default defineComponent({
     const tradeAmount = computed({
       get: () => getters.tradeAmountSMTrade,
       set: tradeAmount => {
+        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount)
         dispatch('changeTradeAmountSMTrade', tradeAmount);
       },
     });

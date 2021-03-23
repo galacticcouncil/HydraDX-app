@@ -26,7 +26,7 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
             const pool = rootState.pool.poolInfo[key];
             if (pool.shareToken === assetRecord.assetId) {
               name = pool.poolAssets
-                .map(asset => assetList.find(x => x && x.assetId == asset))
+                .map(asset => assetList.find(x => x && x.assetId == +asset))
                 .map(x => x?.name)
                 .join(' | ');
               break;

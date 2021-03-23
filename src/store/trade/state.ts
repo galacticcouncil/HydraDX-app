@@ -1,4 +1,5 @@
 import { bnToBn } from '@polkadot/util';
+import * as BN from 'bn.js';
 
 export const state: TradeState = {
   polling: {
@@ -18,7 +19,7 @@ export const state: TradeState = {
   },
   subscriptions: [],
   tokenTradeMap: [],
-  tradeAmount: bnToBn(0),
+  tradeAmount: bnToBn(0) as BN,
   tradeProperties: {
     actionType: 'buy',
     asset1: null,
