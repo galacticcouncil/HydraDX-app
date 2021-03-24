@@ -1,9 +1,8 @@
 import { ActionTree } from 'vuex';
-import { Api, bnToDec, decToBn } from 'hydradx-js';
-import { bnToBn } from '@polkadot/util';
-import { Signer } from '@polkadot/api/types';
+import { Api } from 'hydradx-js';
 
 import { getSigner } from '@/services/utils';
+import BigNumber from 'bignumber.js';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeSelectedPoolSMPool({ commit, dispatch }, poolId) {
@@ -16,9 +15,10 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const amount = state.liquidityAmount;
     const asset1 = state.liquidityProperties.asset1;
     const asset2 = state.liquidityProperties.asset2;
-    const spotPrice = rootState.trade.spotPrice.inputAmount;
+    const spotPrice = rootState.trade.spotPrice;
 
-    const maxSellPrice = decToBn(bnToDec(amount).multipliedBy(spotPrice * 1.1));
+    //TODO update multiply action -> spotPrice * 1.1
+    const maxSellPrice = amount.multipliedBy(spotPrice.amount.multipliedBy(1.1));
 
     if (api && account) {
       const signer = await getSigner(account);
@@ -52,8 +52,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       if (api && account && selectedPool) {
         const signer = await getSigner(account);
         const liquidityToRemove = liquidityBalance
-          .div(bnToBn(100))
-          .mul(percentage);
+          .div(new BigNumber(100))
+          .multipliedBy(percentage);
 
         api.tx.amm
           .removeLiquidity(asset1, asset2, liquidityToRemove)

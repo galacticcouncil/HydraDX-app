@@ -1,6 +1,3 @@
-// type BN = import('bn.js');
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-// import { ActionContext } from 'vuex';
 
 // ================================= STATE =====================================
 
@@ -19,7 +16,7 @@ type LiquidityProperties = {
 };
 
 type PoolState = {
-  liquidityAmount: BN;
+  liquidityAmount: BigNumber;
   liquidityProperties: LiquidityProperties;
   // polling: {
   //   spot: NodeJS.Timeout | null;
@@ -37,7 +34,7 @@ type PoolGetters = {
     getters: MergedGetters,
     rootState: MergedState
   ): PoolInfo;
-  liquidityAmountSMPool(state: PoolState): BN;
+  liquidityAmountSMPool(state: PoolState): BigNumber;
   selectedPoolSMPool(state: PoolState): string | null;
   liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
 };
@@ -47,7 +44,7 @@ type PoolGetters = {
 type PoolMutations = {
   SET_SELECTED_POOL__POOL(state: PoolState, poolId: string | null): void;
   SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolInfo): void; //updatePoolInfo
-  SET_LIQUIDITY_AMOUNT__POOL(state: PoolState, liquidityAmount: BN): void;
+  SET_LIQUIDITY_AMOUNT__POOL(state: PoolState, liquidityAmount: BigNumber): void;
   SET_LIQUIDITY_PROPERTIES__POOL(
     state: PoolState,
     liquidityProperties: LiquidityProperties

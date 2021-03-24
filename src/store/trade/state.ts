@@ -1,5 +1,4 @@
-import { bnToBn } from '@polkadot/util';
-import * as BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 
 export const state: TradeState = {
   polling: {
@@ -7,19 +6,17 @@ export const state: TradeState = {
     spot: null,
   },
   sellPrice: {
-    amount: bnToBn(0),
+    amount: new BigNumber(0),
     amountFormatted: '0',
-    inputAmount: 0,
   },
   shareTokenIds: [],
   spotPrice: {
-    amount: bnToBn(0),
+    amount: new BigNumber(0),
     amountFormatted: '0',
-    inputAmount: 0,
   },
   subscriptions: [],
   tokenTradeMap: [],
-  tradeAmount: bnToBn(0) as BN,
+  tradeAmount: new BigNumber(0) as BigNumber,
   tradeProperties: {
     actionType: 'buy',
     asset1: null,

@@ -10,23 +10,31 @@ import {
 
 const decimalPlaces = 12;
 
-const formatBalanceAmount = (balance: BN): AssetAmount => {
-  const bnDecimals = bnToBn(decimalPlaces);
-  //TODO: Precision
-  const baseAmount = bnToBn(10).pow(bnDecimals.sub(bnToBn(4)));
-  const inputAmount = balance.div(baseAmount).toNumber() / 10 ** 4;
+// export const formatBalanceAmount = (balance: BN): AssetAmount => {
+//   const bnDecimals = bnToBn(decimalPlaces);
+//   //TODO: Precision
+//   const baseAmount = bnToBn(10).pow(bnDecimals.sub(bnToBn(4)));
+//   const inputAmount = balance.div(baseAmount).toNumber() / 10 ** 4;
+//   return {
+//     amount: balance,
+//     inputAmount: inputAmount,
+//     amountFormatted: formatBalance(balance),
+//   };
+// };
+
+export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
+  const amount = balance.div(`1e${decimalPlaces}`);
   return {
-    amount: balance,
-    inputAmount: inputAmount,
-    amountFormatted: formatBalance(balance),
+    amount,
+    amountFormatted: amount.toString(),
   };
 };
 
-const decToBn = (bignumber: BigNumber): BN => bnToBn(bignumber.toString());
+// const decToBn = (bignumber: BigNumber): BN => bnToBn(bignumber.toString());
+//
+// const bnToDec = (bn: BN): BigNumber => new BigNumber(bn.toString());
 
-const bnToDec = (bn: BN): BigNumber => new BigNumber(bn.toString());
-
-export { decToBn, bnToDec, formatBalanceAmount };
+// export { decToBn, bnToDec, formatBalanceAmount };
 
 export const getSigner = async (account: string): Promise<Signer> => {
   const injector = await web3FromAddress(account);

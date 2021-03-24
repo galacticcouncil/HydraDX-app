@@ -98,7 +98,7 @@
             <BalanceInput v-model="liquidityAmount" />
             <div class="computed" v-if="actionType === 'add'">
               {{ poolInfo[selectedPool].poolAssetNames[1] }} AMOUNT:
-              {{ spotPrice.amount }}
+              {{ spotPrice.amountFormatted }}
             </div>
           </label>
 

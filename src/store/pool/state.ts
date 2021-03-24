@@ -1,7 +1,7 @@
-import { bnToBn } from '@polkadot/util';
+import BigNumber from 'bignumber.js';
 
 export const state: PoolState = {
-  liquidityAmount: bnToBn(0),
+  liquidityAmount: new BigNumber(0),
   liquidityProperties: {
     actionType: 'add',
     asset1: null,

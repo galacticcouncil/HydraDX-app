@@ -1,11 +1,9 @@
-// type BN = import('bn.js');
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-// import { ActionContext } from 'vuex';
 
 // ================================= STATE =====================================
+// import BigNumber from "bignumber.js";
+
 type AssetAmount = {
-  amount: BN;
-  inputAmount: number;
+  amount: BigNumber;
   amountFormatted: string;
 };
 
@@ -31,7 +29,7 @@ type TradeState = {
   spotPrice: AssetAmount;
   subscriptions: [];
   tokenTradeMap: TokenTradeMap;
-  tradeAmount: BN;
+  tradeAmount: BigNumber;
   tradeProperties: TradeProperties;
   transactions: Transactions;
   unpairedTransactions: Transactions;
@@ -42,7 +40,7 @@ type TradeState = {
 type TradeGetters = {
   spotPriceSMTrade(state: TradeState): AssetAmount;
   tokenTradeMapSMTrade(state: TradeState): TokenTradeMap;
-  tradeAmountSMTrade(state: TradeState): BN;
+  tradeAmountSMTrade(state: TradeState): BigNumber;
   sellPriceSMTrade(state: TradeState): AssetAmount;
   transactionListSMTrade(state: TradeState): Transactions;
   tradePropertiesSMTrade(state: TradeState): TradeProperties;
@@ -60,7 +58,7 @@ type TradeMutations = {
     timer: NodeJS.Timeout | null
   ): void;
   SET_SHARE_TOKEN_IDS__TRADE(state: TradeState, shareTokenIds: number[]): void;
-  SET_TRADE_AMOUNT__TRADE(state: TradeState, tradeAmount: BN): void;
+  SET_TRADE_AMOUNT__TRADE(state: TradeState, tradeAmount: BigNumber): void;
   SET_TRADE_PROPERTIES__TRADE(
     state: TradeState,
     tradeProperties: TradeProperties
@@ -69,8 +67,8 @@ type TradeMutations = {
     state: TradeState,
     transaction: Transactions
   ): void;
-  UPDATE_SELL_PRICE__TRADE(state: TradeState, sellPrice: BN): void;
-  UPDATE_SPOT_PRICE__TRADE(state: TradeState, spotPrice: BN): void;
+  UPDATE_SELL_PRICE__TRADE(state: TradeState, sellPrice: BigNumber): void;
+  UPDATE_SPOT_PRICE__TRADE(state: TradeState, spotPrice: BigNumber): void;
   UPDATE_TOKEN_TRADE_MAP__TRADE(
     state: TradeState,
     tokenTradeMap: TokenTradeMap
@@ -99,7 +97,7 @@ type TradeActionAugments = Omit<
 };
 
 type TradeActions = {
-  changeTradeAmountSMTrade(context: TradeActionAugments, tradeAmount: BN): void;
+  changeTradeAmountSMTrade(context: TradeActionAugments, tradeAmount: BigNumber): void;
   changeTradePropertiesSMTrade(
     context: TradeActionAugments,
     tradeProperties: TradeProperties

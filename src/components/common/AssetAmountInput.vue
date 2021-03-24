@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, reactive, watch } from 'vue';
-import BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 import BalanceInput from '@/components/BalanceInput.vue';
 
 export default defineComponent({
@@ -49,7 +49,7 @@ export default defineComponent({
       default: () => {},
     },
     amount: {
-      type: Object as () => BN,
+      type: Object as () => BigNumber,
       default: () => {
         return {};
       },
@@ -81,7 +81,7 @@ export default defineComponent({
     });
     const amountValue = computed({
       get: () => props.amount,
-      set: (newAmount: BN) => {
+      set: (newAmount: BigNumber) => {
         props.onAmountChange(newAmount);
       },
     });

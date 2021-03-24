@@ -1,6 +1,6 @@
 import { useStore } from '@/store';
 import { computed } from 'vue';
-import * as BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 
 const { getters, dispatch } = useStore();
 
@@ -15,6 +15,6 @@ export const tradeAmountOptions = computed(() => {
 
 export const tradeAmount = computed(() => getters.tradeAmountSMTrade);
 
-export const setTradeAmount = (tradeAmount: BN) => {
+export const setTradeAmount = (tradeAmount: BigNumber) => {
   dispatch('changeTradeAmountSMTrade', tradeAmount);
 };

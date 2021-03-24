@@ -1,10 +1,9 @@
 import { Api } from 'hydradx-js';
-import BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 
 import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
-import { bnToDec } from '@/services/utils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -53,7 +52,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (api) {
       const timeout = setTimeout(async () => {
         const { asset1, asset2, actionType } = state.tradeProperties;
-        const tradeAmount = state.tradeAmount as BN;
+        const tradeAmount = state.tradeAmount as BigNumber;
 
         console.log('tradeAmount - ', tradeAmount.toString(10).toString());
         console.log(typeof tradeAmount.toString(10).toString());

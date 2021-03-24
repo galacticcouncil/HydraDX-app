@@ -49,7 +49,6 @@
 </template>
 
 <script lang="ts">
-import * as BN from 'bn.js';
 
 import { computed, defineComponent } from 'vue';
 import { useStore } from '@/store';
@@ -114,14 +113,16 @@ export default defineComponent({
 
     const asset1List = computed(() => {
       return getters.assetListSMWallet.filter(
+        //@ts-ignore
         element =>
           Object.keys(getters.tokenTradeMapSMTrade).findIndex(
-            assetId => parseInt(assetId) === element.assetId
+            assetId => +assetId === +element.assetId
           ) >= 0
       );
     });
 
     const asset2List = computed(() => {
+      //@ts-ignore
       return getters.assetListSMWallet.filter(element => {
         // const asset1 = asset1 as number | null;
         if (asset1.value) {

@@ -28,8 +28,6 @@
 import { defineComponent, computed, reactive, watch } from 'vue';
 
 import BigNumber from 'bignumber.js';
-import * as BN from 'bn.js';
-import { decToBn } from '@/services/utils';
 
 export default defineComponent({
   name: 'BalanceInput',
@@ -46,7 +44,7 @@ export default defineComponent({
       range: '1',
     });
 
-    const formatInput = (value: BN, range: string): string => {
+    const formatInput = (value: BigNumber, range: string): string => {
       if (!value) return '';
 
       BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
@@ -57,14 +55,14 @@ export default defineComponent({
         .toString();
       return decimalFormattedValue;
     };
-    const unformatInput = (value = '0', range: string): BN => {
+    const unformatInput = (value = '0', range: string): BigNumber => {
       BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
       const unformattedValue = new BigNumber(value, 10);
       const decimalUnormattedValue = unformattedValue
         .multipliedBy(1e12)
         .multipliedBy(range);
-      const bnUnformatted = decToBn(decimalUnormattedValue);
-      return bnUnformatted;
+      // const bnUnformatted = decToBn(decimalUnormattedValue);
+      return decimalUnormattedValue;
     };
 
     const onKeyPress = ($event: KeyboardEvent) => {
@@ -96,7 +94,7 @@ export default defineComponent({
       updateValue(unformattedValue);
     };
 
-    const updateValue = (value: BN) => {
+    const updateValue = (value: BigNumber) => {
       // props.onChange(value);
       context.emit('update:modelValue', value);
     };
@@ -108,14 +106,14 @@ export default defineComponent({
         const currentValue = props.modelValue;
         const value = new BigNumber(compState.range).dividedBy(newRange);
         const rangeFixedValue = value.multipliedBy(currentValue.toString());
-        const bnFixedValue = decToBn(rangeFixedValue);
-        updateValue(bnFixedValue);
+        // const bnFixedValue = decToBn(rangeFixedValue);
+        updateValue(rangeFixedValue);
       }
     );
 
     return {
       formattedValue: computed(() => {
-        return formatInput(props.modelValue as BN, compState.range);
+        return formatInput(props.modelValue as BigNumber, compState.range);
       }),
       compState,
       onKeyPress,

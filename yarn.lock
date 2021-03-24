@@ -6164,7 +6164,7 @@ human-signals@^1.1.1:
 
 "hydradx-js@git+https://github.com/galacticcouncil/HydraDX-js#initial-version":
   version "0.1.0"
-  resolved "git+https://github.com/galacticcouncil/HydraDX-js#ea9c64c93c6c6ef28d3eb4b6ccb38d0d84323a86"
+  resolved "git+https://github.com/galacticcouncil/HydraDX-js#9a9bfaa4ca203c191853f4ed11c868e4cd701cc6"
   dependencies:
     "@polkadot/api" "^3.3.2"
     bignumber.js "^9.0.1"
