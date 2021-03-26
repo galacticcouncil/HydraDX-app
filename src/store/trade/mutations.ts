@@ -70,14 +70,9 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
   },
 
   UPDATE_SELL_PRICE__TRADE(state, sellPrice) {
-    console.log('UPDATE_SELL_PRICE__TRADE - ', sellPrice);
     state.sellPrice = formatBalanceAmountBigN(sellPrice);
-    // state.sellPrice = sellPrice;
   },
   UPDATE_SPOT_PRICE__TRADE(state, spotPrice) {
-    // state.spotPrice = formatBalanceAmount(spotPrice);
-    console.log('UPDATE_SPOT_PRICE__TRADE - ', spotPrice);
-    console.log('typeof spotPrice - ', typeof spotPrice);
     state.spotPrice = formatBalanceAmountBigN(spotPrice);
   },
   UPDATE_TOKEN_TRADE_MAP__TRADE(state, tokenTradeMap) {

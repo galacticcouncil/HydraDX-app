@@ -1,7 +1,9 @@
 <template>
   <div
     class="hdx-asset-amount-input"
-    :class="{ 'opt-available': amountOptions && amountOptions.length > 0 }"
+    :class="{
+      'opt-available': amountOptions && amountOptions.units !== undefined,
+    }"
   >
     <div class="hdx-asset-amount-input-inner-container">
       <select class="asset-selector" v-model="currentAsset">

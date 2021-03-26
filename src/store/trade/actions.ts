@@ -5,6 +5,8 @@ import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
+import { getAssetsAmounts } from '@/services/utils';
+
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
     commit('SET_TRADE_AMOUNT__TRADE', tradeAmount);
@@ -39,8 +41,20 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       }
 
       const timeout = setTimeout(async () => {
-        const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
-        console.log('getSpotPriceSMTrade - ', amount);
+        const assetsAmounts = await getAssetsAmounts(asset1, asset2);
+
+        if (
+          assetsAmounts === null ||
+          assetsAmounts.asset1 === null ||
+          assetsAmounts.asset2 === null
+        )
+          return;
+
+        const amount = await api.hydraDx.query.getSpotPrice(
+          assetsAmounts.asset1,
+          assetsAmounts.asset2
+        );
+        console.log('getSpotPrice - ', amount);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -54,16 +68,24 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
 
-        console.log('tradeAmount - ', tradeAmount.toString(10).toString());
-        console.log(typeof tradeAmount.toString(10).toString());
+        const assetsAmounts = await getAssetsAmounts(asset1, asset2);
+
+        if (
+          assetsAmounts === null ||
+          assetsAmounts.asset1 === null ||
+          assetsAmounts.asset2 === null
+        )
+          return;
+
+        console.log(tradeAmount.multipliedBy('1e12').toString(10));
 
         const amount = await api.hydraDx.query.getTradePrice(
-          asset1,
-          asset2,
-          tradeAmount.toString(10).toString(),
+          assetsAmounts.asset1,
+          assetsAmounts.asset2,
+          tradeAmount.multipliedBy('1e12').toString(10),
           actionType
         );
-        console.log('getSellPriceSMTrade - ', amount.toString());
+        console.log('getTradePrice - ', amount.toString());
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);

@@ -49,20 +49,15 @@ export default defineComponent({
 
       BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
       const formattedValue = new BigNumber(value.toString(), 10);
-      const decimalFormattedValue = formattedValue
-        .dividedBy(1e12)
-        .dividedBy(range)
-        .toString();
-      return decimalFormattedValue;
+      // return formattedValue.dividedBy(1e12).dividedBy(range).toString();
+      return formattedValue.dividedBy(range).toString();
     };
     const unformatInput = (value = '0', range: string): BigNumber => {
       BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
       const unformattedValue = new BigNumber(value, 10);
-      const decimalUnormattedValue = unformattedValue
-        .multipliedBy(1e12)
-        .multipliedBy(range);
+      return unformattedValue.multipliedBy(range);
+      // return unformattedValue.multipliedBy(1e12).multipliedBy(range);
       // const bnUnformatted = decToBn(decimalUnormattedValue);
-      return decimalUnormattedValue;
     };
 
     const onKeyPress = ($event: KeyboardEvent) => {
@@ -95,7 +90,7 @@ export default defineComponent({
     };
 
     const updateValue = (value: BigNumber) => {
-      // props.onChange(value);
+      console.log('val for update - ', value.toString());
       context.emit('update:modelValue', value);
     };
 

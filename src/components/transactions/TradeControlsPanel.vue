@@ -39,8 +39,7 @@
           :on-asset-select="
             newSelectedAsset => onAssetChange('asset2', newSelectedAsset)
           "
-          :amount="tradeAmount"
-          :amount-options="tradeAmountOptions"
+          :amount="sellPrice.amount"
           input-disabled
         />
       </div>
@@ -49,7 +48,6 @@
 </template>
 
 <script lang="ts">
-
 import { computed, defineComponent } from 'vue';
 import { useStore } from '@/store';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
@@ -76,40 +74,8 @@ export default defineComponent({
 
     const router = useRouter();
     const toast = useToast();
-
-    // const asset1 = computed({
-    //   get: () => getters.tradePropertiesSMTrade.asset1,
-    //   set: asset1 => {
-    //     dispatch('changeTradePropertiesSMTrade', {
-    //       asset1,
-    //       asset2: null,
-    //       actionType: getters.tradePropertiesSMTrade.actionType,
-    //     });
-    //   },
-    // });
-
     const asset1 = computed(() => getters.tradePropertiesSMTrade.asset1);
-
-    const asset2 = computed({
-      get: () => getters.tradePropertiesSMTrade.asset2,
-      set: asset2 => {
-        dispatch('changeTradePropertiesSMTrade', {
-          asset2,
-          asset1: getters.tradePropertiesSMTrade.asset1,
-          actionType: getters.tradePropertiesSMTrade.actionType,
-        });
-      },
-    });
-    // const actionType = computed({
-    //   get: () => getters.tradePropertiesSMTrade.actionType,
-    //   set: actionType => {
-    //     dispatch('changeTradePropertiesSMTrade', {
-    //       asset1: getters.tradePropertiesSMTrade.asset1,
-    //       asset2: getters.tradePropertiesSMTrade.asset2,
-    //       actionType,
-    //     });
-    //   },
-    // });
+    const asset2 = computed(() => getters.tradePropertiesSMTrade.asset2);
 
     const asset1List = computed(() => {
       return getters.assetListSMWallet.filter(
@@ -122,13 +88,11 @@ export default defineComponent({
     });
 
     const asset2List = computed(() => {
-      //@ts-ignore
+
       return getters.assetListSMWallet.filter(element => {
-        // const asset1 = asset1 as number | null;
         if (asset1.value) {
           return (
-            //@ts-ignore
-            getters.tokenTradeMapSMTrade[asset1.value].findIndex(
+            getters.tokenTradeMapSMTrade[+asset1.value].findIndex(
               (assetId: number) => assetId === element.assetId
             ) >= 0
           );
@@ -145,8 +109,6 @@ export default defineComponent({
       }
     };
 
-    // -----------------------------------
-    // -----------------------------------
     // -----------------------------------
 
     const setActionType = (actionType: string) => {
@@ -173,9 +135,6 @@ export default defineComponent({
         asset2: newAsset2,
         actionType: getters.tradePropertiesSMTrade.actionType,
       });
-
-      console.log('assetName - ', assetName);
-      console.log('assetValue - ', assetValue);
     };
 
     return {
