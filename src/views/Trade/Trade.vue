@@ -4,7 +4,7 @@
       <TradesListPanel />
       <TradeControlsPanel />
     </div>
-    <div v-if="true">
+    <div v-if="false">
       <!-- MENU -->
       <div class="menu">
         <label :class="{ selected: actionType === 'buy' }">

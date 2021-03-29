@@ -54,7 +54,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           assetsAmounts.asset1,
           assetsAmounts.asset2
         );
-        console.log('getSpotPrice - ', amount);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -77,15 +76,12 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         )
           return;
 
-        console.log(tradeAmount.multipliedBy('1e12').toString(10));
-
         const amount = await api.hydraDx.query.getTradePrice(
           assetsAmounts.asset1,
           assetsAmounts.asset2,
           tradeAmount.multipliedBy('1e12').toString(10),
           actionType
         );
-        console.log('getTradePrice - ', amount.toString());
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
       }, 200);
@@ -107,13 +103,13 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         accountId: account,
         tokenIn: asset1,
         tokenOut: asset2,
-        amountIn: formatBalance(amount),
+        amountIn: amount.toString(),
         expectedOut: state.sellPrice.amountFormatted,
         type: actionType,
         progress: 0,
       });
 
-      api.hydraDx?.tx
+      api.hydraDx.tx
         .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
         .then(({ events, status }: { events: any; status: any }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);

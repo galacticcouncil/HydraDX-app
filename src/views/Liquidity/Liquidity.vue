@@ -228,6 +228,7 @@ export default defineComponent({
 
 .liquidityPlatform {
   display: flex;
+  background-color: #0c36a1;
 }
 
 .actionList.main {

@@ -175,6 +175,10 @@ a,
   color: #0d106e;
 }
 
+.tokenList {
+  background-color: #0c36a1;
+}
+
 .currentAccount {
   padding: 0.6em;
 }

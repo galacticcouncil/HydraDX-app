@@ -8,6 +8,7 @@ import Toast, { PluginOptions } from 'vue-toastification';
 import NoticeMessage from '@/components/common/NoticeMessage.vue';
 import LinkWithStatus from '@/components/common/LinkWithStatus.vue';
 import ButtonWithStatus from '@/components/common/ButtonWithStatus.vue';
+import ButtonCommon from '@/components/common/ButtonCommon.vue';
 import CommonPanel from '@/components/common/CommonPanel.vue';
 
 const options: PluginOptions = {
@@ -27,4 +28,5 @@ createApp(App)
   .component('NoticeMessage', NoticeMessage)
   .component('LinkWithStatus', LinkWithStatus)
   .component('ButtonWithStatus', ButtonWithStatus)
+  .component('ButtonCommon', ButtonCommon)
   .mount('#app');

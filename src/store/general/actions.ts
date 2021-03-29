@@ -103,10 +103,10 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       if (!apiInstance) return 1;
 
       // INITIALIZE HELPERS
-      formatBalance.setDefaults({
-        decimals: 12,
-        unit: '',
-      });
+      // formatBalance.setDefaults({
+      //   decimals: 12,
+      //   unit: '',
+      // });
 
       const int = apiInstance.createType('FixedU128', '100000000000000');
       console.log(int.toHuman());

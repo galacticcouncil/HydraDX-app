@@ -15,7 +15,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="empty-list-notice">
+      <div v-else class="full-panel-notice">
         <span>Empty</span>
       </div>
     </div>

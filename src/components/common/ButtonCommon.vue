@@ -8,7 +8,7 @@
 import { defineComponent, computed } from 'vue';
 
 export default defineComponent({
-  name: 'ButtonWithStatus',
+  name: 'ButtonCommon',
   props: {
     active: {
       type: Boolean,
@@ -34,12 +34,7 @@ export default defineComponent({
     };
     return {
       clickHandler,
-      linkClass: computed(
-        () =>
-          `hdx-button-with-status ${props.active ? 'active' : ''} ${
-            props.customClass
-          }`
-      ),
+      linkClass: computed(() => `hdx-button-common ${props.customClass}`),
     };
   },
 });

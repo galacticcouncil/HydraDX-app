@@ -16,7 +16,7 @@ export const state: TradeState = {
   },
   subscriptions: [],
   tokenTradeMap: [],
-  tradeAmount: new BigNumber(0) as BigNumber,
+  tradeAmount: new BigNumber(0),
   tradeProperties: {
     actionType: 'buy',
     asset1: null,
