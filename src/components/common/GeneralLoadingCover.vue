@@ -19,7 +19,7 @@ export default defineComponent({
     const { getters } = useStore();
 
     return {
-      messages: computed(() => getters.generalLoadingMessagesSMGeneral),
+      messages: computed(() => getters.generalLoadingMessagesSMNotification),
     };
   },
 });

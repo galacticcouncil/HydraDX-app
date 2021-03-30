@@ -53,7 +53,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         commit('SET_EXTENSION_PRESENT__GENERAL', true);
       }
 
-      commit('SET_GENERAL_LOADING__GENERAL', false);
+      commit('SET_GENERAL_LOADING__NOTIFICATION', false);
       commit('SET_EXTENSION_INITIALIZED__GENERAL', true);
     } catch (e) {
       console.log(e);
@@ -69,32 +69,32 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       const apiInstance = await Api.initialize({
         error: (e: Error) => {
           console.log('on error listener - ', e);
-          commit('SET_GENERAL_LOADING__GENERAL', true);
-          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+          commit('SET_GENERAL_LOADING__NOTIFICATION', true);
+          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
             action: 'delete',
             message: notificationsVars.loadingMsgApiConnection,
           });
-          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
             action: 'add',
             message: notificationsVars.loadingMsgApiConnectionErrorOccurred,
           });
         },
         disconnected: () => {
           console.log('on disconnected listener');
-          commit('SET_GENERAL_LOADING__GENERAL', true);
-          commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+          commit('SET_GENERAL_LOADING__NOTIFICATION', true);
+          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
             action: 'add',
             message: notificationsVars.loadingMsgApiConnection,
           });
         },
         connected: () => {
           console.log('on connected listener');
-          commit('SET_GENERAL_LOADING__GENERAL', false);
+          commit('SET_GENERAL_LOADING__NOTIFICATION', false);
         },
         //TODO add parameter to the hydra-js
         ready: (apiInstance?: ApiPromise) => {
           console.log('on ready listener - ', apiInstance);
-          commit('SET_GENERAL_LOADING__GENERAL', false);
+          commit('SET_GENERAL_LOADING__NOTIFICATION', false);
         },
       });
 
@@ -163,11 +163,11 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         });
       });
       // TODO Should be moved to success callback of Hydra.js API call ->
-      commit('SET_GENERAL_LOADING__GENERAL', false);
+      commit('SET_GENERAL_LOADING__NOTIFICATION', false);
       commit('SET_API_CONNECTION_VALID__GENERAL', true);
     } catch (e) {
       console.log(e);
-      commit('SET_GENERAL_LOADING__GENERAL', false);
+      commit('SET_GENERAL_LOADING__NOTIFICATION', false);
       toast.error(notifications.commonErrorOccurred);
     }
   },
