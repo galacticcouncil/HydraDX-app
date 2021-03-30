@@ -5,7 +5,17 @@ export const mutations: MutationTree<NotificationState> &
   NotificationMutations = {
   SET_GENERAL_LOADING__NOTIFICATION(state, loading) {
     state.generalLoading = loading;
-    if (!loading) state.generalLoadingMessages = [];
+    if (!loading) {
+      state.generalLoadingMessages = [];
+      state.generalLoadingShowReconnectControl = false;
+      state.generalLoadingSpinner = true;
+    }
+  },
+  SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION(state, isShow) {
+    state.generalLoadingShowReconnectControl = isShow;
+  },
+  SET_GENERAL_LOADING_SPINNER__NOTIFICATION(state, isShow) {
+    state.generalLoadingSpinner = isShow;
   },
   SET_GENERAL_LOADING_MESSAGES__NOTIFICATION(
     state,

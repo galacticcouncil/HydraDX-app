@@ -6,10 +6,7 @@ import notifications from '@/variables/notifications';
 import notificationsVars from '@/variables/notifications';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import {
-  web3Enable,
-  web3AccountsSubscribe,
-} from '@polkadot/extension-dapp';
+import { web3Enable, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 
 const syncWallets = async (
   updateFunction: (accounts: InjectedAccountWithMeta[]) => void
@@ -78,6 +75,14 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
             action: 'add',
             message: notificationsVars.loadingMsgApiConnectionErrorOccurred,
           });
+          commit(
+            'SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION',
+            true
+          );
+          commit(
+            'SET_GENERAL_LOADING_SPINNER__NOTIFICATION',
+            false
+          );
         },
         disconnected: () => {
           console.log('on disconnected listener');

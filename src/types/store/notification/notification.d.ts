@@ -2,6 +2,8 @@
 
 type NotificationState = {
   generalLoading: boolean;
+  generalLoadingShowReconnectControl: boolean;
+  generalLoadingSpinner: boolean;
   generalLoadingMessages: string[];
 
 };
@@ -10,13 +12,26 @@ type NotificationState = {
 
 type NotificationGetters = {
   generalLoadingSMNotification(state: NotificationState): boolean;
+  generalLoadingSpinnerSMNotification(state: NotificationState): boolean;
   generalLoadingMessagesSMNotification(state: NotificationState): string[];
+  generalLoadingShowReconnectControlSMNotification(state: NotificationState): boolean;
 };
 
 // =============================== MUTATION ====================================
 
 type NotificationMutations = {
-  SET_GENERAL_LOADING__NOTIFICATION(state: NotificationState, loading: boolean): void;
+  SET_GENERAL_LOADING__NOTIFICATION(
+    state: NotificationState,
+    loading: boolean
+  ): void;
+  SET_GENERAL_LOADING_SPINNER__NOTIFICATION(
+    state: NotificationState,
+    loading: boolean
+  ): void;
+  SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION(
+    state: NotificationState,
+    loading: boolean
+  ): void;
   SET_GENERAL_LOADING_MESSAGES__NOTIFICATION(
     state: NotificationState,
     messageData: { action: string; message: string }
