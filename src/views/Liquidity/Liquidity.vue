@@ -1,7 +1,9 @@
 <template>
   <div class="page-wrapper liquidity">
+    <PoolsList v-show="!isPoolSelected" />
+    <SinglePoolPanel v-show="isPoolSelected" />
     <!-- MENU -->
-    <div class="menu">
+    <div class="menu" v-if="false">
       <label :class="{ selected: actionType === 'add' }">
         <input
           v-model="actionType"
@@ -28,10 +30,10 @@
       >
     </div>
 
-    <div class="noPools" v-if="!Object.keys(poolInfo).length">
-      OH!... NO POOLS ON CHAIN
-    </div>
-    <div class="liquidityPlatform" v-if="Object.keys(poolInfo).length">
+    <!--    <div class="noPools" v-if="!Object.keys(poolInfo).length">-->
+    <div class="noPools" v-if="false">OH!... NO POOLS ON CHAIN</div>
+    <!--    <div class="liquidityPlatform" v-if="Object.keys(poolInfo).length">-->
+    <div class="liquidityPlatform" v-if="false">
       <!-- POOL LIST -->
       <div class="actionList main">
         <div class="legend inverted">
@@ -133,17 +135,18 @@
 </template>
 
 <script lang="ts">
-import BalanceInput from '@/components/BalanceInput.vue';
 
 import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
+import PoolsList from '@/components/liquidity/PoolsList.vue';
+import SinglePoolPanel from '@/components/liquidity/SinglePoolPanel.vue';
 
 export default defineComponent({
   name: 'Liquidity',
-  components: { BalanceInput },
+  components: {  PoolsList, SinglePoolPanel },
   setup() {
     const { getters, commit, dispatch } = useStore();
     const router = useRouter();
@@ -164,25 +167,23 @@ export default defineComponent({
 
     // --- Computed ---
     const poolInfo = computed(() => getters.poolInfoSMPool);
-    const liquidityProperties = computed(
-      () => getters.liquidityPropertiesSMPool
-    );
-    const selectedPool = computed({
-      get: () => getters.selectedPoolSMPool,
-      set: poolId => {
-        const newPoolId = poolId as string;
-        const asset1 = poolInfo.value[newPoolId].poolAssets[0];
-        const asset2 = poolInfo.value[newPoolId].poolAssets[1];
 
-        commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-          actionType: liquidityProperties.value.actionType,
-          asset1,
-          asset2,
-        });
-        dispatch('getSpotPriceSMTrade');
-        dispatch('changeSelectedPoolSMPool', poolId);
-      },
-    });
+    // const selectedPool = computed({
+    //   get: () => getters.selectedPoolSMPool,
+    //   set: poolId => {
+    //     const newPoolId = poolId as string;
+    //     const asset1 = poolInfo.value[newPoolId].poolAssets[0];
+    //     const asset2 = poolInfo.value[newPoolId].poolAssets[1];
+    //
+    //     commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+    //       actionType: liquidityProperties.value.actionType,
+    //       asset1,
+    //       asset2,
+    //     });
+    //     dispatch('getSpotPriceSMTrade');
+    //     dispatch('changeSelectedPoolSMPool', poolId);
+    //   },
+    // });
 
     const liquidityAmount = computed({
       get: () => getters.liquidityAmountSMPool,
@@ -203,7 +204,26 @@ export default defineComponent({
       },
     });
 
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+    // --------------------------------------------------------
+
+    const selectedPool = computed(() => getters.selectedPoolSMPool);
+    const liquidityProperties = computed(
+      () => getters.liquidityPropertiesSMPool
+    );
+
+    const isPoolSelected = computed(() => {
+      return (
+        selectedPool.value !== null &&
+        liquidityProperties.value.asset1 !== null &&
+        liquidityProperties.value.asset2 !== null
+      );
+    });
+
     return {
+      isPoolSelected,
+
       assetBalances: computed(() => getters.assetBalancesSMWallet),
       spotPrice: computed(() => getters.spotPriceSMTrade),
       liquidityAmount,

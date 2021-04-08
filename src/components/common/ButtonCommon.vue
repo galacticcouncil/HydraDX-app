@@ -1,5 +1,5 @@
 <template>
-  <button @click="clickHandler" :class="linkClass">
+  <button :disabled="disabled" @click="clickHandler" :class="linkClass">
     <slot />
   </button>
 </template>
@@ -25,6 +25,10 @@ export default defineComponent({
     onClick: {
       type: Function,
       default: () => {},
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {

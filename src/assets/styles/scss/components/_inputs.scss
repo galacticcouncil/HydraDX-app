@@ -18,10 +18,12 @@
   //}
 }
 
+.hdx-common-number-input,
 .hdx-asset-amount-input {
   margin-top: 20px;
   margin-bottom: 20px;
 
+  .hdx-common-number-input-inner-container,
   .hdx-asset-amount-input-inner-container {
     display: flex;
     flex-direction: row;

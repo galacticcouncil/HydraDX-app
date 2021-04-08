@@ -1,3 +1,9 @@
+.hdx-common-panel-layout {
+  background-color: $hdx-blue;
+  box-shadow: 0.5em 0.5em rgba($hdx-bgr-blue, 0.9);
+  padding: 10px;
+}
+
 .hdx-common-panels-container {
   //height: 100%;
   display: flex;
@@ -7,15 +13,13 @@
   padding: 100px 0;
 
   .hdx-common-panel-container {
+    @extend .hdx-common-panel-layout;
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 500px;
     margin-left: 20px;
     margin-right: 20px;
-    background-color: $hdx-blue;
-    box-shadow: 0.5em 0.5em rgba($hdx-bgr-blue, 0.9);
-    padding: 10px;
     min-height: 600px;
   }
 
@@ -45,4 +49,14 @@
     text-transform: uppercase;
     font-weight: 600;
   }
+
+
+  &.built-in-panels {
+    padding: 0;
+
+    .hdx-common-panel-container {
+      min-height: auto;
+    }
+  }
+
 }

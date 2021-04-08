@@ -6,14 +6,23 @@
     }"
   >
     <div class="hdx-asset-amount-input-inner-container">
-      <select class="asset-selector" v-model="currentAsset">
-        <option
-          v-for="(asset, index) in assetsList"
-          :key="index"
-          :value="asset.assetId.toString()"
-        >
-          {{ asset.name }}
-        </option>
+      <select
+        class="asset-selector"
+        v-model="currentAsset"
+        :disabled="singleAsset"
+      >
+        <template v-if="!singleAsset">
+          <option
+            v-for="(asset, index) in assetsList"
+            :key="index"
+            :value="asset.assetId.toString()"
+          >
+            {{ asset.name }}
+          </option>
+        </template>
+        <template v-else>
+          <option :value="currentAsset" selected>{{ currentAsset }}</option>
+        </template>
       </select>
       <BalanceInput
         v-model="amountValue"
@@ -25,9 +34,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed } from 'vue';
 import BigNumber from 'bignumber.js';
-import BalanceInput from '@/components/BalanceInput.vue';
 
 export default defineComponent({
   name: 'AssetAmountInput',
@@ -44,7 +52,9 @@ export default defineComponent({
     },
     onAssetSelect: {
       type: Function,
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
     onAmountChange: {
       type: Function,
@@ -66,14 +76,17 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-  },
-  components: {
-    BalanceInput,
+    singleAsset: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     // const compState = reactive({
     //   range: '1',
     // });
+
+    console.log('props - ', props);
 
     const currentAsset = computed({
       get: () => props.asset,

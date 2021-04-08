@@ -70,11 +70,17 @@
     transition: transform 150ms, background-color 150ms, box-shadow 150ms;
   }
 
-  &.disabled {
-    border: 1px solid $hdx-blue;
-    background-color: transparent;
-    color: $hdx-blue;
+  &.disabled,
+  &:disabled {
+    //border: 1px solid $hdx-blue;
+    //background-color: transparent;
+    //color: $hdx-blue;
     pointer-events: none;
+
+    color: rgba($hdx-bgr-blue, 0.7);
+    background-color: $hdx-light-blue;
+    box-shadow: none;
+    //transform: translate(6px, 6px);
   }
 
   &.full-width {

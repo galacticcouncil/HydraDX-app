@@ -40,6 +40,7 @@ export const getSigner = async (account: string): Promise<Signer> => {
   return injector.signer;
 };
 
+
 // --------------------------------------
 // --------------------------------------
 // --------------------------------------
@@ -56,7 +57,7 @@ interface AccountAmount extends Codec {
  * @param accountId: string
  * @param assetId: string
  */
-const getTokenAmount = async (
+export const getTokenAmount = async (
   accountId: string,
   assetId: string
 ): Promise<number | null> => {
@@ -68,7 +69,9 @@ const getTokenAmount = async (
       accountId,
       assetId
     );
-    return amount.free ? amount.free.toNumber() : null;
+    return amount.free
+      ? new BigNumber(amount.free.toString()).toNumber()
+      : null;
   }
 };
 
@@ -102,6 +105,8 @@ export const getAssetsAmounts = async (
     return [item[0].toHuman(), item[1].toHuman()];
   });
 
+  console.log('parsedPoolsList -', parsedPoolsList);
+
   /**
    * parsedPoolsList has next structure
    * [
@@ -120,6 +125,10 @@ export const getAssetsAmounts = async (
       //@ts-ignore
       poolInfo[1].includes(asset2Id)
   );
+
+  console.log('asset1Id - ', asset1Id);
+  console.log('asset2Id - ', asset2Id);
+  console.log('currentPool - ', currentPool);
 
   //@ts-ignore
   const currentPoolId = currentPool ? currentPool[0][0] : null;

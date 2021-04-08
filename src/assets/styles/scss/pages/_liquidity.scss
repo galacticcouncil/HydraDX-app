@@ -1,0 +1,21 @@
+.page-wrapper.liquidity {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  .liquidity-action-controls {
+    position: relative;
+    padding: 40px 20px;
+
+    .close-liquidity-action-controls-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+  }
+
+}
+
+.hdx-liquidity-controls-panel-container {
+  border: 1px solid $hdx-light-blue;
+}

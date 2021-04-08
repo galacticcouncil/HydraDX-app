@@ -14,11 +14,10 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
-import BalanceInput from './BalanceInput.vue';
 
 export default defineComponent({
   name: 'TradeAmount',
-  components: { BalanceInput },
+  components: {  },
   setup() {
     const { getters, dispatch } = useStore();
 

@@ -1,0 +1,70 @@
+.hdx-single-pool-panel-container {
+  flex: 1;
+  margin: 25px;
+}
+
+.hdx-single-pool-panel {
+  border: 1px solid $hdx-light-blue;
+  width: 100%;
+
+  .pool-panel-header {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid $hdx-light-blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .back-btn {
+      position: absolute;
+      left: 10px;
+      top: 8px;
+    }
+
+    .pool-name {
+      font-weight: 600;
+    }
+  }
+  .pool-panel-body {
+    //padding: 10px;
+  }
+
+  .pool-meta-data-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid $hdx-light-blue;
+
+    .meta-data-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      &.pool-controls {
+        flex-direction: row;
+      }
+    }
+    .item-value {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .item-name {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .liquidity-control {
+      font-size: 16px;
+      margin-right: 15px;
+
+      &:last-of-type {
+        margin-left: 0;
+      }
+    }
+  }
+}

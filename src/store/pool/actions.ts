@@ -3,11 +3,17 @@ import { Api } from 'hydradx-js';
 
 import { getSigner } from '@/services/utils';
 import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
+import { bnToBn } from '@polkadot/util';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeSelectedPoolSMPool({ commit, dispatch }, poolId) {
     dispatch('getSpotPriceSMTrade');
     commit('SET_SELECTED_POOL__POOL', poolId);
+  },
+  changeLiquidityAmountSMPool({ commit, dispatch }, liquidityAmount) {
+    commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
+    dispatch('getSellPriceSMTrade');
   },
   async addLiquiditySMPool({ dispatch, commit, state, rootState }) {
     const api = Api.getApi();
@@ -18,13 +24,20 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const spotPrice = rootState.trade.spotPrice;
 
     //TODO update multiply action -> spotPrice * 1.1
-    const maxSellPrice = amount.multipliedBy(spotPrice.amount.multipliedBy(1.1));
+    const maxSellPrice = amount
+      .multipliedBy(spotPrice.amount.multipliedBy(1.05))
+      .multipliedBy('1e12');
 
-    if (api && account) {
+    if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
       api.tx.amm
-        .addLiquidity(asset1, asset2, amount, maxSellPrice)
+        .addLiquidity(
+          asset1,
+          asset2,
+          bnToBn(amount.toString()),
+          bnToBn(maxSellPrice.toString())
+        )
         // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
@@ -40,29 +53,29 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const asset2 = state.liquidityProperties.asset2;
     const selectedPool = state.selectedPool;
 
-    if (api && account && selectedPool) {
+    if (api && account && selectedPool && asset1 !== null && asset2 !== null) {
       const shareToken = state.poolInfo[selectedPool].shareToken;
 
       const liquidityBalance =
         rootState.wallet.assetBalances[shareToken].balance;
+
       const percentage = state.liquidityAmount;
 
-      const api = Api.getApi();
+      const signer = await getSigner(account);
+      const liquidityToRemove = liquidityBalance
+        .div(new BigNumber(100))
+        .multipliedBy(percentage);
 
-      if (api && account && selectedPool) {
-        const signer = await getSigner(account);
-        const liquidityToRemove = liquidityBalance
-          .div(new BigNumber(100))
-          .multipliedBy(percentage);
+      console.log('liquidityToRemove - ', liquidityToRemove)
+      console.log('liquidityToRemove - ', liquidityToRemove.toString())
 
-        api.tx.amm
-          .removeLiquidity(asset1, asset2, liquidityToRemove)
-          // @ts-ignore
-          .signAndSend(account, { signer }, ({ status }) => {
-            if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-            dispatch('getSpotPriceSMTrade');
-          });
-      }
+      api.tx.amm
+        .removeLiquidity(asset1, asset2, bnToBn(liquidityToRemove.toString()))
+        // @ts-ignore
+        .signAndSend(account, { signer }, ({ status }) => {
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+          dispatch('getSpotPriceSMTrade');
+        });
     }
   },
   async syncPoolsSMPool({ commit }) {

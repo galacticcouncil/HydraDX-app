@@ -29,6 +29,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (api) {
       let asset1: string | null = null;
       let asset2: string | null = null;
+      console.log('getSpotPriceSMTrade action')
 
       if (router.currentRoute.value.path === '/trade') {
         asset1 = state.tradeProperties.asset1;
@@ -40,9 +41,17 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         return;
       }
 
+      console.log('----- ',asset1, asset2)
+
+      asset1 = asset1 !== null ? asset1.toString() : null;
+      asset2 = asset2 !== null ? asset2.toString() : null;
+
+      console.log('asset1 - ', asset1)
+      console.log('asset2 - ', asset2)
+
       const timeout = setTimeout(async () => {
         const assetsAmounts = await getAssetsAmounts(asset1, asset2);
-
+        console.log('assetsAmounts - ', assetsAmounts)
         if (
           assetsAmounts === null ||
           assetsAmounts.asset1 === null ||
@@ -64,8 +73,11 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (state.polling.real) clearTimeout(state.polling.real);
     if (api) {
       const timeout = setTimeout(async () => {
-        const { asset1, asset2, actionType } = state.tradeProperties;
+        let { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
+
+        asset1 = asset1 !== null ? asset1.toString() : null;
+        asset2 = asset2 !== null ? asset2.toString() : null;
 
         const assetsAmounts = await getAssetsAmounts(asset1, asset2);
 

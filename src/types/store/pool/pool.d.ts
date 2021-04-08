@@ -2,11 +2,13 @@
 // ================================= STATE =====================================
 
 type PoolInfo = {
-  [key: string]: {
-    poolAssets: string[];
-    poolAssetNames: string[];
-    shareToken: number;
-  };
+  poolAssets: string[];
+  poolAssetNames: string[];
+  shareToken: number;
+};
+
+type PoolsInfoList = {
+  [key: string]: PoolInfo;
 };
 
 type LiquidityProperties = {
@@ -22,7 +24,7 @@ type PoolState = {
   //   spot: NodeJS.Timeout | null;
   //   real: NodeJS.Timeout | null;
   // };
-  poolInfo: PoolInfo;
+  poolInfo: PoolsInfoList;
   selectedPool: string | null;
 };
 
@@ -33,7 +35,7 @@ type PoolGetters = {
     state: PoolState,
     getters: MergedGetters,
     rootState: MergedState
-  ): PoolInfo;
+  ): PoolsInfoList;
   liquidityAmountSMPool(state: PoolState): BigNumber;
   selectedPoolSMPool(state: PoolState): string | null;
   liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
@@ -43,7 +45,7 @@ type PoolGetters = {
 
 type PoolMutations = {
   SET_SELECTED_POOL__POOL(state: PoolState, poolId: string | null): void;
-  SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolInfo): void; //updatePoolInfo
+  SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolsInfoList): void; //updatePoolInfo
   SET_LIQUIDITY_AMOUNT__POOL(state: PoolState, liquidityAmount: BigNumber): void;
   SET_LIQUIDITY_PROPERTIES__POOL(
     state: PoolState,
@@ -76,6 +78,10 @@ type PoolActions = {
   changeSelectedPoolSMPool(
     context: PoolActionAugments,
     poolId: string | null
+  ): void;
+  changeLiquidityAmountSMPool(
+    context: PoolActionAugments,
+    liquidityAmount: BigNumber
   ): void;
   addLiquiditySMPool(context: PoolActionAugments): void;
   withdrawLiquiditySMPool(context: PoolActionAugments): void;
