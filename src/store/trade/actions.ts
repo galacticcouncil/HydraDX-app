@@ -29,7 +29,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     if (api) {
       let asset1: string | null = null;
       let asset2: string | null = null;
-      console.log('getSpotPriceSMTrade action')
+      console.log('getSpotPriceSMTrade action');
 
       if (router.currentRoute.value.path === '/trade') {
         asset1 = state.tradeProperties.asset1;
@@ -41,28 +41,16 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         return;
       }
 
-      console.log('----- ',asset1, asset2)
+      console.log('----- ', asset1, asset2);
 
       asset1 = asset1 !== null ? asset1.toString() : null;
       asset2 = asset2 !== null ? asset2.toString() : null;
 
-      console.log('asset1 - ', asset1)
-      console.log('asset2 - ', asset2)
+      console.log('asset1 - ', asset1);
+      console.log('asset2 - ', asset2);
 
       const timeout = setTimeout(async () => {
-        const assetsAmounts = await getAssetsAmounts(asset1, asset2);
-        console.log('assetsAmounts - ', assetsAmounts)
-        if (
-          assetsAmounts === null ||
-          assetsAmounts.asset1 === null ||
-          assetsAmounts.asset2 === null
-        )
-          return;
-
-        const amount = await api.hydraDx.query.getSpotPrice(
-          assetsAmounts.asset1,
-          assetsAmounts.asset2
-        );
+        const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2, '1000000000000');
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
@@ -79,18 +67,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         asset1 = asset1 !== null ? asset1.toString() : null;
         asset2 = asset2 !== null ? asset2.toString() : null;
 
-        const assetsAmounts = await getAssetsAmounts(asset1, asset2);
-
-        if (
-          assetsAmounts === null ||
-          assetsAmounts.asset1 === null ||
-          assetsAmounts.asset2 === null
-        )
-          return;
-
         const amount = await api.hydraDx.query.getTradePrice(
-          assetsAmounts.asset1,
-          assetsAmounts.asset2,
+          asset1,
+          asset2,
           tradeAmount.multipliedBy('1e12').toString(10),
           actionType
         );
