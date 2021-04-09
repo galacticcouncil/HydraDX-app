@@ -21,7 +21,7 @@
           </div>
           <div class="flex-row" role="cell">---</div>
           <div class="flex-row" role="cell">
-            {{ getUserPoolLiquidity(pool.shareToken) }}
+            {{ getUserPoolLiquidity(pool.shareToken) || '---' }}
           </div>
           <div class="flex-row" role="cell">---</div>
         </div>
@@ -128,7 +128,11 @@ export default defineComponent({
     });
 
     const getUserPoolLiquidity = (poolToken: number) => {
-      return +walletAssetBalances.value[poolToken].balance || '---';
+      return walletAssetBalances.value[poolToken].balance
+        ? +walletAssetBalances.value[poolToken].balance
+            .dividedBy('1e12')
+            .toFormat()
+        : null;
     };
 
     return {

@@ -35,7 +35,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         .addLiquidity(
           asset1,
           asset2,
-          bnToBn(amount.toString()),
+          bnToBn(amount.multipliedBy('1e12').toString()),
           bnToBn(maxSellPrice.toString())
         )
         // @ts-ignore
@@ -62,15 +62,17 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
       const percentage = state.liquidityAmount;
 
       const signer = await getSigner(account);
+      BigNumber.config({ ROUNDING_MODE: 0 });
       const liquidityToRemove = liquidityBalance
         .div(new BigNumber(100))
-        .multipliedBy(percentage);
-
-      console.log('liquidityToRemove - ', liquidityToRemove)
-      console.log('liquidityToRemove - ', liquidityToRemove.toString())
+        .multipliedBy(percentage); // TODO remove after SDK update
 
       api.tx.amm
-        .removeLiquidity(asset1, asset2, bnToBn(liquidityToRemove.toString()))
+        .removeLiquidity(
+          asset1,
+          asset2,
+          bnToBn(liquidityToRemove.integerValue().toString())
+        )
         // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);

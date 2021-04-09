@@ -35,7 +35,8 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
         }
       }
       const balance = tokenInfo?.balance;
-      const balanceFormatted = tokenInfo?.balanceFormatted;
+      // const balanceFormatted = tokenInfo?.balanceFormatted;
+      const balanceFormatted = tokenInfo?.balance ? tokenInfo?.balance.dividedBy('1e12').toString() : '0';
 
       return {
         ...assetRecord,
