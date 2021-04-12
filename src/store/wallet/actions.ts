@@ -44,10 +44,10 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     );
     context.commit('SET_ASSET_BALANCES__WALLET', balances);
   },
-  async syncAssetListSMWallet(context) {
+  async syncAssetListSMWallet({ commit }) {
     const api = Api.getApi();
     const assetList = await api.hydraDx.query.getAssetList();
-    context.commit('SET_ASSET_LIST__WALLET', assetList);
+    commit('SET_ASSET_LIST__WALLET', assetList);
   },
   async mintAssetSMWallet({ commit, rootState }, assetId) {
     const account = rootState.wallet.account || '';

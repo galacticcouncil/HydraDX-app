@@ -3,7 +3,6 @@ import { Api } from 'hydradx-js';
 
 import { getSigner } from '@/services/utils';
 import BigNumber from 'bignumber.js';
-import BN from 'bn.js';
 import { bnToBn } from '@polkadot/util';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
@@ -14,6 +13,12 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeLiquidityAmountSMPool({ commit, dispatch }, liquidityAmount) {
     commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
     dispatch('getSellPriceSMTrade');
+  },
+  changeNewPoolPropertiesSMPool(
+    { commit, dispatch, state },
+    newPoolProperties
+  ) {
+    commit('SET_NEW_POOL_PROPERTIES__POOL', newPoolProperties);
   },
   async addLiquiditySMPool({ dispatch, commit, state, rootState }) {
     const api = Api.getApi();
@@ -31,7 +36,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
-      api.tx.amm
+      api.hydraDx.tx
         .addLiquidity(
           asset1,
           asset2,
@@ -67,7 +72,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         .div(new BigNumber(100))
         .multipliedBy(percentage); // TODO remove after SDK update
 
-      api.tx.amm
+      api.hydraDx.tx
         .removeLiquidity(
           asset1,
           asset2,
@@ -93,5 +98,27 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
     commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);
     commit('SET_POOL_INFO__POOL', poolInfo);
+  },
+
+  async createPoolSMPool({ dispatch, commit, state, rootState }) {
+    const api = Api.getApi();
+
+    const account = rootState.wallet.account;
+    const { asset1, asset2, initialPrice, amount } = state.newPoolProperties;
+
+    console.log('state.newPoolProperties - ', state.newPoolProperties)
+
+    if (api && account && asset1 !== null && asset2 !== null) {
+      const signer = await getSigner(account);
+
+      const resp = await api.hydraDx.tx
+        .createPool(asset1, asset2, amount.multipliedBy('1e12'), initialPrice.multipliedBy('1e12'))
+        // @ts-ignore
+        .signAndSend(account, { signer }, ({ status }) => {
+          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+        });
+
+      console.log('resp - ', resp);
+    }
   },
 };

@@ -1,15 +1,13 @@
 <template>
-  <div class="hdx-single-pool-panel-container hdx-common-panel-layout">
-    <div class="hdx-single-pool-panel">
-      <div class="pool-panel-header">
-        <a href="#" class="back-btn" @click.prevent="onBackClick">
-          <img :src="backBtnIcon" alt="Back" />
-        </a>
-        <div class="pool-name" v-if="poolName">
+  <div class="hdx-single-pool hdx-common-panel-layout">
+    <div class="hdx-page-screen-panel-container hdx-single-pool-panel">
+      <div class="screen-panel-header">
+        <PanelBackButton :on-click="onBackClick" />
+        <div class="screen-panel-name" v-if="poolName">
           {{ poolName }}
         </div>
       </div>
-      <div class="pool-panel-body">
+      <div class="screen-panel-body">
         <div class="pool-meta-data-panel">
           <div class="meta-data-item">
             <div class="item-value">120$ M</div>
@@ -64,13 +62,14 @@ type PoolInfo = {
 import { Ref } from '@vue/reactivity';
 import { defineComponent, computed, watch, ref } from 'vue';
 import { useStore } from '@/store';
-import { getTokenAmount } from '@/services/utils';
 import LiquidityControlsPanel from '@/components/liquidity/LiquidityControlsPanel.vue';
+import PanelBackButton from '@/components/common/PanelBackButton.vue';
 
 export default defineComponent({
-  name: 'PoolsList',
+  name: 'SinglePoolPanel',
   components: {
     LiquidityControlsPanel,
+    PanelBackButton,
   },
   setup() {
     const { getters, commit, dispatch } = useStore();
@@ -92,8 +91,9 @@ export default defineComponent({
         return null;
       }
 
-      return getters.assetBalancesSMWallet[currentPool.value.shareToken]
-        .balance.dividedBy('1e12').toFormat();
+      return getters.assetBalancesSMWallet[currentPool.value.shareToken].balance
+        .dividedBy('1e12')
+        .toFormat();
     });
 
     watch(
@@ -101,7 +101,7 @@ export default defineComponent({
       (newVal, oldVal) => {
         if (newVal !== oldVal && newVal) {
           currentPool.value = poolInfo.value[newVal];
-          console.log('--------poolInfo.value[newVal]', poolInfo.value[newVal])
+          console.log('--------poolInfo.value[newVal]', poolInfo.value[newVal]);
         }
       }
     );
@@ -168,7 +168,6 @@ export default defineComponent({
       setActionType,
       openLiquidityActionControls,
       onCloseLiquidityActionControlsClick,
-      backBtnIcon: require('@/assets/images/reply.svg'),
     };
   },
 });

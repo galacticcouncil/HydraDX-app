@@ -9,4 +9,13 @@ export const state: PoolState = {
   },
   poolInfo: {},
   selectedPool: null,
+
+  newPoolProperties: {
+    asset1: null,
+    asset2: null,
+    initialPrice: new BigNumber(0),
+    amount: new BigNumber(0),
+  },
+
+  createPoolDialogOpen: false,
 };

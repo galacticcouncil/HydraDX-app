@@ -1,7 +1,8 @@
 <template>
   <div class="page-wrapper liquidity">
-    <PoolsList v-show="!isPoolSelected" />
-    <SinglePoolPanel v-show="isPoolSelected" />
+    <PoolsList v-show="!isPoolSelected && !createPoolDialogOpen" />
+    <SinglePoolPanel v-show="isPoolSelected && !createPoolDialogOpen" />
+    <CreatePoolPanel v-if="createPoolDialogOpen" />
     <!-- MENU -->
     <div class="menu" v-if="false">
       <label :class="{ selected: actionType === 'add' }">
@@ -135,22 +136,26 @@
 </template>
 
 <script lang="ts">
-
-import { defineComponent, computed, onMounted } from 'vue';
+import { defineComponent, computed, onBeforeUnmount } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
 import PoolsList from '@/components/liquidity/PoolsList.vue';
 import SinglePoolPanel from '@/components/liquidity/SinglePoolPanel.vue';
+import CreatePoolPanel from '@/components/liquidity/CreatePoolPanel.vue';
 
 export default defineComponent({
   name: 'Liquidity',
-  components: {  PoolsList, SinglePoolPanel },
+  components: { PoolsList, SinglePoolPanel, CreatePoolPanel },
   setup() {
     const { getters, commit, dispatch } = useStore();
     const router = useRouter();
     const toast = useToast();
+
+    onBeforeUnmount(() => {
+      commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false);
+    });
 
     const addLiquidity = () => {
       if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
@@ -226,6 +231,7 @@ export default defineComponent({
 
       assetBalances: computed(() => getters.assetBalancesSMWallet),
       spotPrice: computed(() => getters.spotPriceSMTrade),
+      createPoolDialogOpen: computed(() => getters.createPoolDialogOpenSMPool),
       liquidityAmount,
       selectedPool,
       actionType,
@@ -238,100 +244,100 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.menu label {
-  border-color: #5eafe1;
-}
+/*.menu label {*/
+/*  border-color: #5eafe1;*/
+/*}*/
 
-.legend {
-  padding: 0.5em;
-}
+/*.legend {*/
+/*  padding: 0.5em;*/
+/*}*/
 
-.liquidityPlatform {
-  display: flex;
-  background-color: #0c36a1;
-}
+/*.liquidityPlatform {*/
+/*  display: flex;*/
+/*  background-color: #0c36a1;*/
+/*}*/
 
-.actionList.main {
-  flex-basis: 30%;
-}
+/*.actionList.main {*/
+/*  flex-basis: 30%;*/
+/*}*/
 
-.actionList.add {
-  flex-basis: 30%;
-}
+/*.actionList.add {*/
+/*  flex-basis: 30%;*/
+/*}*/
 
-.actionList.trades {
-  flex-basis: 40%;
-}
+/*.actionList.trades {*/
+/*  flex-basis: 40%;*/
+/*}*/
 
-.listItem {
-  width: 100%;
-}
+/*.listItem {*/
+/*  width: 100%;*/
+/*}*/
 
-label {
-  padding: 0.8em;
-  display: block;
-  width: 100%;
-}
+/*label {*/
+/*  padding: 0.8em;*/
+/*  display: block;*/
+/*  width: 100%;*/
+/*}*/
 
-.actionList {
-  border-color: #5eafe1;
-  border-right-width: 1px;
-  border-bottom-width: 15px;
-}
+/*.actionList {*/
+/*  border-color: #5eafe1;*/
+/*  border-right-width: 1px;*/
+/*  border-bottom-width: 15px;*/
+/*}*/
 
-.shares {
-  padding-top: 1em;
-}
+/*.shares {*/
+/*  padding-top: 1em;*/
+/*}*/
 
-.amount {
-  text-align: left;
-  padding: 10%;
-}
+/*.amount {*/
+/*  text-align: left;*/
+/*  padding: 10%;*/
+/*}*/
 
-.computed {
-  color: #aaa;
-  padding-top: 0.5em;
-}
+/*.computed {*/
+/*  color: #aaa;*/
+/*  padding-top: 0.5em;*/
+/*}*/
 
-button {
-  outline: none;
-  border-width: 1px;
-  border-color: #5eafe1;
-  width: 80%;
-  height: 3em;
-  padding: 1em;
-  font-size: 1em;
-  background: transparent;
-  text-decoration: underline;
-  color: #5eafe1;
-  margin: 1em;
-}
+/*button {*/
+/*  outline: none;*/
+/*  border-width: 1px;*/
+/*  border-color: #5eafe1;*/
+/*  width: 80%;*/
+/*  height: 3em;*/
+/*  padding: 1em;*/
+/*  font-size: 1em;*/
+/*  background: transparent;*/
+/*  text-decoration: underline;*/
+/*  color: #5eafe1;*/
+/*  margin: 1em;*/
+/*}*/
 
-.liquidity input {
-  background-color: transparent;
-  font-size: 1em;
-  color: #5eafe1;
-  border-width: 1px;
-  border-color: #5eafe1;
-  outline: none;
-}
+/*.liquidity input {*/
+/*  background-color: transparent;*/
+/*  font-size: 1em;*/
+/*  color: #5eafe1;*/
+/*  border-width: 1px;*/
+/*  border-color: #5eafe1;*/
+/*  outline: none;*/
+/*}*/
 
-.spotPrice {
-  padding-top: 1em;
-}
+/*.spotPrice {*/
+/*  padding-top: 1em;*/
+/*}*/
 
-.assetRecord label:hover {
-  border-top-width: 1px;
-  border-color: #5eafe1;
-  box-shadow: 0 0 7px #5eafe1 inset;
-}
+/*.assetRecord label:hover {*/
+/*  border-top-width: 1px;*/
+/*  border-color: #5eafe1;*/
+/*  box-shadow: 0 0 7px #5eafe1 inset;*/
+/*}*/
 
-.menu label:hover,
-button:hover {
-  box-shadow: 0 0 10px #5eafe1 inset;
-}
+/*.menu label:hover,*/
+/*button:hover {*/
+/*  box-shadow: 0 0 10px #5eafe1 inset;*/
+/*}*/
 
-.walletState {
-  padding: 1em;
-}
+/*.walletState {*/
+/*  padding: 1em;*/
+/*}*/
 </style>

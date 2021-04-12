@@ -1,33 +1,9 @@
-.hdx-single-pool-panel-container {
+.hdx-single-pool {
   flex: 1;
   margin: 25px;
 }
 
 .hdx-single-pool-panel {
-  border: 1px solid $hdx-light-blue;
-  width: 100%;
-
-  .pool-panel-header {
-    position: relative;
-    padding: 10px;
-    border-bottom: 1px solid $hdx-light-blue;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .back-btn {
-      position: absolute;
-      left: 10px;
-      top: 8px;
-    }
-
-    .pool-name {
-      font-weight: 600;
-    }
-  }
-  .pool-panel-body {
-    //padding: 10px;
-  }
 
   .pool-meta-data-panel {
     display: flex;

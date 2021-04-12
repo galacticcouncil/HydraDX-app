@@ -50,7 +50,6 @@
     font-weight: 600;
   }
 
-
   &.built-in-panels {
     padding: 0;
 
@@ -58,5 +57,31 @@
       min-height: auto;
     }
   }
+}
 
+.hdx-page-screen-panel-container {
+  border: 1px solid $hdx-light-blue;
+  width: 100%;
+
+  .screen-panel-header {
+    position: relative;
+    padding: 10px;
+    border-bottom: 1px solid $hdx-light-blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .panel-back-button {
+      position: absolute;
+      left: 10px;
+      top: 8px;
+    }
+
+    .screen-panel-name {
+      font-weight: 600;
+    }
+  }
+  .screen-panel-body {
+    //padding: 10px;
+  }
 }

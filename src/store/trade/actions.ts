@@ -5,8 +5,6 @@ import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
 
-import { getAssetsAmounts } from '@/services/utils';
-
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
     commit('SET_TRADE_AMOUNT__TRADE', tradeAmount);

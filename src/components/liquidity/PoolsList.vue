@@ -1,5 +1,13 @@
 <template>
   <div class="hdx-pools-list-container hdx-common-panel-layout">
+    <div class="pools-list-controls-container">
+      <ButtonCommon
+        :on-click="openCreatePoolDialog"
+        custom-class="liquidity-page-control create-pool"
+        >Create pool</ButtonCommon
+      >
+    </div>
+
     <div class="hdx-table-container" role="table" aria-label="Destinations">
       <div class="flex-table header" role="rowgroup">
         <div class="flex-row first" role="columnheader">Pool</div>
@@ -140,6 +148,8 @@ export default defineComponent({
       // selectedPool,
       getUserPoolLiquidity,
       onPoolClick,
+      openCreatePoolDialog: () =>
+        commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', true),
     };
   },
 });

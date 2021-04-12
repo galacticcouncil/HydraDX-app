@@ -6,32 +6,6 @@
     <div class="panel-header">{{ panelActionLabel }} liquidity</div>
     <div class="panel-body">
       <div class="spot-price-container">
-        <!--        <label class="amount">-->
-        <!--          <div v-if="actionType === 'withdraw'">BURN SHARE %:</div>-->
-        <!--          <div v-if="actionType === 'add'">-->
-        <!--            {{ currentPool.poolAssetNames[0] }} AMOUNT:-->
-        <!--          </div>-->
-
-        <!--          <div class="computed" v-if="actionType === 'add'">-->
-        <!--            {{ currentPool.poolAssetNames[1] }} AMOUNT:-->
-        <!--            {{ spotPrice.amountFormatted }}-->
-        <!--          </div>-->
-        <!--        </label>-->
-
-        <!--        <div class="panel-text-label">-->
-        <!--          <div v-if="actionType === 'withdraw'">BURN SHARE %:</div>-->
-        <!--          <div v-if="actionType === 'add'">-->
-        <!--            {{ currentPool.poolAssetNames[0] }} AMOUNT:-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <!--        <BalanceInput v-model="liquidityAmount" />-->
-        <!--        <div class="panel-text-label">-->
-        <!--          <div class="computed" v-if="actionType === 'add'">-->
-        <!--            {{ currentPool.poolAssetNames[1] }} AMOUNT:-->
-        <!--            {{ asset2Amount }}-->
-        <!--            &lt;!&ndash;            {{ sellPrice.amountFormatted }}&ndash;&gt;-->
-        <!--          </div>-->
-        <!--        </div>-->
         <template v-if="actionType === 'add'">
           <AssetAmountInput
             :amount-options="{ units: currentPool.poolAssetNames[0] }"

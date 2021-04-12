@@ -58,6 +58,23 @@
       background-color: #0c36a1;
     }
   }
-
-
 }
+
+
+// ----------------------------------------------
+
+.panel-back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    display: block;
+    width: 25px;
+    height: auto;
+  }
+}
+
+// ----------------------------------------------
+
+
