@@ -63,13 +63,14 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
 import { onBeforeRouteLeave } from 'vue-router';
-import get = Reflect.get;
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'PoolsList',
 
   setup() {
     const { getters, commit, dispatch } = useStore();
+    const router = useRouter();
 
     const poolInfo = computed(() => getters.poolInfoSMPool);
     const walletAssetBalances = computed(() => getters.assetBalancesSMWallet);
@@ -114,8 +115,6 @@ export default defineComponent({
       const asset1 = poolInfo.value[newPoolId].poolAssets[0];
       const asset2 = poolInfo.value[newPoolId].poolAssets[1];
 
-      console.log('poolId - ', poolId);
-
       commit('SET_LIQUIDITY_PROPERTIES__POOL', {
         actionType: liquidityProperties.value.actionType,
         asset1,
@@ -123,17 +122,18 @@ export default defineComponent({
       });
       dispatch('getSpotPriceSMTrade');
       dispatch('changeSelectedPoolSMPool', poolId);
+      router.push(`/liquidity/${poolId}`);
     };
 
-    onBeforeRouteLeave((to, from, next) => {
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-        actionType: 'add',
-        asset1: null,
-        asset2: null,
-      });
-      dispatch('changeSelectedPoolSMPool', null);
-      next();
-    });
+    // onBeforeRouteLeave((to, from, next) => {
+    //   commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+    //     actionType: 'add',
+    //     asset1: null,
+    //     asset2: null,
+    //   });
+    //   dispatch('changeSelectedPoolSMPool', null);
+    //   next();
+    // });
 
     const getUserPoolLiquidity = (poolToken: number) => {
       return walletAssetBalances.value[poolToken].balance

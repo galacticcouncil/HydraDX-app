@@ -60,10 +60,11 @@ type PoolInfo = {
   shareToken: number;
 };
 import { Ref } from '@vue/reactivity';
-import { defineComponent, computed, watch, ref } from 'vue';
+import { defineComponent, computed, watch, ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import LiquidityControlsPanel from '@/components/liquidity/LiquidityControlsPanel.vue';
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'SinglePoolPanel',
@@ -76,11 +77,13 @@ export default defineComponent({
     const poolName = ref('');
     const currentPool: Ref<PoolInfo | null> = ref(null);
     const openLiquidityActionControls = ref(false);
+    const router = useRouter();
 
     const poolInfo = computed(() => getters.poolInfoSMPool);
     const liquidityProperties = computed(
       () => getters.liquidityPropertiesSMPool
     );
+    const selectedPool = computed(() => getters.selectedPoolSMPool);
 
     const userPoolLiquidity = computed(() => {
       if (
@@ -101,7 +104,6 @@ export default defineComponent({
       (newVal, oldVal) => {
         if (newVal !== oldVal && newVal) {
           currentPool.value = poolInfo.value[newVal];
-          console.log('--------poolInfo.value[newVal]', poolInfo.value[newVal]);
         }
       }
     );
@@ -127,32 +129,21 @@ export default defineComponent({
       openLiquidityActionControls.value = true;
     };
 
-    // console.log('getters.selectedPoolSMPool - ', getters.selectedPoolSMPool);
+    onMounted(() => {
+      if (selectedPool.value) {
+        currentPool.value = poolInfo.value[selectedPool.value];
+      }
 
-    // watch(
-    //   () => getters.poolInfoSMPool,
-    //   async newVal => {
-    //     console.log('poolInfo - ', newVal); //shareToken
-    //     if (!newVal) return;
-    //     const firstPoolId = Object.keys(newVal)[0];
-    //     const poolAmount = await getTokenAmount(
-    //       firstPoolId.toString(),
-    //       //@ts-ignore
-    //       '0'
-    //     );
-    //     console.log('firstPoolId- ', firstPoolId);
-    //     console.log('poolAmount- ', poolAmount);
-    //   }
-    // );
+      if (selectedPool.value !== null && currentPool.value !== null) {
+        poolName.value = `${currentPool.value.poolAssetNames[0]} | ${currentPool.value.poolAssetNames[1]}`;
+      } else {
+        poolName.value = '';
+      }
+    });
 
     const onBackClick = () => {
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-        actionType: '',
-        asset1: null,
-        asset2: null,
-      });
-      dispatch('changeSelectedPoolSMPool', null);
       openLiquidityActionControls.value = false;
+      router.push('/liquidity');
     };
 
     const onCloseLiquidityActionControlsClick = () => {

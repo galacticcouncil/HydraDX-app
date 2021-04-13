@@ -126,10 +126,8 @@ export default defineComponent({
 
     const swap = () => {
       if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
-        console.log(1);
         dispatch('swapSMTrade');
       } else {
-        console.log(2);
         toast.error(notifications.connectAccountIsRequired);
         router.push('/wallet');
       }
