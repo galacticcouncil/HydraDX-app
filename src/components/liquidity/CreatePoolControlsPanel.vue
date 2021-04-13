@@ -43,6 +43,7 @@
         label="Initial Price"
       />
       <ButtonCommon
+        :disabled="!isCreatePoolFormValid"
         :on-click="onPoolCreateClick"
         custom-class="create-pool full-width"
         >Create</ButtonCommon
@@ -52,8 +53,15 @@
 </template>
 
 <script lang="ts">
+type NewPoolProperties = {
+  asset1: string | null;
+  asset2: string | null;
+  initialPrice: BigNumber;
+  amount: BigNumber;
+};
+
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent, onBeforeUnmount, onMounted } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
@@ -75,6 +83,7 @@ export default defineComponent({
   setup(props) {
     const { getters, dispatch, commit } = useStore();
     // const toast = useToast();
+    const isCreatePoolFormValid = ref(false);
 
     const newPoolProperties = computed(() => getters.newPoolPropertiesSMPool);
     const asset1 = computed(() => getters.newPoolPropertiesSMPool.asset1);
@@ -165,12 +174,41 @@ export default defineComponent({
       await dispatch('createPoolSMPool');
     };
 
-    const getAssetDetailed = (assetId: string | null) => {
-      if (assetId === null) return {};
+    const getAssetDetailed = (assetId: string | null): AssetBalance => {
+      if (assetId === null) return {} as AssetBalance;
       return (
-        assetBalancesList.value.find(item => +item.assetId === +assetId) || {}
+        assetBalancesList.value.find(item => +item.assetId === +assetId) ||
+        ({} as AssetBalance)
       );
     };
+
+    const validateCreatePoolForm = (poolProps: NewPoolProperties) => {
+      let isAmountValid = false;
+      let isPriceValid = false;
+      let isAssetValid = false;
+      const asset1Details = getAssetDetailed(poolProps.asset1);
+
+      if (
+        asset1Details.balance !== undefined &&
+        poolProps.amount.multipliedBy('1e12').isLessThan(asset1Details.balance)
+      )
+        isAmountValid = true;
+
+      if (
+        poolProps.initialPrice.isPositive() &&
+        !poolProps.initialPrice.isZero()
+      )
+        isPriceValid = true;
+
+      if (poolProps.asset1 !== null && poolProps.asset2) {
+        isAssetValid = true;
+      }
+
+      isCreatePoolFormValid.value =
+        isAmountValid && isAssetValid && isPriceValid;
+    };
+
+    watch(() => getters.newPoolPropertiesSMPool, validateCreatePoolForm);
 
     onBeforeUnmount(() => {
       dispatch('changeNewPoolPropertiesSMPool', {
@@ -189,6 +227,7 @@ export default defineComponent({
       asset2,
       initialPrice,
       amount,
+      isCreatePoolFormValid,
       onAmountChange,
       onInitialPriceChange,
       onAssetChange,
