@@ -32,15 +32,18 @@
       </div>
       <AmountInput
         :amount="amount"
-        :amount-options="{ unit: '' }"
+        :amount-options="{ units: '' }"
         :on-amount-change="onAmountChange"
         label="Pool Amount"
+        :input-disabled="false"
       />
       <AmountInput
         :amount="initialPrice"
-        :amount-options="{ unit: '' }"
+        :amount-options="{ units: '', range: '1e9' }"
         :on-amount-change="onInitialPriceChange"
         label="Initial Price"
+        :input-disabled="false"
+
       />
       <ButtonCommon
         :disabled="!isCreatePoolFormValid"
@@ -63,9 +66,9 @@ type NewPoolProperties = {
 import BigNumber from 'bignumber.js';
 import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
 import { useStore } from '@/store';
-import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
-import notifications from '@/variables/notifications';
+// import { useRouter } from 'vue-router';
+// import { useToast } from 'vue-toastification';
+// import notifications from '@/variables/notifications';
 import AssetInput from '@/components/common/AssetInput.vue';
 import AmountInput from '@/components/common/AmountInput.vue';
 

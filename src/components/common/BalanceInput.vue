@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 
 import BigNumber from 'bignumber.js';
 
@@ -93,6 +93,12 @@ export default defineComponent({
       console.log('val for update - ', value.toString());
       context.emit('update:modelValue', value);
     };
+
+    onMounted(() => {
+      if (props.options && props.options.range !== undefined) {
+        compState.range = props.options.range;
+      }
+    });
 
     //TODO check functionality
     watch(
