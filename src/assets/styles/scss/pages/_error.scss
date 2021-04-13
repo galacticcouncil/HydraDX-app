@@ -1,0 +1,16 @@
+.error-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .error-page-msg-container {
+    max-width: 400px;
+    padding: 30px;
+  }
+
+  &.not-found {
+
+  }
+
+
+}
