@@ -39,11 +39,10 @@
       />
       <AmountInput
         :amount="initialPrice"
-        :amount-options="{ units: '', range: '1e9' }"
+        :amount-options="{ units: '' }"
         :on-amount-change="onInitialPriceChange"
         label="Initial Price"
         :input-disabled="false"
-
       />
       <ButtonCommon
         :disabled="!isCreatePoolFormValid"
@@ -66,9 +65,6 @@ type NewPoolProperties = {
 import BigNumber from 'bignumber.js';
 import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
 import { useStore } from '@/store';
-// import { useRouter } from 'vue-router';
-// import { useToast } from 'vue-toastification';
-// import notifications from '@/variables/notifications';
 import AssetInput from '@/components/common/AssetInput.vue';
 import AmountInput from '@/components/common/AmountInput.vue';
 
@@ -83,8 +79,8 @@ export default defineComponent({
       type: Object,
     },
   },
-  setup(props) {
-    const { getters, dispatch, commit } = useStore();
+  setup() {
+    const { getters, dispatch } = useStore();
     // const toast = useToast();
     const isCreatePoolFormValid = ref(false);
 
@@ -96,43 +92,72 @@ export default defineComponent({
     );
     const amount = computed(() => getters.newPoolPropertiesSMPool.amount);
 
-    const assetBalancesList = computed(() => {
-      // console.log('assetsList - ', getters.assetBalancesSMWallet);
-      return getters.assetBalancesSMWallet;
-    });
+    const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
 
-    const dfv = [
-      {
-        assetId: 0,
-        name: 'HDX',
-        shareToken: false,
-        balance: '1000000000000000',
-        balanceFormatted: '1000',
-      },
-      {
-        assetId: 12,
-        name: 'HDX | tDOT',
-        shareToken: true,
-        balance: 0,
-        balanceFormatted: '0',
-      },
-    ];
+    // const dfv = [
+    //   {
+    //     assetId: 0,
+    //     name: 'HDX',
+    //     shareToken: false,
+    //     balance: '1000000000000000',
+    //     balanceFormatted: '1000',
+    //   },
+    //   {
+    //     assetId: 12,
+    //     name: 'HDX | tDOT',
+    //     shareToken: true,
+    //     balance: 0,
+    //     balanceFormatted: '0',
+    //   },
+    // ];
+
+    const getAssetsListForExclude = (
+      selectedPairAsset: string | null
+    ): string[] => {
+      return getters.assetListSMWallet
+        .map(element => {
+          if (
+            selectedPairAsset !== null &&
+            getters.tokenTradeMapSMTrade[+selectedPairAsset] !== undefined &&
+            getters.tokenTradeMapSMTrade[+selectedPairAsset].findIndex(
+              (assetId: number) => assetId === element.assetId
+            ) >= 0
+          ) {
+            return element.assetId.toString();
+          } else return '';
+        })
+        .filter(item => item.length > 0);
+    };
 
     const asset1List = computed(() => {
+      let assetsListForExclude: string[] = [];
+
+      if (asset2.value !== null) {
+        assetsListForExclude = getAssetsListForExclude(asset2.value);
+      }
+
       return getters.assetBalancesSMWallet.filter(
         item =>
           !item.shareToken &&
           (newPoolProperties.value.asset2 === null ||
-            +newPoolProperties.value.asset2 !== item.assetId)
+            +newPoolProperties.value.asset2 !== item.assetId) &&
+          !assetsListForExclude.includes(item.assetId.toString())
       );
     });
 
     const asset2List = computed(() => {
-      return getters.assetBalancesSMWallet.filter(
+      let assetsListForExclude: string[] = [];
+
+      if (asset1.value !== null) {
+        assetsListForExclude = getAssetsListForExclude(asset1.value);
+      }
+
+      return assetBalancesList.value.filter(
         item =>
           !item.shareToken &&
           (newPoolProperties.value.asset1 === null ||
-            +newPoolProperties.value.asset1 !== item.assetId)
+            +newPoolProperties.value.asset1 !== item.assetId) &&
+          !assetsListForExclude.includes(item.assetId.toString())
       );
     });
 

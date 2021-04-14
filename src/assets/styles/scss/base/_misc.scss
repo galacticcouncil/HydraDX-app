@@ -27,6 +27,16 @@
     &:hover {
       //background: #F5F5F5;
     }
+
+    //&.row {
+    //  &:hover {
+    //    border-style: inset;
+    //    border-color: $hdx-light-blue;
+    //    border-top-color: $hdx-blue;
+    //    border-left-color: $hdx-blue;
+    //    border-width: 3px;
+    //  }
+    //}
   }
 
   .flex-row {
@@ -43,6 +53,7 @@
     &.empty-pools-list-notice {
       width: 100%;
     }
+
   }
 
   .rowspan {

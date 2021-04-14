@@ -100,24 +100,27 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     commit('SET_POOL_INFO__POOL', poolInfo);
   },
 
-  async createPoolSMPool({ dispatch, commit, state, rootState }) {
+  async createPoolSMPool({ commit, state, rootState }) {
     const api = Api.getApi();
 
     const account = rootState.wallet.account;
     const { asset1, asset2, initialPrice, amount } = state.newPoolProperties;
 
-    console.log('state.newPoolProperties - ', state.newPoolProperties)
-
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
-      console.log('asset1 - ', asset1)
-      console.log('asset2 - ', asset2)
-      console.log('amount - ', amount.multipliedBy('1e12').toString())
-      console.log('initialPrice - ', initialPrice.multipliedBy('1e12').toString())
+      // console.log('asset1 - ', asset1)
+      // console.log('asset2 - ', asset2)
+      // console.log('amount - ', amount.multipliedBy('1e12').toString())
+      // console.log('initialPrice - ', initialPrice.multipliedBy('1e18').toString())
 
       const resp = await api.hydraDx.tx
-        .createPool(asset1, asset2, amount.multipliedBy('1e12'), initialPrice.multipliedBy('1e12'))
+        .createPool(
+          asset1,
+          asset2,
+          amount.multipliedBy('1e12'),
+          initialPrice.multipliedBy('1e18')
+        )
         // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
           if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
