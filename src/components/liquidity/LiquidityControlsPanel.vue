@@ -53,6 +53,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import { calculateSpotAmount } from '@/services/utils';
 import notifications from '@/variables/notifications';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
 import CommonNumberInput from '@/components/common/CommonNumberInput.vue';
@@ -66,6 +67,7 @@ export default defineComponent({
   props: {
     currentPool: {
       type: Object,
+      required: true,
     },
   },
   setup(props) {
@@ -95,10 +97,14 @@ export default defineComponent({
 
     const asset2Amount = computed(() => {
       return liquidityAmount.value.multipliedBy(spotPrice.value.amount);
+      // return calculateSpotAmount(
+      //   props.currentPool.poolAssetNames[0],
+      //   props.currentPool.poolAssetNames[1],
+      //   liquidityAmount.value
+      // );
     });
 
     const onLiquidityAmountChange = (liquidityAmountUpdated: BigNumber) => {
-      console.log('liquidityAmount - SET ', liquidityAmountUpdated);
       liquidityAmount.value = liquidityAmountUpdated;
       // commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmountUpdated);
       // dispatch('changeLiquidityAmountSMPool', liquidityAmountUpdated);
@@ -120,10 +126,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       // onLiquidityAmountChange(new BigNumber(0));
       liquidityAmount.value = new BigNumber(0);
-    });
-
-    onMounted(() => {
-      console.log(props.currentPool);
     });
 
     return {

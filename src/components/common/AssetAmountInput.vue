@@ -86,8 +86,6 @@ export default defineComponent({
     //   range: '1',
     // });
 
-    console.log('props - ', props);
-
     const currentAsset = computed({
       get: () => props.asset,
       set: (selectedAsset: string) => {

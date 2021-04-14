@@ -39,3 +39,13 @@ export const getSigner = async (account: string): Promise<Signer> => {
   const injector = await web3FromAddress(account);
   return injector.signer;
 };
+
+export const calculateSpotAmount = async (
+  asset1: string,
+  asset2: string,
+  amount: BigNumber
+): Promise<BigNumber> => {
+  const api = Api.getApi();
+
+  return api.hydraDx.query.calculateSpotAmount(asset1, asset2, amount);
+};

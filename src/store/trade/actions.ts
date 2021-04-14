@@ -24,14 +24,15 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   getSpotPriceSMTrade({ state, rootState, commit }) {
     const api = Api.getApi();
     if (state.polling.spot) clearTimeout(state.polling.spot);
+
     if (api) {
       let asset1: string | null = null;
       let asset2: string | null = null;
 
-      if (router.currentRoute.value.path === '/trade') {
+      if (router.currentRoute.value.path.indexOf('/trade') === 0) {
         asset1 = state.tradeProperties.asset1;
         asset2 = state.tradeProperties.asset2;
-      } else if (router.currentRoute.value.path === '/liquidity') {
+      } else if (router.currentRoute.value.path.indexOf('/liquidity') === 0) {
         asset1 = rootState.pool.liquidityProperties.asset1;
         asset2 = rootState.pool.liquidityProperties.asset2;
       } else {
@@ -41,8 +42,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       asset1 = asset1 !== null ? asset1.toString() : null;
       asset2 = asset2 !== null ? asset2.toString() : null;
 
+      //TODO remove timeout
       const timeout = setTimeout(async () => {
-        const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2, '1000000000000');
+        const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
       }, 200);
       commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);

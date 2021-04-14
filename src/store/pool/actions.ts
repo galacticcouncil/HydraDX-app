@@ -40,8 +40,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         .addLiquidity(
           asset1,
           asset2,
-          bnToBn(amount.multipliedBy('1e12').toString()),
-          bnToBn(maxSellPrice.toString())
+          amount.multipliedBy('1e12'),
+          maxSellPrice
         )
         // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
@@ -76,7 +76,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         .removeLiquidity(
           asset1,
           asset2,
-          bnToBn(liquidityToRemove.integerValue().toString())
+          liquidityToRemove.integerValue()
         )
         // @ts-ignore
         .signAndSend(account, { signer }, ({ status }) => {
