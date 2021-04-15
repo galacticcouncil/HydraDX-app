@@ -2,34 +2,54 @@
   <CommonPanel class="hdx-liquidity-controls-panel-container">
     <div class="panel-header">Create pool</div>
     <div class="panel-body">
-      <AssetInput
-        :assets-list="asset1List"
-        placeholder="Select asset 1"
-        :asset="asset1"
-        :on-asset-select="
-          newSelectedAsset => onAssetChange('asset1', newSelectedAsset)
-        "
-      />
-      <div class="panel-text-label spot-price-label" v-show="asset1 !== null">
-        <span>
-          My balance {{ getAssetDetailed(asset1).name }}:
-          {{ getAssetDetailed(asset1).balanceFormatted }}</span
-        >
+      <div class="asset-select-with-details-container">
+        <AssetInput
+          :assets-list="asset1List"
+          placeholder="Select asset 1"
+          :asset="asset1"
+          :on-asset-select="
+            newSelectedAsset => onAssetChange('asset1', newSelectedAsset)
+          "
+        />
+        <BalanceIndicatorsGroup v-show="asset1 !== null">
+          <BalanceIndicator
+            :amount="asset1Detailed.balance"
+            :label="`Available balance:`"
+            :ending="asset1Detailed.name"
+          />
+          <BalanceIndicator
+            class="sub-value"
+            :amount="assetAmountAfterTransaction('asset1')"
+            :label="`Balance after transaction:`"
+            :ending="asset1Detailed.name"
+          />
+        </BalanceIndicatorsGroup>
       </div>
-      <AssetInput
-        :assets-list="asset2List"
-        placeholder="Select asset 2"
-        :asset="asset2"
-        :on-asset-select="
-          newSelectedAsset => onAssetChange('asset2', newSelectedAsset)
-        "
-      />
-      <div class="panel-text-label spot-price-label" v-show="asset2 !== null">
-        <span>
-          My balance {{ getAssetDetailed(asset2).name }}:
-          {{ getAssetDetailed(asset2).balanceFormatted }}</span
-        >
+
+      <div class="asset-select-with-details-container">
+        <AssetInput
+          :assets-list="asset2List"
+          placeholder="Select asset 2"
+          :asset="asset2"
+          :on-asset-select="
+            newSelectedAsset => onAssetChange('asset2', newSelectedAsset)
+          "
+        />
+        <BalanceIndicatorsGroup v-show="asset2 !== null">
+          <BalanceIndicator
+            :amount="asset2Detailed.balance"
+            :label="`Available balance:`"
+            :ending="asset2Detailed.name"
+          />
+          <BalanceIndicator
+            class="sub-value"
+            :amount="assetAmountAfterTransaction('asset2')"
+            :label="`Balance after transaction:`"
+            :ending="asset2Detailed.name"
+          />
+        </BalanceIndicatorsGroup>
       </div>
+
       <AmountInput
         :amount="amount"
         :amount-options="{ units: '' }"
@@ -43,6 +63,12 @@
         :on-amount-change="onInitialPriceChange"
         label="Initial Price"
         :input-disabled="false"
+      />
+      <BalanceIndicator
+        v-show="asset2 !== null"
+        :amount="requiredAsset2Amount"
+        :label="`Required amount of ${asset2Detailed.name}:`"
+        no-exponential
       />
       <ButtonCommon
         :disabled="!isCreatePoolFormValid"
@@ -67,12 +93,16 @@ import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
 import { useStore } from '@/store';
 import AssetInput from '@/components/common/AssetInput.vue';
 import AmountInput from '@/components/common/AmountInput.vue';
+import BalanceIndicatorsGroup from '@/components/common/BalanceIndicator/BalanceIndicatorsGroup.vue';
+import BalanceIndicator from '@/components/common/BalanceIndicator/BalanceIndicator.vue';
 
 export default defineComponent({
   name: 'CreatePoolControlsPanel',
   components: {
     AssetInput,
     AmountInput,
+    BalanceIndicator,
+    BalanceIndicatorsGroup,
   },
   props: {
     currentPool: {
@@ -93,6 +123,24 @@ export default defineComponent({
     const amount = computed(() => getters.newPoolPropertiesSMPool.amount);
 
     const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
+
+    const asset1Detailed = computed(() => {
+      if (asset1.value === null) return {} as AssetBalance;
+      return (
+        assetBalancesList.value.find(
+          item => asset1.value !== null && +item.assetId === +asset1.value
+        ) || ({} as AssetBalance)
+      );
+    });
+
+    const asset2Detailed = computed(() => {
+      if (asset2.value === null) return {} as AssetBalance;
+      return (
+        assetBalancesList.value.find(
+          item => asset2.value !== null && +item.assetId === +asset2.value
+        ) || ({} as AssetBalance)
+      );
+    });
 
     // const dfv = [
     //   {
@@ -161,6 +209,26 @@ export default defineComponent({
       );
     });
 
+    const requiredAsset2Amount = computed(() => {
+      return initialPrice.value.multipliedBy(amount.value);
+    });
+
+    const assetAmountAfterTransaction = (asset: string): BigNumber => {
+      if (asset === 'asset1') {
+        return asset1Detailed.value.balance
+          ? asset1Detailed.value.balance.minus(
+              amount.value.multipliedBy('1e12')
+            )
+          : new BigNumber(0);
+      } else {
+        return asset2Detailed.value.balance
+          ? asset2Detailed.value.balance.minus(
+              requiredAsset2Amount.value.multipliedBy('1e12')
+            )
+          : new BigNumber(0);
+      }
+    };
+
     const onAssetChange = (assetName: string, assetValue: string) => {
       let newAsset1: string | null = null;
       let newAsset2: string | null = null;
@@ -202,23 +270,24 @@ export default defineComponent({
       await dispatch('createPoolSMPool');
     };
 
-    const getAssetDetailed = (assetId: string | null): AssetBalance => {
-      if (assetId === null) return {} as AssetBalance;
-      return (
-        assetBalancesList.value.find(item => +item.assetId === +assetId) ||
-        ({} as AssetBalance)
-      );
-    };
+    // const getAssetDetailed = (assetId: string | null): AssetBalance => {
+    //   if (assetId === null) return {} as AssetBalance;
+    //   return (
+    //     assetBalancesList.value.find(item => +item.assetId === +assetId) ||
+    //     ({} as AssetBalance)
+    //   );
+    // };
 
     const validateCreatePoolForm = (poolProps: NewPoolProperties) => {
       let isAmountValid = false;
       let isPriceValid = false;
       let isAssetValid = false;
-      const asset1Details = getAssetDetailed(poolProps.asset1);
 
       if (
-        asset1Details.balance !== undefined &&
-        poolProps.amount.multipliedBy('1e12').isLessThan(asset1Details.balance)
+        asset2Detailed.value.balance !== undefined &&
+        poolProps.amount
+          .multipliedBy('1e12')
+          .isLessThan(asset2Detailed.value.balance)
       )
         isAmountValid = true;
 
@@ -253,14 +322,17 @@ export default defineComponent({
       asset2List,
       asset1,
       asset2,
+      asset1Detailed,
+      asset2Detailed,
+      requiredAsset2Amount,
       initialPrice,
       amount,
       isCreatePoolFormValid,
+      assetAmountAfterTransaction,
       onAmountChange,
       onInitialPriceChange,
       onAssetChange,
       onPoolCreateClick,
-      getAssetDetailed,
     };
   },
 });
