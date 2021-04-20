@@ -1,52 +1,47 @@
 <template>
-  <div class="hdx-single-pool hdx-common-panel-layout">
-    <div class="hdx-page-screen-panel-container hdx-single-pool-panel">
-      <div class="screen-panel-header">
-        <PanelBackButton :on-click="onBackClick" />
-        <div class="screen-panel-name" v-if="poolName">
-          {{ poolName }}
+  <div class="hdx-page-screen-panel-container hdx-single-pool-panel">
+    <div class="screen-panel-header">
+      <PanelBackButton :on-click="onBackClick" />
+      <div class="screen-panel-name" v-if="poolName">
+        {{ poolName }}
+      </div>
+    </div>
+    <div class="screen-panel-body">
+      <div class="pool-meta-data-panel">
+        <div class="meta-data-item">
+          <div class="item-value">120$ M</div>
+          <div class="item-name">Liquidity</div>
+        </div>
+        <div class="meta-data-item">
+          <div class="item-value">3.3$ M</div>
+          <div class="item-name">Volume (24h)</div>
+        </div>
+        <div class="meta-data-item">
+          <div class="item-value">{{ userPoolLiquidity || '---' }}</div>
+          <div class="item-name">My pool share</div>
+        </div>
+        <div class="meta-data-item pool-controls">
+          <ButtonCommon
+            :on-click="() => setActionType('add')"
+            custom-class="liquidity-control add"
+            >Add Liquidity</ButtonCommon
+          >
+          <ButtonCommon
+            :on-click="() => setActionType('withdraw')"
+            :disabled="!userPoolLiquidity"
+            custom-class="liquidity-control remove"
+            >Remove liquidity</ButtonCommon
+          >
         </div>
       </div>
-      <div class="screen-panel-body">
-        <div class="pool-meta-data-panel">
-          <div class="meta-data-item">
-            <div class="item-value">120$ M</div>
-            <div class="item-name">Liquidity</div>
-          </div>
-          <div class="meta-data-item">
-            <div class="item-value">3.3$ M</div>
-            <div class="item-name">Volume (24h)</div>
-          </div>
-          <div class="meta-data-item">
-            <div class="item-value">{{ userPoolLiquidity || '---' }}</div>
-            <div class="item-name">My pool share</div>
-          </div>
-          <div class="meta-data-item pool-controls">
-            <ButtonCommon
-              :on-click="() => setActionType('add')"
-              custom-class="liquidity-control add"
-              >Add Liquidity</ButtonCommon
-            >
-            <ButtonCommon
-              :on-click="() => setActionType('withdraw')"
-              :disabled="!userPoolLiquidity"
-              custom-class="liquidity-control remove"
-              >Remove liquidity</ButtonCommon
-            >
-          </div>
-        </div>
-        <div
-          class="liquidity-action-controls"
-          v-if="openLiquidityActionControls"
+      <div class="liquidity-action-controls" v-if="openLiquidityActionControls">
+        <ButtonCommon
+          :on-click="onCloseLiquidityActionControlsClick"
+          custom-class="close-liquidity-action-controls-btn"
+          >Close</ButtonCommon
         >
-          <ButtonCommon
-            :on-click="onCloseLiquidityActionControlsClick"
-            custom-class="close-liquidity-action-controls-btn"
-            >Close</ButtonCommon
-          >
-          <div class="hdx-common-panels-container built-in-panels">
-            <LiquidityControlsPanel :current-pool="currentPool" />
-          </div>
+        <div class="hdx-common-panels-container built-in-panels">
+          <LiquidityControlsPanel :current-pool="currentPool" />
         </div>
       </div>
     </div>

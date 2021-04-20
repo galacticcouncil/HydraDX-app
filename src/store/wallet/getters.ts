@@ -1,4 +1,5 @@
 import { GetterTree } from 'vuex';
+import BigNumber from 'bignumber.js';
 
 export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
   accountSMWallet: ({ account }) => account,
@@ -36,13 +37,15 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
       }
       const balance = tokenInfo?.balance;
       // const balanceFormatted = tokenInfo?.balanceFormatted;
-      const balanceFormatted = tokenInfo?.balance ? tokenInfo?.balance.dividedBy('1e12').toString() : '0';
+      const balanceFormatted = tokenInfo?.balance
+        ? tokenInfo?.balance.dividedBy('1e12').toString()
+        : '0';
 
       return {
         ...assetRecord,
         name,
         shareToken,
-        balance: balance || 0,
+        balance: balance || new BigNumber(0),
         balanceFormatted: balanceFormatted || '0',
       };
     });

@@ -1,5 +1,5 @@
 <template>
-  <div class="hdx-pools-list-container hdx-common-panel-layout">
+  <div class="hdx-pools-list-container">
     <div class="pools-list-controls-container">
       <ButtonCommon
         :on-click="openCreatePoolDialog"
@@ -8,7 +8,7 @@
       >
     </div>
 
-    <div class="hdx-table-container" role="table" aria-label="Destinations">
+    <div class="hdx-table-container col-num-4" role="table">
       <div class="flex-table header" role="rowgroup">
         <div class="flex-row first" role="columnheader">Pool</div>
         <div class="flex-row" role="columnheader">Market cap</div>
@@ -36,25 +36,11 @@
       </template>
       <template v-else>
         <div class="flex-table row" role="rowgroup">
-          <div class="flex-row empty-pools-list-notice" role="cell">
+          <div class="flex-row empty-list-notice" role="cell">
             OH!... NO POOLS ON CHAIN
           </div>
         </div>
       </template>
-
-      <!--      <div class="assetRecord" v-for="(pool, poolId) in poolInfo" :key="poolId">-->
-      <!--        <div class="listItem">-->
-      <!--          <label :class="{ selected: selectedPool === poolId }">-->
-      <!--            <input-->
-      <!--              v-model="selectedPool"-->
-      <!--              type="radio"-->
-      <!--              name="selectedPool"-->
-      <!--              :value="poolId"-->
-      <!--            />-->
-      <!--            {{ pool.poolAssetNames[0] }} | {{ pool.poolAssetNames[1] }}-->
-      <!--          </label>-->
-      <!--        </div>-->
-      <!--      </div>-->
     </div>
   </div>
 </template>

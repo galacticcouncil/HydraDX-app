@@ -109,10 +109,10 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
-      // console.log('asset1 - ', asset1)
-      // console.log('asset2 - ', asset2)
-      // console.log('amount - ', amount.multipliedBy('1e12').toString())
-      // console.log('initialPrice - ', initialPrice.multipliedBy('1e18').toString())
+      console.log('asset1 - ', asset1)
+      console.log('asset2 - ', asset2)
+      console.log('amount - ', amount.multipliedBy('1e12').toString())
+      console.log('initialPrice - ', initialPrice.multipliedBy('1e18').toString())
 
       const resp = await api.hydraDx.tx
         .createPool(

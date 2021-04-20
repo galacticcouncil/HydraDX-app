@@ -1,5 +1,42 @@
 <template>
   <div class="page-wrapper wallet">
+    <PagePanelLayout class="hdx-assets-list-container">
+      <div class="hdx-table-container col-num-5" role="table">
+        <div class="flex-table header" role="rowgroup">
+          <div class="flex-row first" role="columnheader">Token</div>
+          <div class="flex-row" role="columnheader">Total balance</div>
+          <div class="flex-row" role="columnheader">Free balance</div>
+          <div class="flex-row" role="columnheader">Bounded balance</div>
+          <div class="flex-row" role="columnheader">Get token</div>
+        </div>
+
+        <div
+          class="flex-table row align-center"
+          role="rowgroup"
+          v-for="assetRecord in [...assetBalances].sort(
+            (a, b) => Number(b.balance) - Number(a.balance)
+          )"
+          :key="assetRecord.assetId"
+        >
+          <div class="flex-row first" role="cell">
+            {{ assetRecord.name }}
+          </div>
+          <div class="flex-row" role="cell">
+            {{ assetRecord.balanceFormatted }}
+          </div>
+          <div class="flex-row" role="cell">---</div>
+          <div class="flex-row" role="cell">---</div>
+          <div class="flex-row" role="cell">
+            <ButtonCommon
+              :on-click="() => mintAsset(assetRecord.assetId)"
+              custom-class="mt-0 mb-0"
+              >GET</ButtonCommon
+            >
+          </div>
+        </div>
+      </div>
+    </PagePanelLayout>
+
     <!-- CURRENT ACCOUNT INFO -->
     <div class="currentAccount inverted">
       <h3 v-if="accountInfo">SELECTED ACCOUNT</h3>

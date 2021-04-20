@@ -28,3 +28,11 @@
     height: 100%;
   }
 }
+
+.hdx-page-panel-layout {
+  background-color: $hdx-blue;
+  box-shadow: 0.5em 0.5em rgba($hdx-bgr-blue, 0.9);
+  padding: 10px;
+  flex: 1;
+  margin: 25px;
+}

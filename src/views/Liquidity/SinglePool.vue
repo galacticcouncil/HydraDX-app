@@ -1,6 +1,8 @@
 <template>
   <div class="page-wrapper liquidity single-pool">
-    <SinglePoolPanel />
+    <PagePanelLayout class="hdx-single-pool">
+      <SinglePoolPanel />
+    </PagePanelLayout>
   </div>
 </template>
 

@@ -37,12 +37,14 @@ export default defineComponent({
     const amountFormatted = computed(() => {
       if (props.round && props.round.length > 0) {
         return props.amount
-          .dividedBy(props.noExponential ? '1' : '1e12')
-          .toFixed(+props.round);
+          ? props.amount
+              .dividedBy(props.noExponential ? '1' : '1e12')
+              .toFixed(+props.round)
+          : '0';
       }
       return props.amount
-        .dividedBy(props.noExponential ? '1' : '1e12')
-        .toString();
+        ? props.amount.dividedBy(props.noExponential ? '1' : '1e12').toString()
+        : '0';
     });
 
     return {

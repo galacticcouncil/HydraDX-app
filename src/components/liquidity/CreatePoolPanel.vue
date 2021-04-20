@@ -1,5 +1,5 @@
 <template>
-  <div class="hdx-create-pool hdx-common-panel-layout">
+  <div class="hdx-create-pool">
     <div class="hdx-page-screen-panel-container hdx-create-pool-panel">
       <div class="screen-panel-header">
         <PanelBackButton :on-click="closeCreatePoolDialog" />
@@ -15,12 +15,6 @@
 </template>
 
 <script lang="ts">
-type PoolInfo = {
-  poolAssets: string[];
-  poolAssetNames: string[];
-  shareToken: number;
-};
-import { Ref } from '@vue/reactivity';
 import { defineComponent, computed, watch, ref } from 'vue';
 import { useStore } from '@/store';
 import CreatePoolControlsPanel from '@/components/liquidity/CreatePoolControlsPanel.vue';
@@ -33,7 +27,7 @@ export default defineComponent({
     CreatePoolControlsPanel,
   },
   setup() {
-    const { getters, commit, dispatch } = useStore();
+    const { commit } = useStore();
 
     return {
       closeCreatePoolDialog: () =>

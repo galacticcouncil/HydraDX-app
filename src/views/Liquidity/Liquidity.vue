@@ -1,23 +1,23 @@
 <template>
   <div class="page-wrapper liquidity">
-    <PoolsList v-show="!isPoolSelected && !createPoolDialogOpen" />
-<!--    <SinglePoolPanel v-show="isPoolSelected && !createPoolDialogOpen" />-->
-    <CreatePoolPanel v-if="createPoolDialogOpen" />
+    <PagePanelLayout>
+      <PoolsList v-show="!isPoolSelected && !createPoolDialogOpen" />
+      <CreatePoolPanel v-if="createPoolDialogOpen" />
+    </PagePanelLayout>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onBeforeUnmount } from 'vue';
+import { defineComponent, computed, onBeforeUnmount, onMounted } from 'vue';
 import { useStore } from '@/store';
 import PoolsList from '@/components/liquidity/PoolsList.vue';
-import SinglePoolPanel from '@/components/liquidity/SinglePoolPanel.vue';
 import CreatePoolPanel from '@/components/liquidity/CreatePoolPanel.vue';
 
 export default defineComponent({
   name: 'Liquidity',
-  components: { PoolsList, SinglePoolPanel, CreatePoolPanel },
+  components: { PoolsList, CreatePoolPanel },
   setup() {
-    const { getters, commit, dispatch } = useStore();
+    const { getters, commit } = useStore();
 
     onBeforeUnmount(() => {
       commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false);
@@ -44,5 +44,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
