@@ -18,4 +18,6 @@ export const state: PoolState = {
   },
 
   createPoolDialogOpen: false,
+
+  addRemovePoolLiquidityDialogOpen: false,
 };

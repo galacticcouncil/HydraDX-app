@@ -32,9 +32,11 @@ type PoolState = {
   // };
   poolInfo: PoolsInfoList;
   selectedPool: string | null;
-  createPoolDialogOpen: boolean;
 
+  createPoolDialogOpen: boolean;
   newPoolProperties: NewPoolProperties;
+
+  addRemovePoolLiquidityDialogOpen: boolean;
 };
 
 // ================================ GETTERS ====================================
@@ -50,6 +52,7 @@ type PoolGetters = {
   liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
   newPoolPropertiesSMPool(state: PoolState): NewPoolProperties;
   createPoolDialogOpenSMPool(state: PoolState): boolean;
+  addRemovePoolLiquidityDialogOpenSMPool(state: PoolState): boolean;
 };
 
 // =============================== MUTATION ====================================
@@ -57,6 +60,7 @@ type PoolGetters = {
 type PoolMutations = {
   SET_SELECTED_POOL__POOL(state: PoolState, poolId: string | null): void;
   SET_CREATE_POOL_DIALOG_OPEN__POOL(state: PoolState, isOpen: boolean): void;
+  SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL(state: PoolState, isOpen: boolean): void;
   SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolsInfoList): void; //updatePoolInfo
   SET_LIQUIDITY_AMOUNT__POOL(
     state: PoolState,

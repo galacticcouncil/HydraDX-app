@@ -17,6 +17,7 @@
 <script lang="ts">
 import { defineComponent, computed, watch, ref } from 'vue';
 import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import CreatePoolControlsPanel from '@/components/liquidity/CreatePoolControlsPanel.vue';
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
 
@@ -28,10 +29,10 @@ export default defineComponent({
   },
   setup() {
     const { commit } = useStore();
+    const router = useRouter();
 
     return {
-      closeCreatePoolDialog: () =>
-        commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false),
+      closeCreatePoolDialog: () => router.push(router.currentRoute.value.path),
     };
   },
 });

@@ -51,6 +51,7 @@ import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useRouter } from 'vue-router';
+import { POOL_CREAT_NEW_POOL_SECTION_PATH } from '@/variables/constants';
 
 export default defineComponent({
   name: 'PoolsList',
@@ -64,39 +65,6 @@ export default defineComponent({
     const liquidityProperties = computed(
       () => getters.liquidityPropertiesSMPool
     );
-
-    // watch(
-    //   () => getters.poolInfoSMPool,
-    //   async newVal => {
-    //     console.log('poolInfo - ', newVal); //shareToken
-    //     if (!newVal) return;
-    //     const firstPoolId = Object.keys(newVal)[1];
-    //     const poolAmount = await getTokenAmount(
-    //       firstPoolId.toString(),
-    //       //@ts-ignore
-    //       '0'
-    //     );
-    //     console.log('poolAmount- ', poolAmount)
-    //   }
-    // );
-
-    // const selectedPool = computed({
-    //   get: () => getters.selectedPoolSMPool,
-    //   set: poolId => {
-    //     const newPoolId = poolId as string;
-    //     const asset1 = poolInfo.value[newPoolId].poolAssets[0];
-    //     const asset2 = poolInfo.value[newPoolId].poolAssets[1];
-    //
-    //     commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-    //       actionType: liquidityProperties.value.actionType,
-    //       asset1,
-    //       asset2,
-    //     });
-    //     dispatch('getSpotPriceSMTrade');
-    //     dispatch('changeSelectedPoolSMPool', poolId);
-    //   },
-    // });
-
     const onPoolClick = (poolId: string) => {
       const newPoolId = poolId as string;
       const asset1 = poolInfo.value[newPoolId].poolAssets[0];
@@ -112,16 +80,6 @@ export default defineComponent({
       router.push(`/liquidity/${poolId}`);
     };
 
-    // onBeforeRouteLeave((to, from, next) => {
-    //   commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-    //     actionType: 'add',
-    //     asset1: null,
-    //     asset2: null,
-    //   });
-    //   dispatch('changeSelectedPoolSMPool', null);
-    //   next();
-    // });
-
     const getUserPoolLiquidity = (poolToken: number) => {
       return walletAssetBalances.value[poolToken].balance
         ? +walletAssetBalances.value[poolToken].balance
@@ -136,7 +94,9 @@ export default defineComponent({
       getUserPoolLiquidity,
       onPoolClick,
       openCreatePoolDialog: () =>
-        commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', true),
+        router.push(
+          `${router.currentRoute.value.path}#${POOL_CREAT_NEW_POOL_SECTION_PATH}`
+        ),
     };
   },
 });

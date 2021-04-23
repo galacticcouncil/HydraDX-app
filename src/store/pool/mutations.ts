@@ -7,6 +7,9 @@ export const mutations: MutationTree<PoolState> & PoolMutations = {
   SET_CREATE_POOL_DIALOG_OPEN__POOL(state, isOpen) {
     state.createPoolDialogOpen = isOpen;
   },
+  SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL(state, isOpen) {
+    state.addRemovePoolLiquidityDialogOpen = isOpen;
+  },
   SET_LIQUIDITY_AMOUNT__POOL(state, liquidityAmount) {
     state.liquidityAmount = liquidityAmount;
   },

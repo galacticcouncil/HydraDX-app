@@ -34,7 +34,10 @@
           >
         </div>
       </div>
-      <div class="liquidity-action-controls" v-if="openLiquidityActionControls">
+      <div
+        class="liquidity-action-controls"
+        v-if="addRemovePoolLiquidityDialogOpen"
+      >
         <ButtonCommon
           :on-click="onCloseLiquidityActionControlsClick"
           custom-class="close-liquidity-action-controls-btn"
@@ -60,6 +63,7 @@ import { useStore } from '@/store';
 import LiquidityControlsPanel from '@/components/liquidity/LiquidityControlsPanel.vue';
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
 import { useRouter } from 'vue-router';
+import * as constants from '@/variables/constants';
 
 export default defineComponent({
   name: 'SinglePoolPanel',
@@ -68,15 +72,14 @@ export default defineComponent({
     PanelBackButton,
   },
   setup() {
-    const { getters, commit, dispatch } = useStore();
+    const { getters } = useStore();
     const poolName = ref('');
     const currentPool: Ref<PoolInfo | null> = ref(null);
-    const openLiquidityActionControls = ref(false);
     const router = useRouter();
 
     const poolInfo = computed(() => getters.poolInfoSMPool);
-    const liquidityProperties = computed(
-      () => getters.liquidityPropertiesSMPool
+    const addRemovePoolLiquidityDialogOpen = computed(
+      () => getters.addRemovePoolLiquidityDialogOpenSMPool
     );
     const selectedPool = computed(() => getters.selectedPoolSMPool);
 
@@ -115,13 +118,13 @@ export default defineComponent({
     );
 
     const setActionType = (actionType: string) => {
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
-        asset1: liquidityProperties.value.asset1,
-        asset2: liquidityProperties.value.asset2,
-        actionType,
-      });
-      dispatch('getSpotPriceSMTrade');
-      openLiquidityActionControls.value = true;
+      router.push(
+        `${router.currentRoute.value.path}#${
+          actionType === 'add'
+            ? constants.POOL_ADD_LIQUIDITY_SECTION_PATH
+            : constants.POOL_REMOVE_LIQUIDITY_SECTION_PATH
+        }`
+      );
     };
 
     onMounted(() => {
@@ -137,22 +140,21 @@ export default defineComponent({
     });
 
     const onBackClick = () => {
-      openLiquidityActionControls.value = false;
       router.push('/liquidity');
     };
 
     const onCloseLiquidityActionControlsClick = () => {
-      openLiquidityActionControls.value = false;
+      router.push(`${router.currentRoute.value.path}`);
     };
 
     return {
       poolInfo,
       userPoolLiquidity,
+      addRemovePoolLiquidityDialogOpen,
       onBackClick,
       currentPool,
       poolName,
       setActionType,
-      openLiquidityActionControls,
       onCloseLiquidityActionControlsClick,
     };
   },

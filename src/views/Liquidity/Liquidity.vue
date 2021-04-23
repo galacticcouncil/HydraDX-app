@@ -8,19 +8,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onBeforeUnmount, onMounted } from 'vue';
+import {
+  defineComponent,
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  watch,
+} from 'vue';
 import { useStore } from '@/store';
 import PoolsList from '@/components/liquidity/PoolsList.vue';
 import CreatePoolPanel from '@/components/liquidity/CreatePoolPanel.vue';
+import {
+  onRouteHashChangeWatchLiquidityPage,
+  onMountRouteHashCheckLiquidityPage,
+} from '@/services/componentsServices/liquidityPage';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Liquidity',
   components: { PoolsList, CreatePoolPanel },
   setup() {
     const { getters, commit } = useStore();
+    const router = useRouter();
 
     onBeforeUnmount(() => {
       commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false);
+    });
+
+    onMounted(() => {
+      onMountRouteHashCheckLiquidityPage();
     });
 
     const selectedPool = computed(() => getters.selectedPoolSMPool);
@@ -35,6 +51,11 @@ export default defineComponent({
         liquidityProperties.value.asset2 !== null
       );
     });
+
+    watch(
+      () => router.currentRoute.value.hash,
+      onRouteHashChangeWatchLiquidityPage
+    );
 
     return {
       isPoolSelected,
