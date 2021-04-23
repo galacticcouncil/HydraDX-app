@@ -35,6 +35,7 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
           }
         }
       }
+
       const balance = tokenInfo?.balance;
       // const balanceFormatted = tokenInfo?.balanceFormatted;
       const balanceFormatted = tokenInfo?.balance

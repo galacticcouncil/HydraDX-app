@@ -1,0 +1,54 @@
+.header-accounts-control-panel {
+  position: relative;
+
+
+  .accounts-list-popup-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 450px;
+    background-color: $hdx-light-blue;
+    box-shadow: 0.5em 0.5em $hdx-bgr-blue;
+    padding: 10px;
+    color: $hdx-bgr-blue;
+    @include crt-effect();
+  }
+
+  .accounts-list-popup-header {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 10px;
+  }
+
+  .accounts-list-popup-inner-container {
+
+
+    .account-list-item {
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+      cursor: pointer;
+      text-align: left;
+
+      &.active-acc,
+      &:hover {
+        background-color: $hdx-bgr-blue;
+        color: $hdx-light-blue;
+
+        .account-hash {
+          opacity: 1;
+        }
+      }
+    }
+    .account-name {
+      font-weight: 500;
+    }
+
+    .account-hash {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  }
+}

@@ -30,6 +30,14 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+    medium: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const clickHandler = (e: Event) => {
@@ -38,7 +46,12 @@ export default defineComponent({
     };
     return {
       clickHandler,
-      linkClass: computed(() => `hdx-button-common ${props.customClass}`),
+      linkClass: computed(
+        () =>
+          `hdx-button-common ${props.small ? 'btn-small' : ''} ${props.medium ? 'btn-medium' : ''} ${
+            props.customClass
+          }`
+      ),
     };
   },
 });

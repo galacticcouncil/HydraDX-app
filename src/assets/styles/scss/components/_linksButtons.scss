@@ -86,4 +86,15 @@
   &.full-width {
     width: 100%;
   }
+
+  &.btn-small {
+    font-size: 14px;
+    padding: 0.4em 1em;
+    line-height: 1;
+  }
+  &.btn-medium {
+    font-size: 16px;
+    padding: 0.4em 1em;
+    line-height: 1;
+  }
 }

@@ -2,8 +2,9 @@
   <div class="hdx-pools-list-container">
     <div class="pools-list-controls-container">
       <ButtonCommon
+        medium
         :on-click="openCreatePoolDialog"
-        custom-class="liquidity-page-control create-pool"
+        custom-class="mt-o mb-0 create-pool"
         >Create pool</ButtonCommon
       >
     </div>

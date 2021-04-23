@@ -101,7 +101,9 @@
     }
 
     .header-info-container {
-
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
     .chain-info {
       height: 100%;

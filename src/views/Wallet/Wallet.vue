@@ -1,158 +1,29 @@
 <template>
   <div class="page-wrapper wallet">
-    <PagePanelLayout class="hdx-assets-list-container">
-      <div class="hdx-table-container col-num-5" role="table">
-        <div class="flex-table header" role="rowgroup">
-          <div class="flex-row first" role="columnheader">Token</div>
-          <div class="flex-row" role="columnheader">Total balance</div>
-          <div class="flex-row" role="columnheader">Free balance</div>
-          <div class="flex-row" role="columnheader">Bounded balance</div>
-          <div class="flex-row" role="columnheader">Get token</div>
-        </div>
+    <AssetsDetailsList />
 
-        <div
-          class="flex-table row align-center"
-          role="rowgroup"
-          v-for="assetRecord in [...assetBalances].sort(
-            (a, b) => Number(b.balance) - Number(a.balance)
-          )"
-          :key="assetRecord.assetId"
-        >
-          <div class="flex-row first" role="cell">
-            {{ assetRecord.name }}
-          </div>
-          <div class="flex-row" role="cell">
-            {{ assetRecord.balanceFormatted }}
-          </div>
-          <div class="flex-row" role="cell">---</div>
-          <div class="flex-row" role="cell">---</div>
-          <div class="flex-row" role="cell">
-            <ButtonCommon
-              :on-click="() => mintAsset(assetRecord.assetId)"
-              custom-class="mt-0 mb-0"
-              >GET</ButtonCommon
-            >
-          </div>
-        </div>
-      </div>
-    </PagePanelLayout>
-
-    <!-- CURRENT ACCOUNT INFO -->
-    <div class="currentAccount inverted">
-      <h3 v-if="accountInfo">SELECTED ACCOUNT</h3>
-      <h3 v-if="!accountInfo">PLEASE SELECT ACCOUNT</h3>
-      <div v-if="accountList.length < 1">
-        PLEASE ADD ACCOUNT WITH polkadot{.js}
+    <NoticeMessage error v-if="!extensionInfo.extensionPresent">
+      <p>
+        Please use Chrome or Firefox with respective polkadot{.js}
         <a href="https://github.com/polkadot-js/extension#installation"
-          >EXTENSION</a
+          >extension</a
         >
-      </div>
-      <div class="accountRecord" v-if="accountInfo">
-        <div class="accountName">{{ accountInfo.name }}:</div>
-        <div class="accountHash">
-          {{ accountInfo.address }}
-        </div>
-      </div>
-    </div>
-
-    <!-- MENU -->
-    <div class="menu">
-      <label :class="{ selected: screenState === 'select' }">
-        <input
-          @change.prevent="() => onWalletScreenChange('select')"
-          type="radio"
-          name="screenState"
-          value="select"
-        />{{ accountInfo ? 'CHANGE ACCOUNT' : 'SELECT ACCOUNT' }}</label
-      >
-      <label :class="{ selected: screenState === 'tokens' }">
-        <input
-          @change.prevent="() => onWalletScreenChange('tokens')"
-          type="radio"
-          name="screenState"
-          value="tokens"
-        />TOKENS</label
-      >
-    </div>
-
-    <!-- ACCOUNT LIST -->
-    <div class="accountScreen" v-if="screenState === 'select'">
-      <div class="noAccounts" v-if="accountInfo && accountList.length === 1">
-        NO ACCOUNTS TO CHANGE...
-      </div>
-      <div class="accountList" v-if="accountList.length > 0">
-        <div
-          v-for="accountRecord in accountList.filter(
-            item => item !== currentAccount
-          )"
-          :key="accountRecord.address"
-        >
-          <div class="accountRecord">
-            <label>
-              <input
-                @change.prevent="
-                  () => onChangeAccountClick(accountRecord.address)
-                "
-                type="radio"
-                name="account"
-                :value="accountRecord.address"
-              />
-              <div class="accountName">{{ accountRecord.name }}:</div>
-              <div class="accountHash">{{ accountRecord.address }}</div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <NoticeMessage error v-if="!extensionInfo.extensionPresent">
-        <p>
-          Please use Chrome or Firefox with respective polkadot{.js}
-          <a href="https://github.com/polkadot-js/extension#installation"
-            >extension</a
-          >
-          installed and authorize HACK.HydraDX.io to access your address list.
-        </p>
-        <p>
-          If you rejected access HyrdraDX application to Polkadot.js extension
-          before, but you want allow access now, you can do next steps:
-        </p>
-        <ul>
-          <li>Open Polkadot.js extension</li>
-          <li>Find in Settings "Manage Website Access" option</li>
-          <li>Find in existing list necessary resource and allow access</li>
-          <li>
-            Close/Open HydraDX app page or just make hard reload of the page
-          </li>
-          <li>Enjoy! (~˘▾˘)~</li>
-        </ul>
-      </NoticeMessage>
-    </div>
-
-    <!-- TOKEN SCREEN -->
-    <div class="tokenScreen" v-if="screenState === 'tokens'">
-      <div class="noTokens" v-if="!assetBalances">HUH?... UNHELPFUL ERROR</div>
-      <div class="tokenList" v-if="assetBalances && assetBalances.length">
-        <div class="legend inverted">
-          <div class="name">TOKEN</div>
-          <div class="balance">BALANCE</div>
-          <div class="faceut">GET BALANCE</div>
-        </div>
-        <div
-          class="assetRecord"
-          v-for="assetRecord in [...assetBalances].sort(
-            (a, b) => Number(b.balance) - Number(a.balance)
-          )"
-          :key="assetRecord.assetId"
-        >
-          <div class="name">{{ assetRecord.name }}</div>
-          <div class="balance">{{ assetRecord.balanceFormatted }}</div>
-          <div class="faceut" v-if="!assetRecord.shareToken">
-            <button @click.prevent="mintAsset(assetRecord.assetId)">
-              ++GET++
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+        installed and authorize HACK.HydraDX.io to access your address list.
+      </p>
+      <p>
+        If you rejected access HyrdraDX application to Polkadot.js extension
+        before, but you want allow access now, you can do next steps:
+      </p>
+      <ul>
+        <li>Open Polkadot.js extension</li>
+        <li>Find in Settings "Manage Website Access" option</li>
+        <li>Find in existing list necessary resource and allow access</li>
+        <li>
+          Close/Open HydraDX app page or just make hard reload of the page
+        </li>
+        <li>Enjoy! (~˘▾˘)~</li>
+      </ul>
+    </NoticeMessage>
   </div>
 </template>
 
@@ -161,9 +32,10 @@ import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
 import notifications from '@/variables/notifications';
 import { useToast } from 'vue-toastification';
-
+import AssetsDetailsList from '@/components/wallet/AssetsDetailsList.vue';
 export default defineComponent({
   name: 'Wallet',
+  components: { AssetsDetailsList },
   setup() {
     const { getters, dispatch } = useStore();
     const screenState = ref('tokens');
@@ -171,7 +43,9 @@ export default defineComponent({
 
     onMounted(() => {
       screenState.value = localStorage.getItem('account') ? 'tokens' : 'select';
-      dispatch('initializePolkadotExtensionSMGeneral');
+      setTimeout(() => {
+        dispatch('initializePolkadotExtensionSMGeneral');
+      }, 300);
     });
 
     const mintAsset = (assetId: number) => {
@@ -183,7 +57,7 @@ export default defineComponent({
       }
     };
 
-    const onChangeAccountClick = (accountAddress: string) => {
+    const onChangeAccountClick = async (accountAddress: string) => {
       dispatch('changeAccountSMWallet', accountAddress);
     };
 
@@ -191,10 +65,12 @@ export default defineComponent({
       screenState.value = selectedScreen;
     };
 
+    const assetBalances = computed(() => getters.assetBalancesSMWallet);
+
     return {
       accountList: computed(() => getters.accountListSMWallet),
       accountInfo: computed(() => getters.accountInfoSMWallet),
-      assetBalances: computed(() => getters.assetBalancesSMWallet),
+      assetBalances,
       currentAccount: computed(() => getters.accountSMWallet),
       extensionInfo: computed(() => getters.extensionInfoSMGeneral),
       screenState,

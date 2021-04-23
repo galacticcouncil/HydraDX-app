@@ -99,6 +99,9 @@ export default defineComponent({
     const isInitialAsset2Configured = ref(false);
     const router = useRouter();
     const toast = useToast();
+    const currentAccount = computed(() => getters.accountSMWallet);
+    const extensionInfo = computed(() => getters.extensionInfoSMGeneral);
+
     const asset1 = computed(() => getters.tradePropertiesSMTrade.asset1);
     const asset2 = computed(() => getters.tradePropertiesSMTrade.asset2);
 
@@ -125,7 +128,9 @@ export default defineComponent({
     });
 
     const swap = () => {
-      if (getters.accountSMWallet && getters.extensionInfoSMGeneral) {
+      console.log('currentAccount.value - ', currentAccount.value)
+      console.log('extensionInfo.value - ', extensionInfo.value)
+      if (currentAccount.value && extensionInfo.value.extensionInitialized) {
         dispatch('swapSMTrade');
       } else {
         toast.error(notifications.connectAccountIsRequired);

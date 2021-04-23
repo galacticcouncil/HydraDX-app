@@ -11,13 +11,13 @@
       <div class="header-content-container">
         <nav class="main-navigation">
           <LinkWithStatus to="/trade" customClass="main-navigation-item"
-          >Trade</LinkWithStatus
+            >Trade</LinkWithStatus
           >
           <LinkWithStatus to="/liquidity" customClass="main-navigation-item"
-          >Liquidity</LinkWithStatus
+            >Liquidity</LinkWithStatus
           >
           <LinkWithStatus to="/wallet" customClass="main-navigation-item"
-          >Wallet</LinkWithStatus
+            >Wallet</LinkWithStatus
           >
         </nav>
         <div class="header-info-container">
@@ -26,22 +26,24 @@
             <div v-if="blockInfo.blockHash" class="block-hash">
               hash: {{ blockHashShort }}
             </div>
-            <div v-if="accountInfo">Account: {{ accountInfo.name }}</div>
           </div>
-          <div class="account-details-menu-container"></div>
+          <HeaderAccountsControlPanel />
         </div>
       </div>
     </div>
-
   </header>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
+import HeaderAccountsControlPanel from '@/components/wallet/HeaderAccountsControlPanel.vue';
 
 export default defineComponent({
   name: 'Header',
+  components: {
+    HeaderAccountsControlPanel,
+  },
   setup() {
     const { getters, commit } = useStore();
 
