@@ -23,6 +23,7 @@ import {
   onMountRouteHashCheckLiquidityPage,
 } from '@/services/componentsServices/liquidityPage';
 import { useRouter } from 'vue-router';
+import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComponentsServices';
 
 export default defineComponent({
   name: 'Liquidity',
@@ -36,6 +37,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
+      tryConnectPolkadotDapp();
       onMountRouteHashCheckLiquidityPage();
     });
 

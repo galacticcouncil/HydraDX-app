@@ -39,10 +39,14 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();
-    const balances = await api.hydraDx.query.getAccountBalances(
-      context.state.account
-    );
-    context.commit('SET_ASSET_BALANCES__WALLET', balances);
+    try {
+      const balances = await api.hydraDx.query.getAccountBalances(
+        context.state.account
+      );
+      context.commit('SET_ASSET_BALANCES__WALLET', balances);
+    } catch (e) {
+      console.log(e);
+    }
   },
   async syncAssetListSMWallet({ commit }) {
     const api = Api.getApi();

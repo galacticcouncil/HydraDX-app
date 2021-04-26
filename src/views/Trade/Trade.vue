@@ -87,6 +87,7 @@
 import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
+import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComponentsServices';
 
 import TradesListPanel from '@/components/transactions/TradesListPanel.vue';
 import TradeControlsPanel from '@/components/transactions/TradeControlsPanel.vue';
@@ -174,6 +175,10 @@ export default defineComponent({
         router.push('/wallet');
       }
     };
+
+    onMounted(() => {
+      tryConnectPolkadotDapp();
+    });
 
     return {
       poolInfo: computed(() => getters.poolInfoSMPool),

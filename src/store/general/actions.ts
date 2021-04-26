@@ -5,6 +5,7 @@ import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
 import notificationsVars from '@/variables/notifications';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { LS_PD_DAPP_PREVIOUS_CONNECTION_MARKER } from '@/variables/constants';
 
 import { web3Enable, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 
@@ -40,18 +41,17 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
           dispatch('updateWalletInfoSMWallet', payload);
         }
       );
-
-      // () => {
-      //   //TODO Add error notice
-      //   console.log('error PD extension connect');
-      // }
-
       if (accountSubscription) {
         commit('SET_EXTENSION_PRESENT__GENERAL', true);
       }
 
       commit('SET_GENERAL_LOADING__NOTIFICATION', false);
       commit('SET_EXTENSION_INITIALIZED__GENERAL', true);
+
+      window.localStorage.setItem(
+        LS_PD_DAPP_PREVIOUS_CONNECTION_MARKER,
+        'true'
+      );
     } catch (e) {
       console.log(e);
 
@@ -79,10 +79,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
             'SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION',
             true
           );
-          commit(
-            'SET_GENERAL_LOADING_SPINNER__NOTIFICATION',
-            false
-          );
+          commit('SET_GENERAL_LOADING_SPINNER__NOTIFICATION', false);
         },
         disconnected: () => {
           console.log('on disconnected listener');
@@ -114,7 +111,6 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       // });
 
       const int = apiInstance.createType('FixedU128', '100000000000000');
-      console.log(int.toHuman());
       //
       // // INITIALIZE WALLET
       // commit('SET_EXTENSION_PRESENT__GENERAL', false);
