@@ -25,8 +25,14 @@ type GeneralGetters = {
   currentScreenSMGeneral(state: GeneralState): string;
   actionsSMGeneral(state: GeneralState): string[];
   extensionInfoSMGeneral(
-    state: GeneralState
-  ): { extensionInitialized: boolean; extensionPresent: boolean };
+    state: GeneralState,
+    getters,
+    rootState: MergedState
+  ): {
+    extensionInitialized: boolean;
+    extensionPresent: boolean;
+    accountSelected: boolean;
+  };
   pendingActionSMGeneral(state: GeneralState): boolean;
   apiConnectionValidSMGeneral(state: GeneralState): boolean;
 };

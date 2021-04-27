@@ -15,7 +15,7 @@ const modules: ModuleTree<MergedState> = {
 };
 
 export const store = createStore({
-  plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
+  // plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
   modules,
 });
 

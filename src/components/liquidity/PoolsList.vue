@@ -5,6 +5,7 @@
         medium
         :on-click="openCreatePoolDialog"
         custom-class="mt-o mb-0 create-pool"
+        pd-dapp-required
         >Create pool</ButtonCommon
       >
     </div>

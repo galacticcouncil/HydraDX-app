@@ -24,12 +24,14 @@
           <ButtonCommon
             :on-click="() => setActionType('add')"
             custom-class="liquidity-control add"
+            pd-dapp-required
             >Add Liquidity</ButtonCommon
           >
           <ButtonCommon
             :on-click="() => setActionType('withdraw')"
             :disabled="!userPoolLiquidity"
             custom-class="liquidity-control remove"
+            pd-dapp-required
             >Remove liquidity</ButtonCommon
           >
         </div>

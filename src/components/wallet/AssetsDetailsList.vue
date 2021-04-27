@@ -28,6 +28,7 @@
             small
             :on-click="() => mintAsset(assetRecord.assetId)"
             custom-class="mt-0 mb-0"
+            pd-dapp-required
             >GET</ButtonCommon
           >
         </div>

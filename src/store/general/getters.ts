@@ -16,10 +16,15 @@ export const getters: GetterTree<GeneralState, MergedState> & GeneralGetters = {
   currentScreenSMGeneral: state => {
     return state.currentScreen;
   },
-  extensionInfoSMGeneral: ({ extensionInitialized, extensionPresent }) => {
+  extensionInfoSMGeneral: (
+    { extensionInitialized, extensionPresent },
+    getters,
+    rootState
+  ) => {
     return {
       extensionInitialized,
       extensionPresent,
+      accountSelected: !!rootState.wallet.account,
     };
   },
   actionsSMGeneral: state => {
