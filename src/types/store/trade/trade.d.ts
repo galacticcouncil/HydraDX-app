@@ -102,8 +102,8 @@ type TradeActions = {
     context: TradeActionAugments,
     tradeProperties: TradeProperties
   ): void;
-  getSpotPriceSMTrade(context: TradeActionAugments): void;
-  getSellPriceSMTrade(context: TradeActionAugments): void;
+  getSpotPriceSMTrade(context: TradeActionAugments): Promice;
+  getSellPriceSMTrade(context: TradeActionAugments): Promice;
   swapSMTrade(context: TradeActionAugments): void;
   updateTransactionsSMTrade(
     context: TradeActionAugments,

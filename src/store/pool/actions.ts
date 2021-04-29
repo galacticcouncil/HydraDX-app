@@ -36,18 +36,30 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
-      api.hydraDx.tx
-        .addLiquidity(
+      try {
+        commit('SET_PENDING_ACTION__GENERAL', true);
+        await api.hydraDx.tx.addLiquidity(
           asset1,
           asset2,
           amount.multipliedBy('1e12'),
-          maxSellPrice
-        )
-        // @ts-ignore
-        .signAndSend(account, { signer }, ({ status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          dispatch('getSpotPriceSMTrade');
-        });
+          maxSellPrice,
+          account,
+          signer
+        );
+
+        dispatch('getSpotPriceSMTrade');
+      } catch (e) {
+        console.log(e);
+      }
+      commit('SET_PENDING_ACTION__GENERAL', false);
+
+      // api.hydraDx.tx
+      //   .addLiquidity(asset1, asset2, amount.multipliedBy('1e12'), maxSellPrice)
+      //   // @ts-ignore
+      //   .signAndSend(account, { signer }, ({ status }) => {
+      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      //     dispatch('getSpotPriceSMTrade');
+      //   });
       //TODO Add error handler and notifications
     }
   },
@@ -72,32 +84,48 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         .div(new BigNumber(100))
         .multipliedBy(percentage); // TODO remove after SDK update
 
-      api.hydraDx.tx
-        .removeLiquidity(
+      try {
+        commit('SET_PENDING_ACTION__GENERAL', true);
+        await api.hydraDx.tx.removeLiquidity(
           asset1,
           asset2,
-          liquidityToRemove.integerValue()
-        )
-        // @ts-ignore
-        .signAndSend(account, { signer }, ({ status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          dispatch('getSpotPriceSMTrade');
-        });
+          liquidityToRemove.integerValue(),
+          account,
+          signer
+        );
+
+        dispatch('getSpotPriceSMTrade');
+      } catch (e) {
+        console.log(e);
+      }
+      commit('SET_PENDING_ACTION__GENERAL', false);
+
+      // api.hydraDx.tx
+      //   .removeLiquidity(asset1, asset2, liquidityToRemove.integerValue())
+      //   // @ts-ignore
+      //   .signAndSend(account, { signer }, ({ status }) => {
+      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      //     dispatch('getSpotPriceSMTrade');
+      //   });
     }
   },
   async syncPoolsSMPool({ commit }) {
     const api = Api.getApi();
     if (!api) return;
 
-    const {
-      tokenTradeMap,
-      shareTokenIds,
-      poolInfo,
-    } = await api.hydraDx.query.getPoolInfo();
+    try {
+      const {
+        tokenTradeMap,
+        shareTokenIds,
+        poolInfo,
+      } = await api.hydraDx.query.getPoolInfo();
 
-    commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
-    commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);
-    commit('SET_POOL_INFO__POOL', poolInfo);
+      commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
+      commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);
+      commit('SET_POOL_INFO__POOL', poolInfo);
+    } catch (e) {
+      console.log(e);
+    }
   },
 
   async createPoolSMPool({ commit, state, rootState }) {
@@ -109,24 +137,26 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
 
-      console.log('asset1 - ', asset1)
-      console.log('asset2 - ', asset2)
-      console.log('amount - ', amount.multipliedBy('1e12').toString())
-      console.log('initialPrice - ', initialPrice.multipliedBy('1e18').toString())
-
-      const resp = await api.hydraDx.tx
-        .createPool(
+      try {
+        commit('SET_PENDING_ACTION__GENERAL', true);
+        const resp = await api.hydraDx.tx.createPool(
           asset1,
           asset2,
           amount.multipliedBy('1e12'),
-          initialPrice.multipliedBy('1e18')
-        )
-        // @ts-ignore
-        .signAndSend(account, { signer }, ({ status }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-        });
+          initialPrice.multipliedBy('1e18'),
+          account,
+          signer
+        );
+        console.log('resp - ', resp);
+      } catch (e) {
+        console.log(e);
+      }
+      commit('SET_PENDING_ACTION__GENERAL', false);
 
-      console.log('resp - ', resp);
+      // @ts-ignore
+      // .signAndSend(account, { signer }, ({ status }) => {
+      //   if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      // });
     }
   },
 };

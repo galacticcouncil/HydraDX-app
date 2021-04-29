@@ -90,7 +90,6 @@ export default defineComponent({
     };
 
     const updateValue = (value: BigNumber) => {
-      console.log('val for update - ', value.toString());
       context.emit('update:modelValue', value);
     };
 

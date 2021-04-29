@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
+import { getSigner } from '@/services/utils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -21,9 +22,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       dispatch('getSpotPriceSMTrade');
     }
   },
-  getSpotPriceSMTrade({ state, rootState, commit }) {
+  async getSpotPriceSMTrade({ state, rootState, commit }) {
     const api = Api.getApi();
-    if (state.polling.spot) clearTimeout(state.polling.spot);
+    // if (state.polling.spot) clearTimeout(state.polling.spot);
 
     if (api) {
       let asset1: string | null = null;
@@ -42,19 +43,26 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       asset1 = asset1 !== null ? asset1.toString() : null;
       asset2 = asset2 !== null ? asset2.toString() : null;
 
-      //TODO remove timeout
-      const timeout = setTimeout(async () => {
+      try {
         const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
-      }, 200);
-      commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // //TODO remove timeout
+      // const timeout = setTimeout(async () => {
+      //   const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
+      //   commit('UPDATE_SPOT_PRICE__TRADE', amount);
+      // }, 200);
+      // commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
     }
   },
-  getSellPriceSMTrade({ state, commit }) {
+  async getSellPriceSMTrade({ state, commit }) {
     const api = Api.getApi();
-    if (state.polling.real) clearTimeout(state.polling.real);
+    // if (state.polling.real) clearTimeout(state.polling.real);
     if (api) {
-      const timeout = setTimeout(async () => {
+      try {
         let { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
 
@@ -69,8 +77,27 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         );
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
-      }, 200);
-      commit('SET_SELL_PRICE_TIMER__TRADE', timeout);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // const timeout = setTimeout(async () => {
+      //   let { asset1, asset2, actionType } = state.tradeProperties;
+      //   const tradeAmount = state.tradeAmount as BigNumber;
+      //
+      //   asset1 = asset1 !== null ? asset1.toString() : null;
+      //   asset2 = asset2 !== null ? asset2.toString() : null;
+      //
+      //   const amount = await api.hydraDx.query.getTradePrice(
+      //     asset1,
+      //     asset2,
+      //     tradeAmount.multipliedBy('1e12').toString(10),
+      //     actionType
+      //   );
+      //
+      //   commit('UPDATE_SELL_PRICE__TRADE', amount);
+      // }, 200);
+      // commit('SET_SELL_PRICE_TIMER__TRADE', timeout);
     }
   },
   async swapSMTrade({ commit, dispatch, state, rootState }) {
@@ -93,25 +120,56 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         type: actionType,
         progress: 0,
       });
+      const signer = await getSigner(account);
 
-      api.hydraDx.tx
-        .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
-        .then(({ events, status }: { events: any; status: any }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          dispatch('updateTransactionsSMTrade', {
-            events,
-            currentIndex,
-            status,
-          });
-          dispatch('getSpotPriceSMTrade');
-          dispatch('getSellPriceSMTrade');
-        })
-        .catch(() => {
-          commit('UPDATE_TRANSACTIONS__TRADE', {
-            index: currentIndex,
-            progress: 5,
-          });
+      try {
+        commit('SET_PENDING_ACTION__GENERAL', true);
+        const swapResp = await api.hydraDx.tx.swap(
+          asset1,
+          asset2,
+          amount.multipliedBy('1e12'),
+          actionType,
+          currentIndex,
+          account,
+          signer
+        );
+
+        console.log('swapResp - ', swapResp);
+
+        dispatch('updateTransactionsSMTrade', {
+          events: swapResp.events,
+          currentIndex,
+          status: swapResp.status,
         });
+        dispatch('getSpotPriceSMTrade');
+        dispatch('getSellPriceSMTrade');
+      } catch (e) {
+        console.log(e);
+        commit('UPDATE_TRANSACTIONS__TRADE', {
+          index: currentIndex,
+          progress: 5,
+        });
+      }
+      commit('SET_PENDING_ACTION__GENERAL', false);
+
+      // api.hydraDx.tx
+      //   .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
+      //   .then(({ events, status }: { events: any; status: any }) => {
+      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+      //     dispatch('updateTransactionsSMTrade', {
+      //       events,
+      //       currentIndex,
+      //       status,
+      //     });
+      //     dispatch('getSpotPriceSMTrade');
+      //     dispatch('getSellPriceSMTrade');
+      //   })
+      //   .catch(() => {
+      //     commit('UPDATE_TRANSACTIONS__TRADE', {
+      //       index: currentIndex,
+      //       progress: 5,
+      //     });
+      //   });
     }
   },
   updateTransactionsSMTrade(
