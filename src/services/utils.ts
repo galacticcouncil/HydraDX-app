@@ -47,5 +47,15 @@ export const calculateSpotAmount = async (
 ): Promise<BigNumber> => {
   const api = Api.getApi();
 
-  return api.hydraDx.query.calculateSpotAmount(asset1, asset2, amount);
+  try {
+    const amountResp = await api.hydraDx.query.calculateSpotAmount(
+      asset1,
+      asset2,
+      amount
+    );
+    return amountResp;
+  } catch (e) {
+    console.log(e);
+    return new BigNumber(0);
+  }
 };
