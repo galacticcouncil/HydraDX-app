@@ -16,6 +16,9 @@
         >
       </div>
     </div>
+    <div class="trade-slippage-select-container">
+      <TradeSlippageOptions />
+    </div>
     <div class="panel-body">
       <template v-if="Object.entries(tokenTradeMap).length">
         <div class="spot-price-container">
@@ -69,6 +72,7 @@ import { UnwrapRef, ComputedRef } from '@vue/reactivity';
 import { computed, defineComponent, onMounted, watch, ref } from 'vue';
 import { useStore } from '@/store';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
+import TradeSlippageOptions from '@/components/trade/TradeSlippageOptions.vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
@@ -88,6 +92,7 @@ export default defineComponent({
   name: 'TradesListPanel',
   components: {
     AssetAmountInput,
+    TradeSlippageOptions,
   },
   setup() {
     const { getters, dispatch } = useStore();

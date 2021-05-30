@@ -23,5 +23,6 @@ export const state: TradeState = {
     asset2: null,
   },
   transactions: {},
+  tradeSlippagePercentage: new BigNumber('0.5'),
   unpairedTransactions: {},
 };

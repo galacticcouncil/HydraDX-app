@@ -19,4 +19,6 @@ export const getters: GetterTree<TradeState, MergedState> & TradeGetters = {
     return allTransactions;
   },
   tradePropertiesSMTrade: ({ tradeProperties }) => tradeProperties,
+  tradeSlippagePercentageSMTrade: ({ tradeSlippagePercentage }) =>
+    tradeSlippagePercentage,
 };

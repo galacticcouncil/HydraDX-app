@@ -33,6 +33,7 @@ type TradeState = {
   tradeProperties: TradeProperties;
   transactions: Transactions;
   unpairedTransactions: Transactions;
+  tradeSlippagePercentage: BigNumber;
 };
 
 // ================================ GETTERS ====================================
@@ -44,6 +45,7 @@ type TradeGetters = {
   sellPriceSMTrade(state: TradeState): AssetAmount;
   transactionListSMTrade(state: TradeState): Transactions;
   tradePropertiesSMTrade(state: TradeState): TradeProperties;
+  tradeSlippagePercentageSMTrade(state: TradeState): BigNumber;
 };
 
 // =============================== MUTATION ====================================
@@ -72,6 +74,10 @@ type TradeMutations = {
   UPDATE_TOKEN_TRADE_MAP__TRADE(
     state: TradeState,
     tokenTradeMap: TokenTradeMap
+  ): void;
+  SET_TRADE_SLIPPAGE_PERCENTAGE__TRADE(
+    state: TradeState,
+    slippage: BigNumber
   ): void;
 };
 

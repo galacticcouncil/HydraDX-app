@@ -86,4 +86,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
   UPDATE_TOKEN_TRADE_MAP__TRADE(state, tokenTradeMap) {
     state.tokenTradeMap = tokenTradeMap;
   },
+  SET_TRADE_SLIPPAGE_PERCENTAGE__TRADE(state, slippage) {
+    state.tradeSlippagePercentage = slippage;
+  },
 };
