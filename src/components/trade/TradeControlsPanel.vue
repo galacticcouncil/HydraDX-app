@@ -128,8 +128,6 @@ export default defineComponent({
     });
 
     const swap = () => {
-      console.log('currentAccount.value - ', currentAccount.value)
-      console.log('extensionInfo.value - ', extensionInfo.value)
       if (currentAccount.value && extensionInfo.value.extensionInitialized) {
         dispatch('swapSMTrade');
       } else {

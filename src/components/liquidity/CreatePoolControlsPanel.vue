@@ -81,6 +81,8 @@
 </template>
 
 <script lang="ts">
+import { useRouter } from "vue-router";
+
 type NewPoolProperties = {
   asset1: string | null;
   asset2: string | null;
@@ -111,6 +113,7 @@ export default defineComponent({
   },
   setup() {
     const { getters, dispatch } = useStore();
+    const router = useRouter();
     // const toast = useToast();
     const isCreatePoolFormValid = ref(false);
 
@@ -268,6 +271,7 @@ export default defineComponent({
 
     const onPoolCreateClick = async () => {
       await dispatch('createPoolSMPool');
+      await router.push(router.currentRoute.value.path);
     };
 
     // const getAssetDetailed = (assetId: string | null): AssetBalance => {

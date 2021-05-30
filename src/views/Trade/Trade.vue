@@ -89,8 +89,8 @@ import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComponentsServices';
 
-import TradesListPanel from '@/components/transactions/TradesListPanel.vue';
-import TradeControlsPanel from '@/components/transactions/TradeControlsPanel.vue';
+import TradesListPanel from '@/components/trade/TradesListPanel.vue';
+import TradeControlsPanel from '@/components/trade/TradeControlsPanel.vue';
 
 import TradeList from '@/components/TradeList.vue';
 import TradeAmount from '@/components/TradeAmount.vue';

@@ -59,3 +59,10 @@ export const calculateSpotAmount = async (
     return new BigNumber(0);
   }
 };
+
+export const getTransactionFeeInitial = (
+  amount: BigNumber = new BigNumber(0)
+): BigNumber => {
+  return amount.multipliedBy(3).div(1000);
+  // return amount.multipliedBy(1000).div(997);
+};

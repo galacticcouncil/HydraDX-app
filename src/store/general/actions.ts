@@ -98,6 +98,10 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
           console.log('on ready listener - ', apiInstance);
           commit('SET_GENERAL_LOADING__NOTIFICATION', false);
         },
+        onTxEvent: (eventData: any) => {
+          console.log('onTxEvent - ', eventData);
+          // commit('UPDATE_TRANSACTIONS__TRADE', eventData);
+        },
       });
 
       console.log('apiInstance - ', apiInstance);
@@ -128,30 +132,42 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       //   console.log(e);
       // }
       //
-      apiInstance.query.system.events((events: any) => {
-        // const eventsMap = events.map(record => {
-        //   // Extract the phase, event and the event types
-        //   const { event, phase } = record;
-        //   const types = event.typeDef;
-        //   //if (event.section === "exchange") {
-        //   // Show what we are busy with
-        //   console.log(
-        //     `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
-        //   );
-        //   console.log(`\t\t${event.meta.documentation.toString()}`);
-        //   // Loop through each of the parameters, displaying the type and data
-        //   // event.data.forEach((data, index) => {
-        //   //   console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
-        //   // });
-        //   //}
-        //   return event;
-        // });
-        console.log('eventsMap', events);
-        dispatch('updateTransactionsSMTrade', {
-          events: events,
-          instanceOwner: 'Global events listener',
-        });
-      });
+      // apiInstance.query.system.events((events: any) => {
+      //   // const eventsMap = events.map(record => {
+      //   //   // Extract the phase, event and the event types
+      //   //   const { event, phase } = record;
+      //   //   const types = event.typeDef;
+      //   //   //if (event.section === "exchange") {
+      //   //   // Show what we are busy with
+      //   //   console.log(
+      //   //     `\t${event.section}:${event.method}:: (phase=${phase.toString()})`
+      //   //   );
+      //   //   console.log(`\t\t${event.meta.documentation.toString()}`);
+      //   //   // Loop through each of the parameters, displaying the type and data
+      //   //   // event.data.forEach((data, index) => {
+      //   //   //   console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+      //   //   // });
+      //   //   //}
+      //   //   return event;
+      //   // });
+      //   // console.log('eventsMap', events);
+      //   dispatch('updateTransactionsSMTrade', {
+      //     events: events,
+      //     instanceOwner: 'Global events listener',
+      //   });
+      // });
+
+      // apiInstance.query.system.events((events: any) => {
+      //   console.log('subscribeToEvents - eventData - ', events);
+      //   apiInstance.hydraDx.tx.processChainEvent({ events }, (eventData: any) =>
+      //     commit('UPDATE_TRANSACTIONS__TRADE', eventData)
+      //   );
+      // });
+
+      // apiInstance.hydraDx.query.subscribeToEvents((eventData: any) => {
+      //   console.log('subscribeToEvents - eventData - ', eventData);
+      //   commit('UPDATE_TRANSACTIONS__TRADE', eventData);
+      // });
 
       await apiInstance.rpc.chain.subscribeNewHeads((header: any) => {
         dispatch('syncAssetBalancesSMWallet');

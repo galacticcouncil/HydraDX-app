@@ -147,6 +147,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
           account,
           signer
         );
+        // TODO Check response data and show nontifictation
         console.log('resp - ', resp);
       } catch (e) {
         console.log(e);
