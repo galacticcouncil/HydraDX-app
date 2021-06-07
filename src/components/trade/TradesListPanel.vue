@@ -33,7 +33,7 @@
                       ? `${txData.totalFeeFinal
                           .div('1e12')
                           .decimalPlaces(6)
-                          .toString()} ${assetList[txData.asset1].name}`
+                          .toString()} ${assetList[txData.asset2].name}`
                       : '---'
                   }}
                 </div>
@@ -46,7 +46,11 @@
                       ? `${txData.match
                           .div('1e12')
                           .decimalPlaces(6)
-                          .toString()} ${assetList[txData.asset1].name}`
+                          .toString()} ${
+                          txData.intentionType === 'BUY'
+                            ? assetList[txData.asset1].name
+                            : assetList[txData.asset2].name
+                        }`
                       : '---'
                   }}
                 </div>
@@ -56,14 +60,14 @@
               <div class="details-item">
                 <div class="title">Slippage:</div>
                 <div class="value">
-                  {{ txData.slippage.toString() }} %
+                  {{ txData.slippagePercentage.toString() }} %
                 </div>
               </div>
               <div class="details-item">
                 <div class="title">Saved:</div>
                 <div class="value">
                   {{ txData.saved.decimalPlaces(6).toString() }}
-                  {{ assetList[txData.asset1].name }}
+                  {{ assetList[txData.asset2].name }}
                 </div>
               </div>
             </div>

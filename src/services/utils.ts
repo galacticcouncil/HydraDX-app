@@ -63,6 +63,22 @@ export const calculateSpotAmount = async (
 export const getTransactionFeeInitial = (
   amount: BigNumber = new BigNumber(0)
 ): BigNumber => {
-  return amount.multipliedBy(3).div(1000);
+  return amount.multipliedBy(2).div(1000);
   // return amount.multipliedBy(1000).div(997);
+};
+
+export const getMinReceivedTradeAmount = (
+  tradeAmount: BigNumber,
+  slippage: BigNumber
+): BigNumber => {
+  const minPercentage = new BigNumber(100).minus(slippage);
+  return tradeAmount.multipliedBy(minPercentage).div(100);
+};
+
+export const getMaxReceivedTradeAmount = (
+  tradeAmount: BigNumber,
+  slippage: BigNumber
+): BigNumber => {
+  const maxPercentage = new BigNumber(100).plus(slippage);
+  return tradeAmount.multipliedBy(maxPercentage).div(100);
 };

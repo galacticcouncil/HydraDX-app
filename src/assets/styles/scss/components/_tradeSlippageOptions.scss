@@ -1,7 +1,16 @@
 .trade-slippage-options-container {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+
+  .trade-slippage-options-title {
+
+  }
+  .trade-slippage-options-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 
   .trade-slippage-item {
     font-weight: 500;

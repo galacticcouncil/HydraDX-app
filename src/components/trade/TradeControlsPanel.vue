@@ -50,6 +50,12 @@
             :amount="sellPrice.amount"
             input-disabled
           />
+          <div class="input-details-container">
+            <div class="input-details-item" v-show="!tradeAmount.isZero()">
+              Minimum received: {{ receivedAmountFormatted }}
+              {{ getAssetName(asset2, asset2List) }}
+            </div>
+          </div>
 
           <ButtonCommon
             :on-click="swap"
@@ -81,6 +87,10 @@ import {
   tradeAmount,
   setTradeAmount,
 } from '@/services/componentsServices/tradaAmount';
+import {
+  getMinReceivedTradeAmount,
+  getMaxReceivedTradeAmount,
+} from '@/services/utils';
 
 type AssetRecord = {
   assetId: number;
@@ -106,9 +116,13 @@ export default defineComponent({
     const toast = useToast();
     const currentAccount = computed(() => getters.accountSMWallet);
     const extensionInfo = computed(() => getters.extensionInfoSMGeneral);
+    const actionType = computed(
+      () => getters.tradePropertiesSMTrade.actionType
+    );
 
     const asset1 = computed(() => getters.tradePropertiesSMTrade.asset1);
     const asset2 = computed(() => getters.tradePropertiesSMTrade.asset2);
+    const sellPrice = computed(() => getters.sellPriceSMTrade);
 
     const asset1List = computed(() => {
       return getters.assetListSMWallet.filter(
@@ -198,8 +212,22 @@ export default defineComponent({
       return selectedAsset.name;
     };
 
+    const receivedAmountFormatted = computed(() => {
+      const amount =
+        actionType.value === 'buy'
+          ? getMaxReceivedTradeAmount(
+              sellPrice.value.amount,
+              getters.tradeSlippagePercentageSMTrade
+            )
+          : getMinReceivedTradeAmount(
+              sellPrice.value.amount,
+              getters.tradeSlippagePercentageSMTrade
+            );
+      return amount.toString();
+    });
+
     return {
-      actionType: computed(() => getters.tradePropertiesSMTrade.actionType),
+      actionType,
       setActionType,
       spotPrice: computed(() => getters.spotPriceSMTrade),
       onAssetChange,
@@ -212,7 +240,8 @@ export default defineComponent({
       assetList: computed(() => getters.assetListSMWallet),
       tokenTradeMap: computed(() => getters.tokenTradeMapSMTrade),
       assetBalances: computed(() => getters.assetBalancesSMWallet),
-      sellPrice: computed(() => getters.sellPriceSMTrade),
+      sellPrice,
+      receivedAmountFormatted,
       getAssetName,
       asset1,
       asset2,

@@ -1,14 +1,18 @@
 <template>
   <div class="trade-slippage-options-container">
-    <div
-      v-for="(option, index) in slippageOptionsList"
-      :key="index"
-      class="trade-slippage-item"
-      @click.prevent="() => onOptionClick(option)"
-      :class="{ selected: slippageValue === option }"
-    >
-      {{ option }}%
+    <div class="trade-slippage-options-title">slippage tolerance</div>
+    <div class="trade-slippage-options-list">
+      <div
+        v-for="(option, index) in slippageOptionsList"
+        :key="index"
+        class="trade-slippage-item"
+        @click.prevent="() => onOptionClick(option)"
+        :class="{ selected: slippageValue === option }"
+      >
+        {{ option }}%
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -27,8 +31,6 @@ export default defineComponent({
     const slippageValue = computed(() =>
       getters.tradeSlippagePercentageSMTrade.toNumber()
     );
-
-    console.log('slippageValue - ', slippageValue.value);
 
     onMounted(() => {
       try {

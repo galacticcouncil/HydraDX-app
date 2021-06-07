@@ -1,11 +1,15 @@
 import { Api } from 'hydradx-js';
 import BigNumber from 'bignumber.js';
-import BN from 'bn.js';
+import { bnToBn } from '@polkadot/util';
 
-import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
-import { getSigner, getTransactionFeeInitial } from '@/services/utils';
+import {
+  getSigner,
+  getTransactionFeeInitial,
+  getMinReceivedTradeAmount,
+  getMaxReceivedTradeAmount,
+} from '@/services/utils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -64,7 +68,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     // if (state.polling.real) clearTimeout(state.polling.real);
     if (api) {
       try {
-        let { asset1, asset2, actionType } = state.tradeProperties;
+        const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
 
         let asset1Local = asset1 !== null ? asset1.toString() : null;
@@ -86,24 +90,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       } catch (e) {
         console.log(e);
       }
-
-      // const timeout = setTimeout(async () => {
-      //   let { asset1, asset2, actionType } = state.tradeProperties;
-      //   const tradeAmount = state.tradeAmount as BigNumber;
-      //
-      //   asset1 = asset1 !== null ? asset1.toString() : null;
-      //   asset2 = asset2 !== null ? asset2.toString() : null;
-      //
-      //   const amount = await api.hydraDx.query.getTradePrice(
-      //     asset1,
-      //     asset2,
-      //     tradeAmount.multipliedBy('1e12').toString(10),
-      //     actionType
-      //   );
-      //
-      //   commit('UPDATE_SELL_PRICE__TRADE', amount);
-      // }, 200);
-      // commit('SET_SELL_PRICE_TIMER__TRADE', timeout);
     }
   },
   async swapSMTrade({ commit, dispatch, state, rootState }) {
@@ -112,67 +98,48 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const amount = state.tradeAmount;
     const actionType = state.tradeProperties.actionType;
     const currentIndex = Math.random();
+    const slippagePercentage = state.tradeSlippagePercentage;
 
     const asset1 = state.tradeProperties.asset1;
     const asset2 = state.tradeProperties.asset2;
 
-    // const asset1 =
-    //   actionType === 'buy'
-    //     ? state.tradeProperties.asset1
-    //     : state.tradeProperties.asset2;
-    // const asset2 =
-    //   actionType === 'buy'
-    //     ? state.tradeProperties.asset2
-    //     : state.tradeProperties.asset1;
-
     if (api && account && amount && asset1 != null && asset2 != null) {
-      // commit('UPDATE_TRANSACTIONS__TRADE', {
-      //   index: currentIndex,
-      //   accountId: account,
-      //   tokenIn: asset1,
-      //   tokenOut: asset2,
-      //   amountIn: amount.toString(),
-      //   expectedOut: state.sellPrice.amountFormatted,
-      //   type: actionType,
-      //   progress: 0,
-      // });
       const signer = await getSigner(account);
-      // const slippage = new BigNumber('100000000000000000');
-      // const slippage = amount.multipliedBy('0.5').div(100).multipliedBy('1e18');
-      const slippagePercentage = '0.5';
-      const minPercentage = new BigNumber(100).minus(
-        new BigNumber(slippagePercentage)
-      );
-      const slippage = state.sellPrice.amount
-        .multipliedBy(minPercentage)
-        .div(100)
-        .multipliedBy('1e12');
+      const slippageAmount =
+        actionType === 'buy'
+          ? getMaxReceivedTradeAmount(
+              state.sellPrice.amount,
+              slippagePercentage
+            )
+          : getMinReceivedTradeAmount(
+              state.sellPrice.amount,
+              slippagePercentage
+            );
+
       const amountBn = amount.multipliedBy('1e12');
       const totalAmountInitial = state.sellPrice.amount;
 
-      console.log('start');
+      console.log('amountBn - ', amountBn.toString());
 
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
-        // const swapResp = await api.hydraDx.tx.swap(
-        //   asset1,
-        //   asset2,
-        //   amount.multipliedBy('1e12'),
-        //   actionType,
-        //   currentIndex,
-        //   account,
-        //   signer
-        // );
 
-        console.log(`Amount for ${actionType} - ${amountBn.toString()}`);
-        console.log('slippage - ', slippage.div('1e12').toString());
-        console.log(
-          'sellPrice - ',
-          state.sellPrice.amount.multipliedBy('1e12').toString()
-        );
-        console.log('minPercentage - ', minPercentage.toString());
-        console.log('asset1 - ', asset1);
-        console.log('asset2 - ', asset2);
+        console.log('swap request data - ', {
+          asset1Id: asset1,
+          asset2Id: asset2,
+          amount: amountBn.toString(),
+          amountBN: bnToBn(amountBn.toString()).toString(),
+          actionType: actionType,
+          account: account,
+          signer: signer,
+          slippage: slippageAmount
+            .multipliedBy('1e12')
+            .integerValue()
+            .toString(),
+          slippageBN: bnToBn(
+            slippageAmount.multipliedBy('1e12').integerValue().toString()
+          ).toString(),
+        });
 
         const swapResp = await api.hydraDx.tx.swap({
           asset1Id: asset1,
@@ -181,23 +148,12 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           actionType: actionType,
           account: account,
           signer: signer,
-          slippage,
+          slippage: slippageAmount.multipliedBy('1e12').integerValue(),
         });
 
         if (swapResp && swapResp.data) {
-          swapResp.data.slippage = slippage.div('1e18');
-        }
-
-        if (swapResp.data.errorDetails) {
-          console.log(
-            'swapResp.data.errorDetails - ',
-            swapResp.data.errorDetails
-          );
-          // const errorMeta = api.registry.findMetaError({
-          //   error: new BN(swapResp.data.errorDetails.module.error),
-          //   index: new BN(swapResp.data.errorDetails.module.index),
-          // });
-          // console.log('errorMeta - ', errorMeta);
+          swapResp.data.slippagePercentage = slippagePercentage;
+          swapResp.data.slippageAmount = slippageAmount;
         }
 
         if (
@@ -205,20 +161,22 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           swapResp.data &&
           swapResp.data.totalAmountFinal !== undefined
         ) {
-          // console.log(
-          //   `${totalAmountInitial.toString()} - ${swapResp.data.totalAmountFinal
-          //     .div('1e12')
-          //     .toString()} = ${totalAmountInitial.minus(
-          //     swapResp.data.totalAmountFinal.div('1e12')
-          //   )}`
-          // );
-          // console.log(
-          //   'feeeee-',
-          //   getTransactionFeeInitial(totalAmountInitial).toString()
-          // );
-          swapResp.data.saved = totalAmountInitial
-            .plus(getTransactionFeeInitial(totalAmountInitial))
-            .minus(swapResp.data.totalAmountFinal.div('1e12'));
+          if (swapResp.data.intentionType === 'BUY') {
+            swapResp.data.saved = slippageAmount.minus(
+              swapResp.data.totalAmountFinal.div('1e12')
+            );
+            swapResp.data.saved = swapResp.data.saved.plus(
+              getTransactionFeeInitial(totalAmountInitial)
+            );
+          } else {
+            swapResp.data.saved = swapResp.data.totalAmountFinal
+              .div('1e12')
+              .minus(slippageAmount);
+
+            swapResp.data.saved = swapResp.data.saved.minus(
+              getTransactionFeeInitial(totalAmountInitial)
+            );
+          }
           swapResp.data.totalAmountInitial = totalAmountInitial;
         }
 
@@ -226,12 +184,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
 
         commit('UPDATE_TRANSACTIONS__TRADE', swapResp); //TODO reimplement action implementation
 
-        // dispatch('updateTransactionsSMTrade', {
-        //   events: swapResp.events,
-        //   currentIndex,
-        //   status: swapResp.status,
-        //   instanceOwner: 'Swap action',
-        // });
         dispatch('getSpotPriceSMTrade');
         dispatch('getSellPriceSMTrade');
       } catch (e) {
@@ -241,27 +193,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           progress: 5,
         });
       }
-      console.log('finish');
       commit('SET_PENDING_ACTION__GENERAL', false);
-
-      // api.hydraDx.tx
-      //   .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
-      //   .then(({ events, status }: { events: any; status: any }) => {
-      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-      //     dispatch('updateTransactionsSMTrade', {
-      //       events,
-      //       currentIndex,
-      //       status,
-      //     });
-      //     dispatch('getSpotPriceSMTrade');
-      //     dispatch('getSellPriceSMTrade');
-      //   })
-      //   .catch(() => {
-      //     commit('UPDATE_TRANSACTIONS__TRADE', {
-      //       index: currentIndex,
-      //       progress: 5,
-      //     });
-      //   });
     }
   },
   updateTransactionsSMTrade({ commit }, transactionData) {
