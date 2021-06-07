@@ -30,8 +30,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
 
     //TODO update multiply action -> spotPrice * 1.1
     const maxSellPrice = amount
-      .multipliedBy(spotPrice.amount.multipliedBy(1.05))
-      .multipliedBy('1e12');
+      .multipliedBy(spotPrice.amount.multipliedBy(1.05));
 
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
@@ -41,7 +40,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         await api.hydraDx.tx.addLiquidity(
           asset1,
           asset2,
-          amount.multipliedBy('1e12'),
+          amount,
           maxSellPrice,
           account,
           signer
@@ -142,8 +141,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         const resp = await api.hydraDx.tx.createPool(
           asset1,
           asset2,
-          amount.multipliedBy('1e12'),
-          initialPrice.multipliedBy('1e18'),
+          amount,
+          initialPrice, // has 1e18 format on API side
           account,
           signer
         );

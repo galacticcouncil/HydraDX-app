@@ -82,7 +82,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         const amount = await api.hydraDx.query.getTradePrice(
           asset1Local,
           asset2local,
-          tradeAmount.multipliedBy('1e12').toString(10),
+          tradeAmount,
           actionType
         );
 
@@ -116,7 +116,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
               slippagePercentage
             );
 
-      const amountBn = amount.multipliedBy('1e12');
+      const amountBn = amount;
       const totalAmountInitial = state.sellPrice.amount;
 
       console.log('amountBn - ', amountBn.toString());
@@ -124,22 +124,22 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
 
-        console.log('swap request data - ', {
-          asset1Id: asset1,
-          asset2Id: asset2,
-          amount: amountBn.toString(),
-          amountBN: bnToBn(amountBn.toString()).toString(),
-          actionType: actionType,
-          account: account,
-          signer: signer,
-          slippage: slippageAmount
-            .multipliedBy('1e12')
-            .integerValue()
-            .toString(),
-          slippageBN: bnToBn(
-            slippageAmount.multipliedBy('1e12').integerValue().toString()
-          ).toString(),
-        });
+        // console.log('swap request data - ', {
+        //   asset1Id: asset1,
+        //   asset2Id: asset2,
+        //   amount: amountBn.toString(),
+        //   amountBN: bnToBn(amountBn.toString()).toString(),
+        //   actionType: actionType,
+        //   account: account,
+        //   signer: signer,
+        //   slippage: slippageAmount
+        //     .multipliedBy('1e12')
+        //     .integerValue()
+        //     .toString(),
+        //   slippageBN: bnToBn(
+        //     slippageAmount.multipliedBy('1e12').integerValue().toString()
+        //   ).toString(),
+        // });
 
         const swapResp = await api.hydraDx.tx.swap({
           asset1Id: asset1,
@@ -148,7 +148,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           actionType: actionType,
           account: account,
           signer: signer,
-          slippage: slippageAmount.multipliedBy('1e12').integerValue(),
+          slippage: slippageAmount.integerValue(),
         });
 
         if (swapResp && swapResp.data) {
@@ -163,15 +163,14 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         ) {
           if (swapResp.data.intentionType === 'BUY') {
             swapResp.data.saved = slippageAmount.minus(
-              swapResp.data.totalAmountFinal.div('1e12')
+              swapResp.data.totalAmountFinal
             );
             swapResp.data.saved = swapResp.data.saved.plus(
               getTransactionFeeInitial(totalAmountInitial)
             );
           } else {
-            swapResp.data.saved = swapResp.data.totalAmountFinal
-              .div('1e12')
-              .minus(slippageAmount);
+            swapResp.data.saved =
+              swapResp.data.totalAmountFinal.minus(slippageAmount);
 
             swapResp.data.saved = swapResp.data.saved.minus(
               getTransactionFeeInitial(totalAmountInitial)
