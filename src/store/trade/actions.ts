@@ -119,8 +119,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       const amountBn = amount;
       const totalAmountInitial = state.sellPrice.amount;
 
-      console.log('amountBn - ', amountBn.toString());
-
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
 

@@ -129,6 +129,7 @@ export default defineComponent({
 
     const asset1Detailed = computed(() => {
       if (asset1.value === null) return {} as AssetBalance;
+      console.log('asset1.value - ')
       return (
         assetBalancesList.value.find(
           item => asset1.value !== null && +item.assetId === +asset1.value
@@ -285,8 +286,7 @@ export default defineComponent({
 
       if (
         asset2Detailed.value.balance !== undefined &&
-        poolProps.amount
-          .isLessThan(asset2Detailed.value.balance)
+        poolProps.amount.isLessThan(asset2Detailed.value.balance)
       )
         isAmountValid = true;
 
