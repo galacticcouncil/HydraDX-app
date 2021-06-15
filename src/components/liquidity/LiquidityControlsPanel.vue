@@ -77,10 +77,7 @@ export default defineComponent({
 
     // const poolInfo = computed(() => getters.poolInfoSMPool);
 
-    const actionType = computed(() => {
-      console.log('actionType');
-      return getters.liquidityPropertiesSMPool.actionType;
-    });
+    const actionType = computed(() => getters.liquidityPropertiesSMPool.actionType);
 
     const spotPrice = computed(() => getters.spotPriceSMTrade);
 

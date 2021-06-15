@@ -17,9 +17,9 @@
           >
             <span
               >{{ txData.intentionType }}
-              {{ txData.amount.div('1e12').toString() }}
+              {{ txData.amount.toString() }}
               {{ assetList[txData.asset1].name }} for
-              {{ txData.totalAmountFinal.div('1e12').toString() }}
+              {{ txData.totalAmountFinal.toString() }}
               {{ assetList[txData.asset2].name }}</span
             >
           </div>
@@ -30,10 +30,9 @@
                 <div class="value">
                   {{
                     txData.match
-                      ? `${txData.totalFeeFinal
-                          .div('1e12')
-                          .decimalPlaces(6)
-                          .toString()} ${assetList[txData.asset2].name}`
+                      ? `${txData.totalFeeFinal.decimalPlaces(6).toString()} ${
+                          assetList[txData.asset2].name
+                        }`
                       : '---'
                   }}
                 </div>
@@ -43,10 +42,7 @@
                 <div class="value">
                   {{
                     txData.match
-                      ? `${txData.match
-                          .div('1e12')
-                          .decimalPlaces(6)
-                          .toString()} ${
+                      ? `${txData.match.decimalPlaces(6).toString()} ${
                           txData.intentionType === 'BUY'
                             ? assetList[txData.asset1].name
                             : assetList[txData.asset2].name

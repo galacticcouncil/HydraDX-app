@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router';
 
 type NewPoolProperties = {
   asset1: string | null;
@@ -129,6 +129,7 @@ export default defineComponent({
 
     const asset1Detailed = computed(() => {
       if (asset1.value === null) return {} as AssetBalance;
+      console.log('asset1.value - ')
       return (
         assetBalancesList.value.find(
           item => asset1.value !== null && +item.assetId === +asset1.value
@@ -219,15 +220,11 @@ export default defineComponent({
     const assetAmountAfterTransaction = (asset: string): BigNumber => {
       if (asset === 'asset1') {
         return asset1Detailed.value.balance
-          ? asset1Detailed.value.balance.minus(
-              amount.value.multipliedBy('1e12')
-            )
+          ? asset1Detailed.value.balance.minus(amount.value)
           : new BigNumber(0);
       } else {
         return asset2Detailed.value.balance
-          ? asset2Detailed.value.balance.minus(
-              requiredAsset2Amount.value.multipliedBy('1e12')
-            )
+          ? asset2Detailed.value.balance.minus(requiredAsset2Amount.value)
           : new BigNumber(0);
       }
     };
@@ -289,9 +286,7 @@ export default defineComponent({
 
       if (
         asset2Detailed.value.balance !== undefined &&
-        poolProps.amount
-          .multipliedBy('1e12')
-          .isLessThan(asset2Detailed.value.balance)
+        poolProps.amount.isLessThan(asset2Detailed.value.balance)
       )
         isAmountValid = true;
 

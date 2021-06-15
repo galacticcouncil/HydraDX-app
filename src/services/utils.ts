@@ -22,10 +22,10 @@ const decimalPlaces = 12;
 // };
 
 export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
-  const amount = balance.div(`1e${decimalPlaces}`);
+  // const amount = balance.div(`1e${decimalPlaces}`);
   return {
-    amount,
-    amountFormatted: amount.toString(),
+    amount: balance,
+    amountFormatted: balance.toString(),
   };
 };
 

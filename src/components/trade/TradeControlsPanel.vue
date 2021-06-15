@@ -223,6 +223,7 @@ export default defineComponent({
               sellPrice.value.amount,
               getters.tradeSlippagePercentageSMTrade
             );
+
       return amount.toString();
     });
 

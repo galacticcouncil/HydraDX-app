@@ -26,7 +26,7 @@ export default defineComponent({
 
   setup() {
     const { getters, commit } = useStore();
-    const slippageOptionsList = ref([0.2, 0.5, 1, 1.5, 2]);
+    const slippageOptionsList = ref([0.5, 1, 1.5, 2]);
 
     const slippageValue = computed(() =>
       getters.tradeSlippagePercentageSMTrade.toNumber()

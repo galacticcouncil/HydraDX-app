@@ -83,9 +83,7 @@ export default defineComponent({
 
     const getUserPoolLiquidity = (poolToken: number) => {
       return walletAssetBalances.value[poolToken].balance
-        ? +walletAssetBalances.value[poolToken].balance
-            .dividedBy('1e12')
-            .toFormat()
+        ? +walletAssetBalances.value[poolToken].balanceFormatted
         : null;
     };
 

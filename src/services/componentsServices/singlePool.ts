@@ -18,7 +18,6 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => {
   };
 
   if (!newVal && oldVal.length > 0) {
-    console.log(0);
     commit('SET_LIQUIDITY_PROPERTIES__POOL', liquidityPropsTpl);
     commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', false);
     return;
@@ -26,12 +25,9 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => {
 
   liquidityPropsTpl.asset1 = liquidityProperties.value.asset1;
   liquidityPropsTpl.asset2 = liquidityProperties.value.asset2;
-  console.log(1);
 
   switch (newVal.replace('#', '')) {
     case constants.POOL_ADD_LIQUIDITY_SECTION_PATH:
-      console.log(2);
-      console.log(liquidityPropsTpl);
       commit('SET_LIQUIDITY_PROPERTIES__POOL', {
         ...liquidityPropsTpl,
         actionType: 'add',
@@ -39,8 +35,6 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => {
       commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
       return;
     case constants.POOL_REMOVE_LIQUIDITY_SECTION_PATH:
-      console.log(3);
-      console.log(liquidityPropsTpl);
       commit('SET_LIQUIDITY_PROPERTIES__POOL', {
         ...liquidityPropsTpl,
         actionType: 'withdraw',
@@ -67,8 +61,6 @@ export const onMountRouteHashCheck = () => {
 
   switch (currentRouteHash.replace('#', '')) {
     case constants.POOL_ADD_LIQUIDITY_SECTION_PATH:
-      console.log(2);
-      console.log(liquidityPropsTpl);
       commit('SET_LIQUIDITY_PROPERTIES__POOL', {
         ...liquidityPropsTpl,
         actionType: 'add',
@@ -76,8 +68,6 @@ export const onMountRouteHashCheck = () => {
       commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
       return;
     case constants.POOL_REMOVE_LIQUIDITY_SECTION_PATH:
-      console.log(3);
-      console.log(liquidityPropsTpl);
       commit('SET_LIQUIDITY_PROPERTIES__POOL', {
         ...liquidityPropsTpl,
         actionType: 'withdraw',

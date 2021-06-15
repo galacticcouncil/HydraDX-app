@@ -36,15 +36,9 @@ export default defineComponent({
   setup(props) {
     const amountFormatted = computed(() => {
       if (props.round && props.round.length > 0) {
-        return props.amount
-          ? props.amount
-              .dividedBy(props.noExponential ? '1' : '1e12')
-              .toFixed(+props.round)
-          : '0';
+        return props.amount ? props.amount.toFixed(+props.round) : '0';
       }
-      return props.amount
-        ? props.amount.dividedBy(props.noExponential ? '1' : '1e12').toString()
-        : '0';
+      return props.amount ? props.amount.toString() : '0';
     });
 
     return {

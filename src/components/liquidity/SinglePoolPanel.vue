@@ -94,9 +94,8 @@ export default defineComponent({
         return null;
       }
 
-      return getters.assetBalancesSMWallet[currentPool.value.shareToken].balance
-        .dividedBy('1e12')
-        .toFormat();
+      return getters.assetBalancesSMWallet[currentPool.value.shareToken]
+        .balanceFormatted;
     });
 
     watch(

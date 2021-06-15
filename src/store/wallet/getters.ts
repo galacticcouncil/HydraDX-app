@@ -9,7 +9,6 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
   accountListSMWallet: ({ accountList }) => accountList,
   assetBalancesSMWallet: ({ assetList, assetBalances }, getters, rootState) => {
     if (!assetList) return [];
-
     // TODO: Faster algo
     return assetList.map(assetRecord => {
       const tokenInfo = assetBalances.find(
@@ -39,7 +38,7 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
       const balance = tokenInfo?.balance;
       // const balanceFormatted = tokenInfo?.balanceFormatted;
       const balanceFormatted = tokenInfo?.balance
-        ? tokenInfo?.balance.dividedBy('1e12').toString()
+        ? tokenInfo?.balanceFormatted
         : '0';
 
       return {
