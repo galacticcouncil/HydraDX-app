@@ -115,6 +115,15 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       // });
 
       const int = apiInstance.createType('FixedU128', '100000000000000');
+
+      try {
+        const currentGenesisHash = apiInstance.genesisHash.toHex();
+        commit('SET_GENESIS_HASH__GENERAL', currentGenesisHash);
+      } catch (e) {
+        console.log(e);
+        commit('SET_GENESIS_HASH__GENERAL', null);
+      }
+
       //
       // // INITIALIZE WALLET
       // commit('SET_EXTENSION_PRESENT__GENERAL', false);

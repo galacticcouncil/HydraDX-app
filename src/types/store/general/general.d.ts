@@ -3,6 +3,8 @@
 type GeneralState = {
   blockHash: string | null;
   blockNumber: number;
+  genesisHash: string | null;
+  allowedGenesisHashes: string[];
   currentScreen: string;
   savedScreen: boolean;
   actions: string[];
@@ -41,6 +43,7 @@ type GeneralGetters = {
 
 type GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state: GeneralState, pending: boolean): void;
+  SET_GENESIS_HASH__GENERAL(state: GeneralState, genesisHash: string | null): void;
   SET_API_CONNECTION_VALID__GENERAL(state: GeneralState, status: boolean): void;
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;

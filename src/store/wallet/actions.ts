@@ -10,15 +10,29 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
 
   updateWalletInfoSMWallet(
-    { commit, dispatch, state },
+    { commit, dispatch, state, rootState },
     accountsWithMeta: InjectedAccountWithMeta[]
   ) {
-    const accounts = accountsWithMeta.map(account => {
-      return {
-        address: account.address.toString() || '',
-        name: account.meta.name?.toString() || '',
-      };
-    });
+    const accounts = accountsWithMeta
+      /**
+       * Filter available Polkadot extension accounts by genesis hash to show
+       * only correct HydraDX accounts.
+       */
+      .filter(acc => {
+        return (
+          acc.meta.genesisHash &&
+          (rootState.general.genesisHash === acc.meta.genesisHash ||
+            rootState.general.allowedGenesisHashes.includes(
+              acc.meta.genesisHash
+            ))
+        );
+      })
+      .map(account => {
+        return {
+          address: account.address.toString() || '',
+          name: account.meta.name?.toString() || '',
+        };
+      });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
 
     if (accounts.length) {

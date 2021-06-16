@@ -5,6 +5,9 @@ export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state, pending) {
     state.pendingAction = pending;
   },
+  SET_GENESIS_HASH__GENERAL(state, genesisHash) {
+    state.genesisHash = genesisHash;
+  },
   SET_API_CONNECTION_VALID__GENERAL(state, status) {
     state.apiConnectionValid = status;
   },
