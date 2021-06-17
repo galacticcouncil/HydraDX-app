@@ -52,7 +52,8 @@
           />
           <div class="input-details-container">
             <div class="input-details-item" v-show="!tradeAmount.isZero()">
-              Minimum received: {{ receivedAmountFormatted }}
+              {{ actionType === 'buy' ? 'Maximum' : 'Minimum' }} received:
+              {{ receivedAmountFormatted }}
               {{ getAssetName(asset2, asset2List) }}
             </div>
           </div>

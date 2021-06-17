@@ -29,8 +29,9 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const spotPrice = rootState.trade.spotPrice;
 
     //TODO update multiply action -> spotPrice * 1.1
-    const maxSellPrice = amount
-      .multipliedBy(spotPrice.amount.multipliedBy(1.05));
+    const maxSellPrice = amount.multipliedBy(
+      spotPrice.amount.multipliedBy(1.05)
+    );
 
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
@@ -113,11 +114,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (!api) return;
 
     try {
-      const {
-        tokenTradeMap,
-        shareTokenIds,
-        poolInfo,
-      } = await api.hydraDx.query.getPoolInfo();
+      const { tokenTradeMap, shareTokenIds, poolInfo } =
+        await api.hydraDx.query.getPoolInfo();
 
       commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
       commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);

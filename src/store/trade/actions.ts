@@ -152,12 +152,15 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         if (swapResp && swapResp.data) {
           swapResp.data.slippagePercentage = slippagePercentage;
           swapResp.data.slippageAmount = slippageAmount;
+          swapResp.data.totalAmountInitial = totalAmountInitial;
+          swapResp.data.saved = new BigNumber(0);
         }
 
         if (
           swapResp &&
           swapResp.data &&
-          swapResp.data.totalAmountFinal !== undefined
+          swapResp.data.totalAmountFinal !== undefined &&
+          swapResp.data.errorDetails === undefined
         ) {
           if (swapResp.data.intentionType === 'BUY') {
             swapResp.data.saved = slippageAmount.minus(
@@ -174,7 +177,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
               getTransactionFeeInitial(totalAmountInitial)
             );
           }
-          swapResp.data.totalAmountInitial = totalAmountInitial;
         }
 
         console.log('swapResp - ', swapResp);
