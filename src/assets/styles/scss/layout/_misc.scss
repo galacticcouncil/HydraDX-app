@@ -34,3 +34,22 @@
   background-color: #5eafe1;
   color: #0d106e;
 }
+
+// -----------
+
+.page-wrapper {
+  position: relative;
+  height: 100%;
+  padding-top: 75px;
+  overflow-y: scroll;
+}
+
+.panel-text-label {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+
+  &.spot-price-label {
+    min-height: 27px;
+  }
+}

@@ -2,6 +2,7 @@
   <div class="layout-default" :class="{ 'pending-action': pendingAction }">
     <div class="layout-outer-container">
       <div class="layout-inner-container">
+        <div class="layout-bgr-image"></div>
         <Header />
         <slot />
       </div>

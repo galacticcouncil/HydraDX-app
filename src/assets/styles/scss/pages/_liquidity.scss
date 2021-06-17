@@ -1,0 +1,44 @@
+.page-wrapper.liquidity {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-direction: column;
+  height: auto;
+  max-height: 100%;
+
+  .liquidity-action-controls {
+    flex: 1;
+    position: relative;
+    padding: 40px 20px;
+
+    .close-liquidity-action-controls-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+  }
+
+  .pools-list-controls-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 10px 20px 10px;
+
+    //.liquidity-page-control {
+    //  margin-top: 0;
+    //  margin-bottom: 0;
+    //  font-size: 18px;
+    //}
+  }
+}
+
+.hdx-create-pool {
+  .screen-panel-body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+
+.hdx-liquidity-controls-panel-container {
+  border: 1px solid $hdx-light-blue;
+}

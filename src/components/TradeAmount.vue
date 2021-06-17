@@ -14,11 +14,10 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
-import BalanceInput from './BalanceInput.vue';
 
 export default defineComponent({
   name: 'TradeAmount',
-  components: { BalanceInput },
+  components: {  },
   setup() {
     const { getters, dispatch } = useStore();
 
@@ -26,7 +25,7 @@ export default defineComponent({
       if (getters.tradePropertiesSMTrade.asset1) {
         return {
           units:
-            getters.assetListSMWallet[getters.tradePropertiesSMTrade.asset1]
+            getters.assetListSMWallet[+getters.tradePropertiesSMTrade.asset1]
               .name,
         };
       } else return { units: '' };
@@ -35,6 +34,7 @@ export default defineComponent({
     const tradeAmount = computed({
       get: () => getters.tradeAmountSMTrade,
       set: tradeAmount => {
+        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount)
         dispatch('changeTradeAmountSMTrade', tradeAmount);
       },
     });

@@ -58,6 +58,87 @@
       background-color: #0c36a1;
     }
   }
-
-
 }
+
+
+// ----------------------------------------------
+
+.panel-back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    display: block;
+    width: 25px;
+    height: auto;
+  }
+}
+
+// ----------------------------------------------
+
+.asset-select-with-details-container {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: $hdx-light-blue;
+  border-bottom-color: $hdx-blue;
+  border-right-color: $hdx-blue;
+}
+
+// ----------------------------------------------
+
+.hdx-balance-indicator {
+  display: flex;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  &.align-center {
+    justify-content: center;
+  }
+
+  &.sub-value {
+    opacity: 0.8;
+    font-size: 15px;
+  }
+
+  .label {
+    margin-right: 5px;
+  }
+  .amount {
+
+  }
+}
+
+.hdx-balance-indicators-group-container {
+  padding: 5px;
+  //border: 1px solid $hdx-light-blue;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .hdx-balance-indicator {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// ----------------------------------------------
+
+.input-details-container {
+  display: flex;
+  flex-direction: column;align-items: flex-start;
+  font-size: 13px;
+}
+
+// ----------------------------------------------
+
+

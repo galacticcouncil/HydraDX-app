@@ -1,8 +1,15 @@
 import { Api } from 'hydradx-js';
+import BigNumber from 'bignumber.js';
+import { bnToBn } from '@polkadot/util';
 
-import { formatBalance } from '@polkadot/util';
 import { ActionTree } from 'vuex';
 import router from '@/router';
+import {
+  getSigner,
+  getTransactionFeeInitial,
+  getMinReceivedTradeAmount,
+  getMaxReceivedTradeAmount,
+} from '@/services/utils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -13,123 +20,214 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     commit('SET_TRADE_PROPERTIES__TRADE', tradeProperties);
 
     if (
-      state.tradeProperties.asset1 != null &&
-      state.tradeProperties.asset2 != null
+      state.tradeProperties.asset1 !== null &&
+      state.tradeProperties.asset2 !== null
     ) {
       dispatch('getSellPriceSMTrade');
       dispatch('getSpotPriceSMTrade');
     }
   },
-  getSpotPriceSMTrade({ state, rootState, commit }) {
+  async getSpotPriceSMTrade({ state, rootState, commit }) {
     const api = Api.getApi();
-    if (state.polling.spot) clearTimeout(state.polling.spot);
-    if (api) {
-      let asset1: number | null = null;
-      let asset2: number | null = null;
+    // if (state.polling.spot) clearTimeout(state.polling.spot);
 
-      if (router.currentRoute.value.path === '/trade') {
+    if (api) {
+      let asset1: string | null = null;
+      let asset2: string | null = null;
+
+      if (router.currentRoute.value.path.indexOf('/trade') === 0) {
         asset1 = state.tradeProperties.asset1;
         asset2 = state.tradeProperties.asset2;
-      } else if (router.currentRoute.value.path === '/liquidity') {
+      } else if (router.currentRoute.value.path.indexOf('/liquidity') === 0) {
         asset1 = rootState.pool.liquidityProperties.asset1;
         asset2 = rootState.pool.liquidityProperties.asset2;
       } else {
         return;
       }
 
-      const timeout = setTimeout(async () => {
+      asset1 = asset1 !== null ? asset1.toString() : null;
+      asset2 = asset2 !== null ? asset2.toString() : null;
+
+      try {
         const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
         commit('UPDATE_SPOT_PRICE__TRADE', amount);
-      }, 200);
-      commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
+      } catch (e) {
+        console.log(e);
+      }
+
+      // //TODO remove timeout
+      // const timeout = setTimeout(async () => {
+      //   const amount = await api.hydraDx.query.getSpotPrice(asset1, asset2);
+      //   commit('UPDATE_SPOT_PRICE__TRADE', amount);
+      // }, 200);
+      // commit('SET_SPOT_PRICE_TIMER__TRADE', timeout);
     }
   },
-  getSellPriceSMTrade({ state, commit }) {
+  async getSellPriceSMTrade({ state, commit }) {
     const api = Api.getApi();
-    if (state.polling.real) clearTimeout(state.polling.real);
+    // if (state.polling.real) clearTimeout(state.polling.real);
     if (api) {
-      const timeout = setTimeout(async () => {
+      try {
         const { asset1, asset2, actionType } = state.tradeProperties;
-        const tradeAmount = state.tradeAmount;
-        const amount = await api.hydraDx.query.getSellPrice(
-          asset1,
-          asset2,
+        const tradeAmount = state.tradeAmount as BigNumber;
+
+        let asset1Local = asset1 !== null ? asset1.toString() : null;
+        let asset2local = asset2 !== null ? asset2.toString() : null;
+
+        if (actionType === 'buy') {
+          asset1Local = asset2 !== null ? asset2.toString() : null;
+          asset2local = asset1 !== null ? asset1.toString() : null;
+        }
+
+        const amount = await api.hydraDx.query.getTradePrice(
+          asset1Local,
+          asset2local,
           tradeAmount,
           actionType
         );
 
         commit('UPDATE_SELL_PRICE__TRADE', amount);
-      }, 200);
-      commit('SET_SELL_PRICE_TIMER__TRADE', timeout);
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
   async swapSMTrade({ commit, dispatch, state, rootState }) {
     const api = Api.getApi();
     const account = rootState.wallet.account;
     const amount = state.tradeAmount;
-    const asset1 = state.tradeProperties.asset1;
-    const asset2 = state.tradeProperties.asset2;
     const actionType = state.tradeProperties.actionType;
     const currentIndex = Math.random();
+    const slippagePercentage = state.tradeSlippagePercentage;
+
+    const asset1 = state.tradeProperties.asset1;
+    const asset2 = state.tradeProperties.asset2;
 
     if (api && account && amount && asset1 != null && asset2 != null) {
-      commit('UPDATE_TRANSACTIONS__TRADE', {
-        index: currentIndex,
-        accountId: account,
-        tokenIn: asset1,
-        tokenOut: asset2,
-        amountIn: formatBalance(amount),
-        expectedOut: state.sellPrice.amountFormatted,
-        type: actionType,
-        progress: 0,
-      });
+      const signer = await getSigner(account);
+      const slippageAmount =
+        actionType === 'buy'
+          ? getMaxReceivedTradeAmount(
+              state.sellPrice.amount,
+              slippagePercentage
+            )
+          : getMinReceivedTradeAmount(
+              state.sellPrice.amount,
+              slippagePercentage
+            );
 
-      api.hydraDx?.tx
-        .swapSMTrade(account, asset1, asset2, amount, actionType, currentIndex)
-        .then(({ events, status }: { events: any; status: any }) => {
-          if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-          dispatch('updateTransactionsSMTrade', {
-            events,
-            currentIndex,
-            status,
-          });
-          dispatch('getSpotPriceSMTrade');
-          dispatch('getSellPriceSMTrade');
-        })
-        .catch(() => {
-          commit('UPDATE_TRANSACTIONS__TRADE', {
-            index: currentIndex,
-            progress: 5,
-          });
+      const amountBn = amount;
+      const totalAmountInitial = state.sellPrice.amount;
+
+      try {
+        commit('SET_PENDING_ACTION__GENERAL', true);
+
+        // console.log('swap request data - ', {
+        //   asset1Id: asset1,
+        //   asset2Id: asset2,
+        //   amount: amountBn.toString(),
+        //   amountBN: bnToBn(amountBn.toString()).toString(),
+        //   actionType: actionType,
+        //   account: account,
+        //   signer: signer,
+        //   slippage: slippageAmount
+        //     .multipliedBy('1e12')
+        //     .integerValue()
+        //     .toString(),
+        //   slippageBN: bnToBn(
+        //     slippageAmount.multipliedBy('1e12').integerValue().toString()
+        //   ).toString(),
+        // });
+
+        const swapResp = await api.hydraDx.tx.swap({
+          asset1Id: asset1,
+          asset2Id: asset2,
+          amount: amountBn,
+          actionType: actionType,
+          account: account,
+          signer: signer,
+          slippage: slippageAmount,
         });
+
+        if (swapResp && swapResp.data) {
+          swapResp.data.slippagePercentage = slippagePercentage;
+          swapResp.data.slippageAmount = slippageAmount;
+        }
+
+        if (
+          swapResp &&
+          swapResp.data &&
+          swapResp.data.totalAmountFinal !== undefined
+        ) {
+          if (swapResp.data.intentionType === 'BUY') {
+            swapResp.data.saved = slippageAmount.minus(
+              swapResp.data.totalAmountFinal
+            );
+            swapResp.data.saved = swapResp.data.saved.plus(
+              getTransactionFeeInitial(totalAmountInitial)
+            );
+          } else {
+            swapResp.data.saved =
+              swapResp.data.totalAmountFinal.minus(slippageAmount);
+
+            swapResp.data.saved = swapResp.data.saved.minus(
+              getTransactionFeeInitial(totalAmountInitial)
+            );
+          }
+          swapResp.data.totalAmountInitial = totalAmountInitial;
+        }
+
+        console.log('swapResp - ', swapResp);
+
+        commit('UPDATE_TRANSACTIONS__TRADE', swapResp); //TODO reimplement action implementation
+
+        dispatch('getSpotPriceSMTrade');
+        dispatch('getSellPriceSMTrade');
+      } catch (e) {
+        console.log(e);
+        commit('UPDATE_TRANSACTIONS__TRADE', {
+          index: currentIndex,
+          progress: 5,
+        });
+      }
+      commit('SET_PENDING_ACTION__GENERAL', false);
     }
   },
-  updateTransactionsSMTrade(
-    { commit },
-    { events, currentIndex, status, instanceOwner }
-  ) {
+  updateTransactionsSMTrade({ commit }, transactionData) {
+    const { events, currentIndex, status, instanceOwner } = transactionData;
+
+    console.log('--------------------------------------');
+    console.log('--------------------------------------');
+    console.log('--------------------------------------');
+    console.log('transactionData - ', transactionData);
+
     if (!events) return;
     //TODO: BETTER HANDLING | SPLIT LOGIC
 
-    events.forEach(({ event: { data, method } }) => {
+    events.forEach(eventRecord => {
+      console.log('eventRecord - ', eventRecord);
+      if (!eventRecord.event) {
+        return;
+      }
+
+      const { data, method } = eventRecord.event;
+
       console.log(`=========== ${instanceOwner} ==========`);
       console.log('---- status', status?.toHuman(), method, currentIndex);
 
-      if (method === 'IntentionRegistered') {
-        if (status && status.isInBlock) {
-          const parsedData = data.toJSON();
-          /**
-           * parsedData: <Array> [AccountId, AssetId, AssetId, Balance, IntentionType, IntentionID]
-           *                     [who, asset a, asset b, amount, intention type, intention id]
-           */
-          if (Array.isArray(parsedData) && parsedData.length === 6) {
-            const id = parsedData[5]?.toString();
-            commit('UPDATE_TRANSACTIONS__TRADE', {
-              id: id,
-              index: currentIndex,
-              progress: 2,
-            });
-          }
+      if (method === 'IntentionRegistered' && status && status.isInBlock) {
+        const parsedData = data.toJSON();
+        /**
+         * parsedData: <Array> [AccountId, AssetId, AssetId, Balance, IntentionType, IntentionID]
+         *                     [who, asset a, asset b, amount, intention type, intention id]
+         */
+        if (Array.isArray(parsedData) && parsedData.length === 6) {
+          const id = parsedData[5]?.toString();
+          commit('UPDATE_TRANSACTIONS__TRADE', {
+            id: id,
+            index: currentIndex,
+            progress: 2,
+          });
         }
       }
       if (

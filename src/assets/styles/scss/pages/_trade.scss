@@ -1,0 +1,92 @@
+.hdx-trades-panel-container {
+  //.empty-list-notice {
+  //  height: 100%;
+  //  display: flex;
+  //  justify-content: center;
+  //  align-items: center;
+  //  font-size: 18px;
+  //  text-transform: uppercase;
+  //  font-weight: 600;
+  //}
+
+  .transactions-list-container {
+    padding: 0.5em;
+  }
+
+  .transaction-record-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+    //border: 1px solid $hdx-light-blue;
+
+
+    .record-short-info {
+      text-align: left;
+      padding: 0.5em;
+      cursor: pointer;
+      background-color: $hdx-light-blue;
+      color: $hdx-blue;
+      font-weight: 500;
+    }
+
+    .record-detailed-info {
+      border: 1px solid $hdx-light-blue;
+      padding: 1em;
+      display: flex;
+
+      .details-col {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+
+        &.left {
+          justify-content: flex-start;
+          text-align: left;
+        }
+        &.right {
+          justify-content: flex-end;
+          text-align: right;
+        }
+      };
+      .details-item {
+        margin-bottom: 0.5em;
+        .title {
+          font-size: 13px;
+        }
+        .value {
+
+        }
+      }
+    }
+  }
+}
+
+.hdx-trade-controls-panel-container {
+  .trade-type-controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 0;
+
+    .trade-action-type {
+      margin-right: 10px;
+      width: 130px;
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .spot-price-container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .no-pools-notice {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

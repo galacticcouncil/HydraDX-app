@@ -1,25 +1,4 @@
 @mixin crt-effect() {
-  $ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
-  $ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-  $screen-background: #121010;
-
-  @keyframes flicker {
-    $steps: 20;
-    @for $i from 0 through $steps {
-      #{percentage($i*(1/$steps))} {
-        opacity: random();
-      }
-    }
-  }
-  //background: $screen-background;
-  //width: 800px;
-  //height: 600px;
-  //margin-top: 10px;
-  //position: relative;
-  //overflow: hidden;
-  //border: 2px solid #666;
-
-  // flicker
   &::after {
     content: ' ';
     display: block;
@@ -28,14 +7,13 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: transparentize($screen-background, 0.9);
+    background: rgba(18, 16, 16, 0.1);
     opacity: 0;
     z-index: 2;
     pointer-events: none;
   }
-  // scanlines
+
   &::before {
-    opacity: 0.5;
     content: ' ';
     display: block;
     position: absolute;
@@ -44,14 +22,14 @@
     bottom: 0;
     right: 0;
     background: linear-gradient(
-        transparentize($screen-background, 1) 80%,
-        transparentize(darken($screen-background, 10), 0.75) 80%
+        rgba(228, 206, 206, 0) 50%,
+        rgba(0, 0, 0, 0.25) 50%
       ),
       linear-gradient(
         90deg,
-        transparentize(#ff0000, 0.94),
-        transparentize(#00ff00, 0.98),
-        transparentize(#0000ff, 0.94)
+        rgba(255, 0, 0, 0.06),
+        rgba(0, 255, 0, 0.02),
+        rgba(0, 0, 255, 0.06)
       );
     z-index: 2;
     background-size: 100% 2px, 3px 100%;

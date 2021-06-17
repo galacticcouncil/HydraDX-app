@@ -1,18 +1,100 @@
-.hdx-link-with-status {
+.hdx-link-with-status,
+.hdx-button-with-status {
   display: inline-block;
-  color: $hdx-light-blue;
+  color: rgba($hdx-light-blue, 0.7);
   font-size: 18px;
-  line-height: 1;
+  line-height: 1.2;
   padding: 6px 15px 3px 15px;
-  border: 1px solid transparent;
+
+  border-width: 3px;
+  border-style: outset;
+  text-transform: uppercase;
+  border-color: $hdx-light-blue;
+  border-bottom-color: $hdx-blue;
+  border-right-color: $hdx-blue;
+
+  cursor: pointer;
 
   &:hover {
-    color: $hdx-pink;
-    border: 1px solid $hdx-pink;
+    text-transform: uppercase;
+    border-style: inset;
+    border-color: $hdx-light-blue;
+    border-top-color: $hdx-blue;
+    border-left-color: $hdx-blue;
+    border-width: 3px;
   }
 
   &.active {
     color: $hdx-pink;
-    border: 1px solid $hdx-pink;
+    text-transform: uppercase;
+
+    border-style: inset;
+    border-color: $hdx-light-blue;
+    border-top-color: $hdx-blue;
+    border-left-color: $hdx-blue;
+    border-width: 3px;
+  }
+}
+
+.hdx-button-with-status {
+  padding: 7px 30px;
+}
+
+.hdx-button-common {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border: none;
+  outline: none;
+  padding: 0.4em 1em;
+  cursor: pointer;
+  font-size: 20px;
+  text-transform: uppercase;
+  display: inline-block;
+  background-color: $hdx-light-blue;
+
+  box-shadow: 0.5em 0.5em $hdx-bgr-blue;
+  color: $hdx-bgr-blue;
+
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  transition: transform 150ms, background-color 150ms, box-shadow 150ms;
+
+  &:hover {
+    color: $hdx-light-blue;
+    background-color: $hdx-bgr-blue;
+    box-shadow: 0em 0em $hdx-bgr-blue;
+    transform: translate(6px, 6px);
+
+    transition: transform 150ms, background-color 150ms, box-shadow 150ms;
+  }
+
+  &.disabled,
+  &:disabled {
+    //border: 1px solid $hdx-blue;
+    //background-color: transparent;
+    //color: $hdx-blue;
+    pointer-events: none;
+
+    color: rgba($hdx-bgr-blue, 0.7);
+    background-color: $hdx-light-blue;
+    box-shadow: none;
+    //transform: translate(6px, 6px);
+  }
+
+  &.full-width {
+    width: 100%;
+  }
+
+  &.btn-small {
+    font-size: 14px;
+    padding: 0.4em 1em;
+    line-height: 1;
+  }
+  &.btn-medium {
+    font-size: 16px;
+    padding: 0.4em 1em;
+    line-height: 1;
   }
 }

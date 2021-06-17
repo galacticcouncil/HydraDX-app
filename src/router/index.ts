@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Init from '@/views/Init/Init.vue';
 import Liquidity from '@/views/Liquidity/Liquidity.vue';
+import SinglePool from '@/views/Liquidity/SinglePool.vue';
 import Trade from '@/views/Trade/Trade.vue';
 import Wallet from '@/views/Wallet/Wallet.vue';
+import NotFound from '@/views/Error/NotFound.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,6 +35,21 @@ const routes: Array<RouteRecordRaw> = [
     path: '/liquidity',
     name: 'Liquidity',
     component: Liquidity,
+    meta: {
+      layout: 'LayoutDefault',
+    },
+  },
+  {
+    path: '/liquidity/:id',
+    name: 'SinglePool',
+    component: SinglePool,
+    meta: {
+      layout: 'LayoutDefault',
+    },
+  },
+  {
+    path: '/:catchAll(.*)',
+    component: NotFound,
     meta: {
       layout: 'LayoutDefault',
     },

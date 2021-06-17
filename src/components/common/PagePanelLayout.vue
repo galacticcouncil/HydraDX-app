@@ -1,13 +1,13 @@
 <template>
-  <div class="poolList"></div>
+  <div class="hdx-page-panel-layout">
+    <slot />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'PoolList',
+  name: 'PagePanelLayout',
 });
 </script>
-
-<style scoped></style>

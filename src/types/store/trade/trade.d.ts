@@ -1,19 +1,17 @@
-// type BN = import('bn.js');
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-// import { ActionContext } from 'vuex';
 
 // ================================= STATE =====================================
+// import BigNumber from "bignumber.js";
+
 type AssetAmount = {
-  amount: BN;
-  inputAmount: number;
+  amount: BigNumber;
   amountFormatted: string;
 };
 
 type TokenTradeMap = { [key: number]: number[] };
 
 type TradeProperties = {
-  asset1: number | null;
-  asset2: number | null;
+  asset1: string | null;
+  asset2: string | null;
   actionType: string;
 };
 
@@ -31,10 +29,11 @@ type TradeState = {
   spotPrice: AssetAmount;
   subscriptions: [];
   tokenTradeMap: TokenTradeMap;
-  tradeAmount: BN;
+  tradeAmount: BigNumber;
   tradeProperties: TradeProperties;
   transactions: Transactions;
   unpairedTransactions: Transactions;
+  tradeSlippagePercentage: BigNumber;
 };
 
 // ================================ GETTERS ====================================
@@ -42,10 +41,11 @@ type TradeState = {
 type TradeGetters = {
   spotPriceSMTrade(state: TradeState): AssetAmount;
   tokenTradeMapSMTrade(state: TradeState): TokenTradeMap;
-  tradeAmountSMTrade(state: TradeState): BN;
+  tradeAmountSMTrade(state: TradeState): BigNumber;
   sellPriceSMTrade(state: TradeState): AssetAmount;
   transactionListSMTrade(state: TradeState): Transactions;
   tradePropertiesSMTrade(state: TradeState): TradeProperties;
+  tradeSlippagePercentageSMTrade(state: TradeState): BigNumber;
 };
 
 // =============================== MUTATION ====================================
@@ -60,7 +60,7 @@ type TradeMutations = {
     timer: NodeJS.Timeout | null
   ): void;
   SET_SHARE_TOKEN_IDS__TRADE(state: TradeState, shareTokenIds: number[]): void;
-  SET_TRADE_AMOUNT__TRADE(state: TradeState, tradeAmount: BN): void;
+  SET_TRADE_AMOUNT__TRADE(state: TradeState, tradeAmount: BigNumber): void;
   SET_TRADE_PROPERTIES__TRADE(
     state: TradeState,
     tradeProperties: TradeProperties
@@ -69,11 +69,15 @@ type TradeMutations = {
     state: TradeState,
     transaction: Transactions
   ): void;
-  UPDATE_SELL_PRICE__TRADE(state: TradeState, sellPrice: BN): void;
-  UPDATE_SPOT_PRICE__TRADE(state: TradeState, spotPrice: BN): void;
+  UPDATE_SELL_PRICE__TRADE(state: TradeState, sellPrice: BigNumber): void;
+  UPDATE_SPOT_PRICE__TRADE(state: TradeState, spotPrice: BigNumber): void;
   UPDATE_TOKEN_TRADE_MAP__TRADE(
     state: TradeState,
     tokenTradeMap: TokenTradeMap
+  ): void;
+  SET_TRADE_SLIPPAGE_PERCENTAGE__TRADE(
+    state: TradeState,
+    slippage: BigNumber
   ): void;
 };
 
@@ -99,13 +103,13 @@ type TradeActionAugments = Omit<
 };
 
 type TradeActions = {
-  changeTradeAmountSMTrade(context: TradeActionAugments, tradeAmount: BN): void;
+  changeTradeAmountSMTrade(context: TradeActionAugments, tradeAmount: BigNumber): void;
   changeTradePropertiesSMTrade(
     context: TradeActionAugments,
     tradeProperties: TradeProperties
   ): void;
-  getSpotPriceSMTrade(context: TradeActionAugments): void;
-  getSellPriceSMTrade(context: TradeActionAugments): void;
+  getSpotPriceSMTrade(context: TradeActionAugments): Promice;
+  getSellPriceSMTrade(context: TradeActionAugments): Promice;
   swapSMTrade(context: TradeActionAugments): void;
   updateTransactionsSMTrade(
     context: TradeActionAugments,

@@ -1,34 +1,33 @@
 <template>
-  <div class="balanceInputGroup">
-    <input
-      type="tel"
-      class="balanceInput"
-      :value="formattedValue"
-      @input="onInput($event)"
-      @keypress="onKeyPress($event)"
-    />
-    <select class="range" v-model="compState.range">
-      <option value="1e-15">femto</option>
-      <option value="1e-12">pico</option>
-      <option value="1e-9">nano</option>
-      <option value="1e-6">micro</option>
-      <option value="1e-3">mili</option>
-      <option value="1" selected>{{ options ? options.units : '' }}</option>
-      <option value="1e3">kilo</option>
-      <option value="1e6">mega</option>
-      <option value="1e9">giga</option>
-      <option value="1e12">tera</option>
-      <option value="1e15">peta</option>
-    </select>
-  </div>
+  <!--  <div class="hdx-balance-input-group">-->
+  <input
+    type="tel"
+    class="balance-input"
+    :value="formattedValue"
+    @input="onInput($event)"
+    @keypress="onKeyPress($event)"
+    :disabled="inputDisabled"
+  />
+  <select class="range" v-model="compState.range" :disabled="inputDisabled">
+    <option value="1e-15">femto</option>
+    <option value="1e-12">pico</option>
+    <option value="1e-9">nano</option>
+    <option value="1e-6">micro</option>
+    <option value="1e-3">mili</option>
+    <option value="1" selected>{{ options ? options.units : '' }}</option>
+    <option value="1e3">kilo</option>
+    <option value="1e6">mega</option>
+    <option value="1e9">giga</option>
+    <option value="1e12">tera</option>
+    <option value="1e15">peta</option>
+  </select>
+  <!--  </div>-->
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 
 import BigNumber from 'bignumber.js';
-import * as BN from 'bn.js';
-import { decToBn } from '@/services/utils';
 
 export default defineComponent({
   name: 'BalanceInput',
@@ -36,6 +35,7 @@ export default defineComponent({
     // value: { type: Object, required: true },
     modelValue: { type: Object, required: true },
     options: { type: Object, required: false },
+    inputDisabled: { type: Boolean, required: false },
     // onChange: { type: Function, required: true },
   },
   emits: ['update:modelValue'],
@@ -44,25 +44,20 @@ export default defineComponent({
       range: '1',
     });
 
-    const formatInput = (value: BN, range: string): string => {
+    const formatInput = (value: BigNumber, range: string): string => {
       if (!value) return '';
 
       BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
       const formattedValue = new BigNumber(value.toString(), 10);
-      const decimalFormattedValue = formattedValue
-        .dividedBy(1e12)
-        .dividedBy(range)
-        .toString();
-      return decimalFormattedValue;
+      // return formattedValue.dividedBy(1e12).dividedBy(range).toString();
+      return formattedValue.dividedBy(range).toString();
     };
-    const unformatInput = (value = '0', range: string): BN => {
+    const unformatInput = (value = '0', range: string): BigNumber => {
       BigNumber.config({ EXPONENTIAL_AT: [-30, 30] });
       const unformattedValue = new BigNumber(value, 10);
-      const decimalUnormattedValue = unformattedValue
-        .multipliedBy(1e12)
-        .multipliedBy(range);
-      const bnUnformatted = decToBn(decimalUnormattedValue);
-      return bnUnformatted;
+      return unformattedValue.multipliedBy(range);
+      // return unformattedValue.multipliedBy(1e12).multipliedBy(range);
+      // const bnUnformatted = decToBn(decimalUnormattedValue);
     };
 
     const onKeyPress = ($event: KeyboardEvent) => {
@@ -94,10 +89,15 @@ export default defineComponent({
       updateValue(unformattedValue);
     };
 
-    const updateValue = (value: BN) => {
-      // props.onChange(value);
+    const updateValue = (value: BigNumber) => {
       context.emit('update:modelValue', value);
     };
+
+    onMounted(() => {
+      if (props.options && props.options.range !== undefined) {
+        compState.range = props.options.range;
+      }
+    });
 
     //TODO check functionality
     watch(
@@ -106,14 +106,14 @@ export default defineComponent({
         const currentValue = props.modelValue;
         const value = new BigNumber(compState.range).dividedBy(newRange);
         const rangeFixedValue = value.multipliedBy(currentValue.toString());
-        const bnFixedValue = decToBn(rangeFixedValue);
-        updateValue(bnFixedValue);
+        // const bnFixedValue = decToBn(rangeFixedValue); 1999000.000000000001
+        updateValue(rangeFixedValue);
       }
     );
 
     return {
       formattedValue: computed(() => {
-        return formatInput(props.modelValue as BN, compState.range);
+        return formatInput(props.modelValue as BigNumber, compState.range);
       }),
       compState,
       onKeyPress,
@@ -122,23 +122,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-input,
-select {
-  background-color: transparent;
-  color: #5eafe1;
-  border-width: 1px;
-  font-size: 1em;
-  border-color: #5eafe1;
-  outline: none;
-  vertical-align: bottom;
-}
-.range {
-  width: 35%;
-}
-.balanceInput {
-  width: 65%;
-  text-align: right;
-}
-</style>

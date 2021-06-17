@@ -1,0 +1,111 @@
+.hdx-balance-input-group {
+  //input,
+  //select {
+  //  background-color: transparent;
+  //  color: #5eafe1;
+  //  border-width: 1px;
+  //  font-size: 1em;
+  //  border-color: #5eafe1;
+  //  outline: none;
+  //  vertical-align: bottom;
+  //}
+  //.range {
+  //  width: 35%;
+  //}
+  //.balance-input {
+  //  width: 65%;
+  //  text-align: right;
+  //}
+}
+
+.hdx-common-number-input,
+.hdx-asset-amount-input {
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  .hdx-common-number-input-inner-container,
+  .hdx-asset-amount-input-inner-container {
+    display: flex;
+    flex-direction: row;
+    border-style: inset;
+    border-color: $hdx-light-blue;
+    border-top-color: $hdx-blue;
+    border-left-color: $hdx-blue;
+    border-width: 3px;
+  }
+
+  input,
+  select {
+    background-color: transparent;
+    color: #5eafe1;
+    border-width: 1px;
+    font-size: 18px;
+    outline: none;
+    border-color: transparent;
+    height: 40px;
+
+    option[data-placeholder-option] {
+      opacity: 0.5;
+    }
+  }
+
+  select {
+    font-weight: 600;
+  }
+
+  .balance-input {
+    flex: 1;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .hdx-input-label {
+    text-align: left;
+  }
+
+  .asset-selector {
+    width: 20%;
+  }
+
+  .range {
+    width: 15%;
+    opacity: 0;
+  }
+
+  &.opt-available {
+    .range {
+      opacity: 1;
+    }
+  }
+
+  //select {
+  //  background-color: transparent;
+  //  color: #5eafe1;
+  //  border-width: 1px;
+  //  font-size: 1em;
+  //  border-color: #5eafe1;
+  //  outline: none;
+  //  vertical-align: bottom;
+  //}
+}
+
+.hdx-asset-input {
+  @extend .hdx-asset-amount-input;
+
+  .hdx-asset-input-inner-container {
+    @extend .hdx-asset-amount-input-inner-container;
+  }
+
+  .asset-selector {
+    width: 100%;
+  }
+}
+
+.hdx-amount-input {
+  @extend .hdx-asset-amount-input;
+
+  .hdx-amount-input-inner-container {
+    @extend .hdx-asset-amount-input-inner-container;
+  }
+
+}

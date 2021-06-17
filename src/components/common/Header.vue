@@ -1,44 +1,49 @@
 <template>
-  <div class="main-header">
-    <div class="header-logo-container">
-      <router-link class="logo-link" to="/">
-        <div class="logo"></div>
-        <h1>HACK.HYDRA.DX</h1>
-      </router-link>
-    </div>
+  <header class="main-header">
+    <div class="main-header-inner">
+      <div class="header-logo-container">
+        <router-link class="logo-link" to="/">
+          <div class="logo"></div>
+          <h1>HACK.HYDRA.DX</h1>
+        </router-link>
+      </div>
 
-    <div class="header-content-container">
-      <nav class="main-navigation">
-        <LinkWithStatus to="/trade" customClass="main-navigation-item"
-          >Trade</LinkWithStatus
-        >
-        <LinkWithStatus to="/liquidity" customClass="main-navigation-item"
-          >Liquidity</LinkWithStatus
-        >
-        <LinkWithStatus to="/wallet" customClass="main-navigation-item"
-          >Wallet</LinkWithStatus
-        >
-      </nav>
-      <div class="header-info-container">
-        <div class="chain-info">
-          <div class="block-number">block #{{ blockInfo.blockNumber }}</div>
-          <div v-if="blockInfo.blockHash" class="block-hash">
-            hash: {{ blockHashShort }}
+      <div class="header-content-container">
+        <nav class="main-navigation">
+          <LinkWithStatus to="/trade" customClass="main-navigation-item"
+            >Trade</LinkWithStatus
+          >
+          <LinkWithStatus to="/liquidity" customClass="main-navigation-item"
+            >Liquidity</LinkWithStatus
+          >
+          <LinkWithStatus to="/wallet" customClass="main-navigation-item"
+            >Wallet</LinkWithStatus
+          >
+        </nav>
+        <div class="header-info-container">
+          <div class="chain-info">
+            <div class="block-number">block #{{ blockInfo.blockNumber }}</div>
+            <div v-if="blockInfo.blockHash" class="block-hash">
+              hash: {{ blockHashShort }}
+            </div>
           </div>
-          <div v-if="accountInfo">Account: {{ accountInfo.name }}</div>
+          <HeaderAccountsControlPanel />
         </div>
-        <div class="account-details-menu-container"></div>
       </div>
     </div>
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
+import HeaderAccountsControlPanel from '@/components/wallet/HeaderAccountsControlPanel.vue';
 
 export default defineComponent({
   name: 'Header',
+  components: {
+    HeaderAccountsControlPanel,
+  },
   setup() {
     const { getters, commit } = useStore();
 

@@ -1,32 +1,42 @@
-// type BN = import('bn.js');
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-// import { ActionContext } from 'vuex';
-
 // ================================= STATE =====================================
 
 type PoolInfo = {
-  [key: string]: {
-    poolAssets: number[];
-    poolAssetNames: string[];
-    shareToken: number;
-  };
+  poolAssets: string[];
+  poolAssetNames: string[];
+  shareToken: number;
+};
+
+type PoolsInfoList = {
+  [key: string]: PoolInfo;
 };
 
 type LiquidityProperties = {
-  asset1: number | null;
-  asset2: number | null;
+  asset1: string | null;
+  asset2: string | null;
   actionType: string;
 };
 
+type NewPoolProperties = {
+  asset1: string | null;
+  asset2: string | null;
+  initialPrice: BigNumber;
+  amount: BigNumber;
+};
+
 type PoolState = {
-  liquidityAmount: BN;
+  liquidityAmount: BigNumber;
   liquidityProperties: LiquidityProperties;
   // polling: {
   //   spot: NodeJS.Timeout | null;
   //   real: NodeJS.Timeout | null;
   // };
-  poolInfo: PoolInfo;
+  poolInfo: PoolsInfoList;
   selectedPool: string | null;
+
+  createPoolDialogOpen: boolean;
+  newPoolProperties: NewPoolProperties;
+
+  addRemovePoolLiquidityDialogOpen: boolean;
 };
 
 // ================================ GETTERS ====================================
@@ -36,21 +46,33 @@ type PoolGetters = {
     state: PoolState,
     getters: MergedGetters,
     rootState: MergedState
-  ): PoolInfo;
-  liquidityAmountSMPool(state: PoolState): BN;
+  ): PoolsInfoList;
+  liquidityAmountSMPool(state: PoolState): BigNumber;
   selectedPoolSMPool(state: PoolState): string | null;
   liquidityPropertiesSMPool(state: PoolState): LiquidityProperties;
+  newPoolPropertiesSMPool(state: PoolState): NewPoolProperties;
+  createPoolDialogOpenSMPool(state: PoolState): boolean;
+  addRemovePoolLiquidityDialogOpenSMPool(state: PoolState): boolean;
 };
 
 // =============================== MUTATION ====================================
 
 type PoolMutations = {
   SET_SELECTED_POOL__POOL(state: PoolState, poolId: string | null): void;
-  SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolInfo): void; //updatePoolInfo
-  SET_LIQUIDITY_AMOUNT__POOL(state: PoolState, liquidityAmount: BN): void;
+  SET_CREATE_POOL_DIALOG_OPEN__POOL(state: PoolState, isOpen: boolean): void;
+  SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL(state: PoolState, isOpen: boolean): void;
+  SET_POOL_INFO__POOL(state: PoolState, poolInfo: PoolsInfoList): void; //updatePoolInfo
+  SET_LIQUIDITY_AMOUNT__POOL(
+    state: PoolState,
+    liquidityAmount: BigNumber
+  ): void;
   SET_LIQUIDITY_PROPERTIES__POOL(
     state: PoolState,
     liquidityProperties: LiquidityProperties
+  ): void;
+  SET_NEW_POOL_PROPERTIES__POOL(
+    state: PoolState,
+    liquidityProperties: NewPoolProperties
   ): void;
 };
 
@@ -80,8 +102,17 @@ type PoolActions = {
     context: PoolActionAugments,
     poolId: string | null
   ): void;
+  changeLiquidityAmountSMPool(
+    context: PoolActionAugments,
+    liquidityAmount: BigNumber
+  ): void;
+  changeNewPoolPropertiesSMPool(
+    context: PoolActionAugments,
+    newPoolProperties: NewPoolProperties
+  ): void;
   addLiquiditySMPool(context: PoolActionAugments): void;
   withdrawLiquiditySMPool(context: PoolActionAugments): void;
+  createPoolSMPool(context: PoolActionAugments): void;
   syncPoolsSMPool(context: PoolActionAugments): void;
 };
 

@@ -1,79 +1,85 @@
 <template>
-  <div class="trade">
-    <!-- MENU -->
-    <div class="menu">
-      <label :class="{ selected: actionType === 'buy' }">
-        <input
-          v-model="actionType"
-          type="radio"
-          name="actionType"
-          value="buy"
-        />BUY</label
-      >
-      <label :class="{ selected: actionType === 'sell' }">
-        <input
-          v-model="actionType"
-          type="radio"
-          name="actionType"
-          value="sell"
-        />SELL</label
-      >
+  <div class="page-wrapper trade">
+    <div class="hdx-common-panels-container">
+      <TradesListPanel />
+      <TradeControlsPanel />
     </div>
-
-    <div class="noPools" v-if="!Object.entries(tokenTradeMap).length">
-      AWWW... NO POOLS TO TRADE
-    </div>
-
-    <div class="tradePlatform" v-if="Object.entries(tokenTradeMap).length">
-      <!-- ASSET 1 -->
-      <div class="actionList main">
-        <div class="legend inverted">
-          <div class="name">{{ actionType }} TOKEN</div>
-        </div>
-        <AssetList v-model="asset1" :assetList="asset1List" name="asset1" />
+    <div v-if="false">
+      <!-- MENU -->
+      <div class="menu">
+        <label :class="{ selected: actionType === 'buy' }">
+          <input
+            v-model="actionType"
+            type="radio"
+            name="actionType"
+            value="buy"
+          />BUY</label
+        >
+        <label :class="{ selected: actionType === 'sell' }">
+          <input
+            v-model="actionType"
+            type="radio"
+            name="actionType"
+            value="sell"
+          />SELL</label
+        >
       </div>
 
-      <!-- ASSET 2 -->
-      <div class="actionList secondary">
-        <div class="legend inverted">
-          <div class="name">FOR TOKEN</div>
-        </div>
-        <AssetList
-          v-show="asset1 !== null"
-          v-model="asset2"
-          :assetList="asset2List"
-          name="asset2"
-        />
+      <div class="noPools" v-if="!Object.entries(tokenTradeMap).length">
+        AWWW... NO POOLS TO TRADE
       </div>
 
-      <!-- TRADE PARAMS -->
-      <div class="actionList trade">
-        <div class="legend inverted">
-          <div class="name">AMOUNT</div>
-        </div>
-        <div class="params" v-if="asset2 !== null">
-          <div class="spotPrice">
-            SPOT PRICE: {{ spotPrice.amountFormatted }}
+      <div class="tradePlatform" v-if="Object.entries(tokenTradeMap).length">
+        <!-- ASSET 1 -->
+        <div class="actionList main">
+          <div class="legend inverted">
+            <div class="name">{{ actionType }} TOKEN</div>
           </div>
-          <div class="walletState">
-            <div>
-              {{ assetList[asset1].name }}
-              OWNED:
-              {{ assetBalances[asset1].balanceFormatted }}
-            </div>
-            <div>
-              {{ assetList[asset2].name }}
-              OWNED:
-              {{ assetBalances[asset2].balanceFormatted }}
-            </div>
+          <AssetList v-model="asset1" :assetList="asset1List" name="asset1" />
+        </div>
+
+        <!-- ASSET 2 -->
+        <div class="actionList secondary">
+          <div class="legend inverted">
+            <div class="name">FOR TOKEN</div>
           </div>
-          <TradeAmount />
-          <button @click="swap" class="buyButton">{{ actionType }}</button>
+          <AssetList
+            v-show="asset1 !== null"
+            v-model="asset2"
+            :assetList="asset2List"
+            name="asset2"
+          />
+        </div>
+
+        <!-- TRADE PARAMS -->
+        <div class="actionList trade">
+          <div class="legend inverted">
+            <div class="name">AMOUNT</div>
+          </div>
+          <div class="params" v-if="asset2 !== null">
+            <div class="spotPrice">
+              SPOT PRICE: {{ spotPrice.amountFormatted }}
+            </div>
+            <div class="walletState">
+              <div>
+                {{ assetList[asset1].name }}
+                OWNED:
+                {{ assetBalances[asset1].balanceFormatted }}
+              </div>
+              <div>
+                {{ assetList[asset2].name }}
+                OWNED:
+                {{ assetBalances[asset2].balanceFormatted }}
+              </div>
+            </div>
+            <TradeAmount />
+            <button @click="swap" class="buyButton">{{ actionType }}</button>
+          </div>
         </div>
       </div>
+      <!-- TRADES -->
+      <TradeList />
     </div>
-    <!-- TRADES -->
-    <TradeList />
   </div>
 </template>
 
@@ -81,6 +87,10 @@
 import { defineComponent, computed, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
+import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComponentsServices';
+
+import TradesListPanel from '@/components/trade/TradesListPanel.vue';
+import TradeControlsPanel from '@/components/trade/TradeControlsPanel.vue';
 
 import TradeList from '@/components/TradeList.vue';
 import TradeAmount from '@/components/TradeAmount.vue';
@@ -90,7 +100,13 @@ import { useToast } from 'vue-toastification';
 
 export default defineComponent({
   name: 'Trade',
-  components: { TradeList, TradeAmount, AssetList },
+  components: {
+    TradeList,
+    TradeAmount,
+    AssetList,
+    TradesListPanel,
+    TradeControlsPanel,
+  },
 
   setup() {
     const { getters, dispatch } = useStore();
@@ -143,7 +159,7 @@ export default defineComponent({
         // const asset1 = asset1 as number | null;
         if (asset1.value) {
           return (
-            getters.tokenTradeMapSMTrade[asset1.value].findIndex(
+            getters.tokenTradeMapSMTrade[+asset1.value].findIndex(
               assetId => assetId === element.assetId
             ) >= 0
           );
@@ -159,6 +175,10 @@ export default defineComponent({
         router.push('/wallet');
       }
     };
+
+    onMounted(() => {
+      tryConnectPolkadotDapp();
+    });
 
     return {
       poolInfo: computed(() => getters.poolInfoSMPool),

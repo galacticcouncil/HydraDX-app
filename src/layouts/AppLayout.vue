@@ -26,8 +26,8 @@ export default defineComponent({
 
     onMounted(() => {
       setTimeout(() => {
-        commit('SET_GENERAL_LOADING__GENERAL', true);
-        commit('SET_GENERAL_LOADING_MESSAGES__GENERAL', {
+        commit('SET_GENERAL_LOADING__NOTIFICATION', true);
+        commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
           action: 'add',
           message: notificationsVars.loadingMsgApiConnection,
         });
@@ -36,7 +36,7 @@ export default defineComponent({
     });
 
     return {
-      generalLoading: computed(() => getters.generalLoadingSMGeneral),
+      generalLoading: computed(() => getters.generalLoadingSMNotification),
     };
   },
   data() {

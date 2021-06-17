@@ -10,15 +10,29 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
 
   updateWalletInfoSMWallet(
-    { commit, dispatch, state },
+    { commit, dispatch, state, rootState },
     accountsWithMeta: InjectedAccountWithMeta[]
   ) {
-    const accounts = accountsWithMeta.map(account => {
-      return {
-        address: account.address.toString() || '',
-        name: account.meta.name?.toString() || '',
-      };
-    });
+    const accounts = accountsWithMeta
+      /**
+       * Filter available Polkadot extension accounts by genesis hash to show
+       * only correct HydraDX accounts.
+       */
+      .filter(acc => {
+        return (
+          acc.meta.genesisHash &&
+          (rootState.general.genesisHash === acc.meta.genesisHash ||
+            rootState.general.allowedGenesisHashes.includes(
+              acc.meta.genesisHash
+            ))
+        );
+      })
+      .map(account => {
+        return {
+          address: account.address.toString() || '',
+          name: account.meta.name?.toString() || '',
+        };
+      });
     commit('SET_EXTENSION_PRESENT__GENERAL', true);
 
     if (accounts.length) {
@@ -39,26 +53,43 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
   },
   async syncAssetBalancesSMWallet(context) {
     const api = Api.getApi();
-    const balances = await api.hydraDx.query.getAccountBalances(
-      context.state.account
-    );
-    context.commit('SET_ASSET_BALANCES__WALLET', balances);
+    try {
+      const balances = await api.hydraDx.query.getAccountBalances(
+        context.state.account
+      );
+      context.commit('SET_ASSET_BALANCES__WALLET', balances);
+    } catch (e) {
+      console.log(e);
+    }
   },
-  async syncAssetListSMWallet(context) {
+  async syncAssetListSMWallet({ commit }) {
     const api = Api.getApi();
-    const assetList = await api.hydraDx.query.getAssetList();
-    context.commit('SET_ASSET_LIST__WALLET', assetList);
+    try {
+      const assetList = await api.hydraDx.query.getAssetList();
+      commit('SET_ASSET_LIST__WALLET', assetList);
+    } catch (e) {
+      console.log(e);
+    }
   },
   async mintAssetSMWallet({ commit, rootState }, assetId) {
     const account = rootState.wallet.account || '';
     const api = Api.getApi();
     const signer = await getSigner(account);
 
-    api.tx.faucet
-      .mint()
-      // @ts-ignore
-      .signAndSend(account, { signer }, ({ events, status }) => {
-        if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-      });
+    try {
+      commit('SET_PENDING_ACTION__GENERAL', true);
+      const mintResp = await api.hydraDx.tx.mintAsset(account, signer);
+      console.log('mintResp - ', mintResp);
+    } catch (e) {
+      console.log('mintAssetSMWallet - ', e);
+    }
+    commit('SET_PENDING_ACTION__GENERAL', false);
+
+    // api.tx.faucet
+    //   .mint()
+    //   // @ts-ignore
+    //   .signAndSend(account, { signer }, ({ events, status }) => {
+    //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
+    //   });
   },
 };

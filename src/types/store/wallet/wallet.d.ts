@@ -1,6 +1,3 @@
-// type BN = import('bn.js');
-// import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-// import { ActionContext } from 'vuex';
 
 // ================================= STATE =====================================
 
@@ -10,7 +7,7 @@ type AccountInfo = {
 };
 type AssetBalance = {
   assetId: number;
-  balance: BN;
+  balance: BigNumber;
   balanceFormatted: string;
   name?: string;
   shareToken?: boolean;

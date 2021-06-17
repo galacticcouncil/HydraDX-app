@@ -1,4 +1,5 @@
 import { GetterTree } from 'vuex';
+import BigNumber from 'bignumber.js';
 
 export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
   accountSMWallet: ({ account }) => account,
@@ -8,7 +9,6 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
   accountListSMWallet: ({ accountList }) => accountList,
   assetBalancesSMWallet: ({ assetList, assetBalances }, getters, rootState) => {
     if (!assetList) return [];
-
     // TODO: Faster algo
     return assetList.map(assetRecord => {
       const tokenInfo = assetBalances.find(
@@ -26,7 +26,7 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
             const pool = rootState.pool.poolInfo[key];
             if (pool.shareToken === assetRecord.assetId) {
               name = pool.poolAssets
-                .map(asset => assetList.find(x => x && x.assetId == asset))
+                .map(asset => assetList.find(x => x && x.assetId == +asset))
                 .map(x => x?.name)
                 .join(' | ');
               break;
@@ -34,14 +34,18 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
           }
         }
       }
+
       const balance = tokenInfo?.balance;
-      const balanceFormatted = tokenInfo?.balanceFormatted;
+      // const balanceFormatted = tokenInfo?.balanceFormatted;
+      const balanceFormatted = tokenInfo?.balance
+        ? tokenInfo?.balanceFormatted
+        : '0';
 
       return {
         ...assetRecord,
         name,
         shareToken,
-        balance: balance || 0,
+        balance: balance || new BigNumber(0),
         balanceFormatted: balanceFormatted || '0',
       };
     });
