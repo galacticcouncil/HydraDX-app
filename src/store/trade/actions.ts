@@ -146,7 +146,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           actionType: actionType,
           account: account,
           signer: signer,
-          slippage: slippageAmount.integerValue(),
+          slippage: slippageAmount,
         });
 
         if (swapResp && swapResp.data) {
