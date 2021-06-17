@@ -11,6 +11,8 @@ import {
   getMaxReceivedTradeAmount,
 } from '@/services/utils';
 
+import { handleTradeTransactionError } from '@/services/errorsUtils';
+
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
     commit('SET_TRADE_AMOUNT__TRADE', tradeAmount);
@@ -122,22 +124,22 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
 
-        // console.log('swap request data - ', {
-        //   asset1Id: asset1,
-        //   asset2Id: asset2,
-        //   amount: amountBn.toString(),
-        //   amountBN: bnToBn(amountBn.toString()).toString(),
-        //   actionType: actionType,
-        //   account: account,
-        //   signer: signer,
-        //   slippage: slippageAmount
-        //     .multipliedBy('1e12')
-        //     .integerValue()
-        //     .toString(),
-        //   slippageBN: bnToBn(
-        //     slippageAmount.multipliedBy('1e12').integerValue().toString()
-        //   ).toString(),
-        // });
+        console.log('swap request data - ', {
+          asset1Id: asset1,
+          asset2Id: asset2,
+          amount: amountBn.toString(),
+          amountBN: bnToBn(amountBn.toString()).toString(),
+          actionType: actionType,
+          account: account,
+          signer: signer,
+          slippage: slippageAmount
+            .multipliedBy('1e12')
+            .integerValue()
+            .toString(),
+          slippageBN: bnToBn(
+            slippageAmount.multipliedBy('1e12').integerValue().toString()
+          ).toString(),
+        });
 
         const swapResp = await api.hydraDx.tx.swap({
           asset1Id: asset1,
@@ -185,12 +187,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
 
         dispatch('getSpotPriceSMTrade');
         dispatch('getSellPriceSMTrade');
-      } catch (e) {
-        console.log(e);
-        commit('UPDATE_TRANSACTIONS__TRADE', {
-          index: currentIndex,
-          progress: 5,
-        });
+      } catch (error) {
+        console.log(error);
+        handleTradeTransactionError(error);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
     }
