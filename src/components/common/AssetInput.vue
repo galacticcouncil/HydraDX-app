@@ -8,7 +8,9 @@
         :disabled="singleAsset"
       >
         <template v-if="!singleAsset">
-          <option data-placeholder-option :value="null" disabled>{{ placeholder }}</option>
+          <option data-placeholder-option :value="null" disabled>
+            {{ placeholder }}
+          </option>
           <option
             v-for="(asset, index) in assetsList"
             :key="index"

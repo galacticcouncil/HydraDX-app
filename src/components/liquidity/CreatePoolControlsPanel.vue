@@ -128,40 +128,27 @@ export default defineComponent({
     const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
 
     const asset1Detailed = computed(() => {
+      // eslint-disable-next-line no-undef
       if (asset1.value === null) return {} as AssetBalance;
-      console.log('asset1.value - ')
+      console.log('asset1.value - ');
       return (
         assetBalancesList.value.find(
           item => asset1.value !== null && +item.assetId === +asset1.value
+          // eslint-disable-next-line no-undef
         ) || ({} as AssetBalance)
       );
     });
 
     const asset2Detailed = computed(() => {
+      // eslint-disable-next-line no-undef
       if (asset2.value === null) return {} as AssetBalance;
       return (
         assetBalancesList.value.find(
           item => asset2.value !== null && +item.assetId === +asset2.value
+          // eslint-disable-next-line no-undef
         ) || ({} as AssetBalance)
       );
     });
-
-    // const dfv = [
-    //   {
-    //     assetId: 0,
-    //     name: 'HDX',
-    //     shareToken: false,
-    //     balance: '1000000000000000',
-    //     balanceFormatted: '1000',
-    //   },
-    //   {
-    //     assetId: 12,
-    //     name: 'HDX | tDOT',
-    //     shareToken: true,
-    //     balance: 0,
-    //     balanceFormatted: '0',
-    //   },
-    // ];
 
     const getAssetsListForExclude = (
       selectedPairAsset: string | null

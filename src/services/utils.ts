@@ -1,13 +1,10 @@
-import { bnToBn } from '@polkadot/util';
-import BN from 'bn.js';
-import { formatBalance } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
 import { Api } from 'hydradx-js';
 
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 
-const decimalPlaces = 12;
+// const decimalPlaces = 12;
 
 // export const formatBalanceAmount = (balance: BN): AssetAmount => {
 //   const bnDecimals = bnToBn(decimalPlaces);
@@ -28,12 +25,6 @@ export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
     amountFormatted: balance.toString(),
   };
 };
-
-// const decToBn = (bignumber: BigNumber): BN => bnToBn(bignumber.toString());
-//
-// const bnToDec = (bn: BN): BigNumber => new BigNumber(bn.toString());
-
-// export { decToBn, bnToDec, formatBalanceAmount };
 
 export const getSigner = async (account: string): Promise<Signer> => {
   const injector = await web3FromAddress(account);

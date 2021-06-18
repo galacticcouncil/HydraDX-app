@@ -1,5 +1,4 @@
 import { MutationTree } from 'vuex';
-import { uniq } from 'lodash';
 
 export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state, pending) {

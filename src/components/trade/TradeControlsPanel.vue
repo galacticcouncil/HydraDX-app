@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import { UnwrapRef, ComputedRef } from '@vue/reactivity';
-import { computed, defineComponent, onMounted, watch, ref } from 'vue';
+import { computed, defineComponent, watch, ref } from 'vue';
 import { useStore } from '@/store';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
 import TradeSlippageOptions from '@/components/trade/TradeSlippageOptions.vue';
@@ -107,10 +107,6 @@ export default defineComponent({
   },
   setup() {
     const { getters, dispatch } = useStore();
-
-    // -----------------------------------
-    // -----------------------------------
-    // -----------------------------------
     const isInitialAsset1Configured = ref(false);
     const isInitialAsset2Configured = ref(false);
     const router = useRouter();
@@ -127,7 +123,6 @@ export default defineComponent({
 
     const asset1List = computed(() => {
       return getters.assetListSMWallet.filter(
-        //@ts-ignore
         element =>
           Object.keys(getters.tokenTradeMapSMTrade).findIndex(
             assetId => +assetId === +element.assetId

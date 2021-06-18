@@ -58,7 +58,9 @@ export default defineComponent({
     },
     onAmountChange: {
       type: Function,
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
     amount: {
       type: Object as () => BigNumber,
@@ -81,7 +83,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props, context) {
+  setup(props) {
     // const compState = reactive({
     //   range: '1',
     // });

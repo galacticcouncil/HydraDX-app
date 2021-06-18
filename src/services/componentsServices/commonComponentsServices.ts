@@ -4,7 +4,7 @@ import { LS_PD_DAPP_PREVIOUS_CONNECTION_MARKER } from '@/variables/constants';
 
 const { dispatch, getters } = useStore();
 
-export const tryConnectPolkadotDapp = () => {
+export const tryConnectPolkadotDapp = (): void => {
   try {
     const pdDappPrevConnectionMarker = window.localStorage.getItem(
       LS_PD_DAPP_PREVIOUS_CONNECTION_MARKER

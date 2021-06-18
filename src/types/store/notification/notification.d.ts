@@ -5,7 +5,6 @@ type NotificationState = {
   generalLoadingShowReconnectControl: boolean;
   generalLoadingSpinner: boolean;
   generalLoadingMessages: string[];
-
 };
 
 // ================================ GETTERS ====================================
@@ -14,7 +13,9 @@ type NotificationGetters = {
   generalLoadingSMNotification(state: NotificationState): boolean;
   generalLoadingSpinnerSMNotification(state: NotificationState): boolean;
   generalLoadingMessagesSMNotification(state: NotificationState): string[];
-  generalLoadingShowReconnectControlSMNotification(state: NotificationState): boolean;
+  generalLoadingShowReconnectControlSMNotification(
+    state: NotificationState
+  ): boolean;
 };
 
 // =============================== MUTATION ====================================

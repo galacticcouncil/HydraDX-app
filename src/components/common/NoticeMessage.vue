@@ -28,7 +28,6 @@ export default defineComponent({
       default: '',
     },
   },
-  setup() {},
 });
 </script>
 

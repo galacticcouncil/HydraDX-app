@@ -7,7 +7,6 @@
   >
     <div class="hdx-input-label" v-show="label">{{ label }}</div>
     <div class="hdx-amount-input-inner-container">
-
       <BalanceInput
         v-model="amountValue"
         :options="amountOptions"
@@ -26,7 +25,9 @@ export default defineComponent({
   props: {
     onAmountChange: {
       type: Function,
-      default: () => {},
+      default: () => {
+        return {};
+      },
     },
     amount: {
       type: Object as () => BigNumber,

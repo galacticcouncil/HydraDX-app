@@ -3,7 +3,7 @@ import { useStore } from '@/store';
 
 import { transaction as notifications } from '@/variables/notifications';
 
-export const handleTradeTransactionError = (error: any): void => {
+export const handleTradeTransactionError = (error: any) => { // eslint-disable-line
   const toast = useToast();
   const { commit } = useStore();
 

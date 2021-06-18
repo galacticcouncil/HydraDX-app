@@ -12,7 +12,6 @@
         {{ option }}%
       </div>
     </div>
-
   </div>
 </template>
 

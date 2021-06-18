@@ -22,7 +22,7 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
   },
   UPDATE_TRANSACTIONS__TRADE(state, transaction) {
     if (transaction.data.id !== null && transaction.data.id !== undefined) {
-      console.log('UPDATE_TRANSACTIONS__TRADE transaction - ', transaction)
+      console.log('UPDATE_TRANSACTIONS__TRADE transaction - ', transaction);
       state.transactions = {
         ...state.transactions,
         [transaction.data.id]: transaction,

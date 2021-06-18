@@ -50,7 +50,6 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
-import { onBeforeRouteLeave } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { POOL_CREAT_NEW_POOL_SECTION_PATH } from '@/variables/constants';
 

@@ -49,11 +49,10 @@
 
 <script lang="ts">
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent, onBeforeUnmount, onMounted } from 'vue';
+import { computed, defineComponent, onBeforeUnmount } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-import { calculateSpotAmount } from '@/services/utils';
 import notifications from '@/variables/notifications';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
 import CommonNumberInput from '@/components/common/CommonNumberInput.vue';
@@ -70,14 +69,16 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const { getters, dispatch, commit } = useStore();
     const router = useRouter();
     const toast = useToast();
 
     // const poolInfo = computed(() => getters.poolInfoSMPool);
 
-    const actionType = computed(() => getters.liquidityPropertiesSMPool.actionType);
+    const actionType = computed(
+      () => getters.liquidityPropertiesSMPool.actionType
+    );
 
     const spotPrice = computed(() => getters.spotPriceSMTrade);
 

@@ -71,7 +71,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       console.log(e);
     }
   },
-  async mintAssetSMWallet({ commit, rootState }, assetId) {
+  async mintAssetSMWallet({ commit, rootState }) {
     const account = rootState.wallet.account || '';
     const api = Api.getApi();
     const signer = await getSigner(account);

@@ -99,7 +99,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const account = rootState.wallet.account;
     const amount = state.tradeAmount;
     const actionType = state.tradeProperties.actionType;
-    const currentIndex = Math.random();
     const slippagePercentage = state.tradeSlippagePercentage;
 
     const asset1 = state.tradeProperties.asset1;

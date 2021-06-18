@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed } from 'vue';
 
 import BigNumber from 'bignumber.js';
 

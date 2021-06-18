@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, watch, ref } from 'vue';
-import { useStore } from '@/store';
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import CreatePoolControlsPanel from '@/components/liquidity/CreatePoolControlsPanel.vue';
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
@@ -28,7 +27,6 @@ export default defineComponent({
     CreatePoolControlsPanel,
   },
   setup() {
-    const { commit } = useStore();
     const router = useRouter();
 
     return {

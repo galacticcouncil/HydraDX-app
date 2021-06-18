@@ -1,12 +1,12 @@
 import { useStore } from '@/store';
 import { computed } from 'vue';
-import BigNumber from 'bignumber.js';
 import * as constants from '@/variables/constants';
 import { useRouter } from 'vue-router';
 
-const { getters, dispatch, commit } = useStore();
+const { getters, commit } = useStore();
 
-export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => {
+export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => { // eslint-disable-line
+  // eslint-disable-line
   const liquidityProperties = computed(() => getters.liquidityPropertiesSMPool);
 
   if (newVal.length === 0 && newVal === oldVal) return;
@@ -44,7 +44,7 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => {
   }
 };
 
-export const onMountRouteHashCheck = () => {
+export const onMountRouteHashCheck = (): void => {
   const router = useRouter();
 
   const currentRouteHash = router.currentRoute.value.hash;

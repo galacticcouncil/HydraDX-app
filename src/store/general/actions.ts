@@ -1,6 +1,5 @@
 import { ActionTree } from 'vuex';
 import { Api, ApiPromise } from 'hydradx-js';
-import { formatBalance } from '@polkadot/util';
 import { useToast } from 'vue-toastification';
 import notifications from '@/variables/notifications';
 import notificationsVars from '@/variables/notifications';
@@ -98,7 +97,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
           console.log('on ready listener - ', apiInstance);
           commit('SET_GENERAL_LOADING__NOTIFICATION', false);
         },
-        onTxEvent: (eventData: any) => {
+        onTxEvent: eventData => {
           console.log('onTxEvent - ', eventData);
           // commit('UPDATE_TRANSACTIONS__TRADE', eventData);
         },
@@ -114,7 +113,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       //   unit: '',
       // });
 
-      const int = apiInstance.createType('FixedU128', '100000000000000');
+      // const int = apiInstance.createType('FixedU128', '100000000000000');
 
       try {
         const currentGenesisHash = apiInstance.genesisHash.toHex();
@@ -178,7 +177,7 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
       //   commit('UPDATE_TRANSACTIONS__TRADE', eventData);
       // });
 
-      await apiInstance.rpc.chain.subscribeNewHeads((header: any) => {
+      await apiInstance.rpc.chain.subscribeNewHeads(header => {
         dispatch('syncAssetBalancesSMWallet');
         dispatch('syncAssetListSMWallet');
         dispatch('syncPoolsSMPool');

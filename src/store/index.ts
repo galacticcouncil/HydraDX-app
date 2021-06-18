@@ -1,4 +1,4 @@
-import { createStore, createLogger, ModuleTree } from 'vuex';
+import { createStore, ModuleTree } from 'vuex'; //createLogger
 
 import { general } from '@/store/general';
 import { wallet } from '@/store/wallet';

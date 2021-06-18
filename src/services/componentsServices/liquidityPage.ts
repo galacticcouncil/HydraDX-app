@@ -1,14 +1,13 @@
 import { useStore } from '@/store';
-import { computed } from 'vue';
 import BigNumber from 'bignumber.js';
 import * as constants from '@/variables/constants';
 import { useRouter } from 'vue-router';
 
-const { getters, dispatch, commit } = useStore();
+const { dispatch, commit } = useStore();
 
 export const onRouteHashChangeWatchLiquidityPage = (
-  newVal: any,
-  oldVal: any
+  newVal: any, // eslint-disable-line
+  oldVal: any // eslint-disable-line
 ): void => {
   if (newVal.length === 0 && newVal === oldVal) return;
 
@@ -30,7 +29,7 @@ export const onRouteHashChangeWatchLiquidityPage = (
   }
 };
 
-export const onMountRouteHashCheckLiquidityPage = () => {
+export const onMountRouteHashCheckLiquidityPage = (): void => {
   const router = useRouter();
 
   const currentRouteHash = router.currentRoute.value.hash;

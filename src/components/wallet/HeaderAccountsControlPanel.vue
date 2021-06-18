@@ -1,8 +1,8 @@
 <template>
   <div class="header-accounts-control-panel">
-<!--    <div class="selected-account-short-info" v-if="accountInfo">-->
-<!--      Account: {{ accountInfo.name }}-->
-<!--    </div>-->
+    <!--    <div class="selected-account-short-info" v-if="accountInfo">-->
+    <!--      Account: {{ accountInfo.name }}-->
+    <!--    </div>-->
     <div class="accounts-list-toggle" v-if="extensionInfo.extensionInitialized">
       <ButtonCommon
         small
@@ -19,7 +19,7 @@
           small
           :on-click="() => onToggleAccountsListPopup(false)"
           custom-class="mt-0 mb-0"
-        >Close</ButtonCommon
+          >Close</ButtonCommon
         >
       </div>
       <div
