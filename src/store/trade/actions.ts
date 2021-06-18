@@ -123,22 +123,22 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
 
-        console.log('swap request data - ', {
-          asset1Id: asset1,
-          asset2Id: asset2,
-          amount: amountBn.toString(),
-          amountBN: bnToBn(amountBn.toString()).toString(),
-          actionType: actionType,
-          account: account,
-          signer: signer,
-          slippage: slippageAmount
-            .multipliedBy('1e12')
-            .integerValue()
-            .toString(),
-          slippageBN: bnToBn(
-            slippageAmount.multipliedBy('1e12').integerValue().toString()
-          ).toString(),
-        });
+        // console.log('swap request data - ', {
+        //   asset1Id: asset1,
+        //   asset2Id: asset2,
+        //   amount: amountBn.toString(),
+        //   amountBN: bnToBn(amountBn.toString()).toString(),
+        //   actionType: actionType,
+        //   account: account,
+        //   signer: signer,
+        //   slippage: slippageAmount
+        //     .multipliedBy('1e12')
+        //     .integerValue()
+        //     .toString(),
+        //   slippageBN: bnToBn(
+        //     slippageAmount.multipliedBy('1e12').integerValue().toString()
+        //   ).toString(),
+        // });
 
         const swapResp = await api.hydraDx.tx.swap({
           asset1Id: asset1,
@@ -164,7 +164,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           swapResp.data.errorDetails === undefined
         ) {
           if (swapResp.data.intentionType === 'BUY') {
-            swapResp.data.saved = slippageAmount.minus(
+            swapResp.data.saved = totalAmountInitial.minus(
               swapResp.data.totalAmountFinal
             );
             swapResp.data.saved = swapResp.data.saved.plus(
@@ -172,7 +172,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
             );
           } else {
             swapResp.data.saved =
-              swapResp.data.totalAmountFinal.minus(slippageAmount);
+              swapResp.data.totalAmountFinal.minus(totalAmountInitial);
 
             swapResp.data.saved = swapResp.data.saved.minus(
               getTransactionFeeInitial(totalAmountInitial)
