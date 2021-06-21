@@ -4,6 +4,7 @@ type GeneralState = {
   blockHash: string | null;
   blockNumber: number;
   genesisHash: string | null;
+  chainAddressFormat: number | null;
   allowedGenesisHashes: string[];
   currentScreen: string;
   savedScreen: boolean;
@@ -21,6 +22,7 @@ type GeneralState = {
 type GeneralGetters = {
   getBlockHashSMGeneral(state: GeneralState): string | null;
   getBlockNumberSMGeneral(state: GeneralState): number;
+  chainAddressFormatSMGeneral(state: GeneralState): number | null;
   blockInfoSMGeneral(state: GeneralState): {
     blockHash: string | null;
     blockNumber: number;
@@ -51,6 +53,10 @@ type GeneralMutations = {
   SET_API_CONNECTION_VALID__GENERAL(state: GeneralState, status: boolean): void;
   SET_BLOCK_NUMBER__GENERAL(state: GeneralState, payload: number): void;
   SET_BLOCK_HASH__GENERAL(state: GeneralState, payload: string | null): void;
+  SET_CHAIN_ADDRESS_FORMAT__GENERAL(
+    state: GeneralState,
+    payload: number | null
+  ): void;
   SET_BLOCK_INFO__GENERAL(
     state: GeneralState,
     payload: { blockNumber: number; blockHash: string | null }

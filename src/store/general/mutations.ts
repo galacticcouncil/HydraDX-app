@@ -7,6 +7,9 @@ export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_GENESIS_HASH__GENERAL(state, genesisHash) {
     state.genesisHash = genesisHash;
   },
+  SET_CHAIN_ADDRESS_FORMAT__GENERAL(state, addressFormat) {
+    state.chainAddressFormat = addressFormat;
+  },
   SET_API_CONNECTION_VALID__GENERAL(state, status) {
     state.apiConnectionValid = status;
   },

@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import { Api } from 'hydradx-js';
-
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
+import { encodeAddress } from '@polkadot/util-crypto';
 
 // const decimalPlaces = 12;
 
@@ -17,6 +17,13 @@ import { web3FromAddress } from '@polkadot/extension-dapp';
 //     amountFormatted: formatBalance(balance),
 //   };
 // };
+
+export const getHydraDxFormattedAddress: (
+  address: string,
+  format?: number
+) => string = (address = '', format = 63) => {
+  return encodeAddress(address, format);
+};
 
 export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
   // const amount = balance.div(`1e${decimalPlaces}`);

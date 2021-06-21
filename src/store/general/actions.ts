@@ -117,10 +117,13 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
 
       try {
         const currentGenesisHash = apiInstance.genesisHash.toHex();
+        const chainAddressFormat = apiInstance.registry.chainSS58;
         commit('SET_GENESIS_HASH__GENERAL', currentGenesisHash);
+        commit('SET_CHAIN_ADDRESS_FORMAT__GENERAL', chainAddressFormat || null);
       } catch (e) {
         console.log(e);
         commit('SET_GENESIS_HASH__GENERAL', null);
+        commit('SET_CHAIN_ADDRESS_FORMAT__GENERAL', null);
       }
 
       //

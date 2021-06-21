@@ -7,6 +7,9 @@ export const getters: GetterTree<GeneralState, MergedState> & GeneralGetters = {
   getBlockNumberSMGeneral: state => {
     return state.blockNumber;
   },
+  chainAddressFormatSMGeneral: state => {
+    return state.chainAddressFormat;
+  },
   blockInfoSMGeneral: ({ blockNumber, blockHash }) => {
     return {
       blockNumber,
