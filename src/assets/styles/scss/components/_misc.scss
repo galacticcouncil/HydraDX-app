@@ -103,6 +103,11 @@
     font-size: 15px;
   }
 
+  &.not-valid-value {
+    color: $hdx-pink;
+    font-weight: 600;
+  }
+
   .label {
     margin-right: 5px;
   }

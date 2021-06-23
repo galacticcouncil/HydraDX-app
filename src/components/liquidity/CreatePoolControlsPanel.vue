@@ -16,12 +16,14 @@
             :amount="asset1Detailed.balance"
             :label="`Available balance:`"
             :ending="asset1Detailed.name"
+            :valid="validationState.isAsset1BalanceValid"
           />
           <BalanceIndicator
             class="sub-value"
-            :amount="assetAmountAfterTransaction('asset1')"
+            :amount="asset1AmountAfterTransaction"
             :label="`Balance after transaction:`"
             :ending="asset1Detailed.name"
+            :valid="validationState.isAsset1AmountAfterValid"
           />
         </BalanceIndicatorsGroup>
       </div>
@@ -40,12 +42,14 @@
             :amount="asset2Detailed.balance"
             :label="`Available balance:`"
             :ending="asset2Detailed.name"
+            :valid="validationState.isAsset2BalanceValid"
           />
           <BalanceIndicator
             class="sub-value"
-            :amount="assetAmountAfterTransaction('asset2')"
+            :amount="asset2AmountAfterTransaction"
             :label="`Balance after transaction:`"
             :ending="asset2Detailed.name"
+            :valid="validationState.isAsset2AmountAfterValid"
           />
         </BalanceIndicatorsGroup>
       </div>
@@ -68,7 +72,6 @@
         v-show="asset2 !== null"
         :amount="requiredAsset2Amount"
         :label="`Required amount of ${asset2Detailed.name}:`"
-        no-exponential
       />
       <ButtonCommon
         :disabled="!isCreatePoolFormValid"
@@ -91,7 +94,14 @@ type NewPoolProperties = {
 };
 
 import BigNumber from 'bignumber.js';
-import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  ref,
+  watch,
+  reactive,
+} from 'vue';
 import { useStore } from '@/store';
 import AssetInput from '@/components/common/AssetInput.vue';
 import AmountInput from '@/components/common/AmountInput.vue';
@@ -116,6 +126,15 @@ export default defineComponent({
     const router = useRouter();
     // const toast = useToast();
     const isCreatePoolFormValid = ref(false);
+    const validationState = reactive({
+      isAmountValid: true,
+      isPriceValid: true,
+      isAssetValid: true,
+      isAsset1AmountAfterValid: true,
+      isAsset2AmountAfterValid: true,
+      isAsset1BalanceValid: true,
+      isAsset2BalanceValid: true,
+    });
 
     const newPoolProperties = computed(() => getters.newPoolPropertiesSMPool);
     const asset1 = computed(() => getters.newPoolPropertiesSMPool.asset1);
@@ -130,7 +149,6 @@ export default defineComponent({
     const asset1Detailed = computed(() => {
       // eslint-disable-next-line no-undef
       if (asset1.value === null) return {} as AssetBalance;
-      console.log('asset1.value - ');
       return (
         assetBalancesList.value.find(
           item => asset1.value !== null && +item.assetId === +asset1.value
@@ -205,16 +223,29 @@ export default defineComponent({
     });
 
     const assetAmountAfterTransaction = (asset: string): BigNumber => {
-      if (asset === 'asset1') {
-        return asset1Detailed.value.balance
-          ? asset1Detailed.value.balance.minus(amount.value)
-          : new BigNumber(0);
-      } else {
-        return asset2Detailed.value.balance
-          ? asset2Detailed.value.balance.minus(requiredAsset2Amount.value)
-          : new BigNumber(0);
+      let amountAfter = new BigNumber(0);
+
+      if (asset === 'asset1' && asset1Detailed.value.balance) {
+        amountAfter = asset1Detailed.value.balance.minus(amount.value);
+      } else if (asset === 'asset2' && asset2Detailed.value.balance) {
+        amountAfter = asset2Detailed.value.balance.minus(
+          requiredAsset2Amount.value
+        );
       }
+
+      return !amountAfter.isNaN() &&
+        amountAfter.isPositive() &&
+        amountAfter.isFinite()
+        ? amountAfter
+        : new BigNumber(0);
     };
+
+    const asset1AmountAfterTransaction = computed(() =>
+      assetAmountAfterTransaction('asset1')
+    );
+    const asset2AmountAfterTransaction = computed(() =>
+      assetAmountAfterTransaction('asset2')
+    );
 
     const onAssetChange = (assetName: string, assetValue: string) => {
       let newAsset1: string | null = null;
@@ -270,12 +301,42 @@ export default defineComponent({
       let isAmountValid = false;
       let isPriceValid = false;
       let isAssetValid = false;
+      let isAsset1AmountAfterValid = false;
+      let isAsset2AmountAfterValid = false;
+      let isAsset1BalanceValid = false;
+      let isAsset2BalanceValid = false;
 
       if (
         asset2Detailed.value.balance !== undefined &&
         poolProps.amount.isLessThan(asset2Detailed.value.balance)
       )
         isAmountValid = true;
+
+      if (
+        !asset1AmountAfterTransaction.value.isZero() &&
+        asset1AmountAfterTransaction.value.isPositive()
+      )
+        isAsset1AmountAfterValid = true;
+
+      if (
+        !asset2AmountAfterTransaction.value.isZero() &&
+        asset2AmountAfterTransaction.value.isPositive()
+      )
+        isAsset2AmountAfterValid = true;
+
+      if (
+        asset1Detailed.value.balance &&
+        !asset1Detailed.value.balance.isZero() &&
+        asset1Detailed.value.balance.isPositive()
+      )
+        isAsset1BalanceValid = true;
+
+      if (
+        asset2Detailed.value.balance &&
+        !asset2Detailed.value.balance.isZero() &&
+        asset2Detailed.value.balance.isPositive()
+      )
+        isAsset2BalanceValid = true;
 
       if (
         poolProps.initialPrice.isPositive() &&
@@ -288,7 +349,21 @@ export default defineComponent({
       }
 
       isCreatePoolFormValid.value =
-        isAmountValid && isAssetValid && isPriceValid;
+        isAsset1AmountAfterValid &&
+        isAsset2AmountAfterValid &&
+        isAsset1BalanceValid &&
+        isAsset2BalanceValid &&
+        isAmountValid &&
+        isAssetValid &&
+        isPriceValid;
+
+      validationState.isAmountValid = isAmountValid;
+      validationState.isPriceValid = isPriceValid;
+      validationState.isAssetValid = isAssetValid;
+      validationState.isAsset1AmountAfterValid = isAsset1AmountAfterValid;
+      validationState.isAsset2AmountAfterValid = isAsset2AmountAfterValid;
+      validationState.isAsset1BalanceValid = isAsset1BalanceValid;
+      validationState.isAsset2BalanceValid = isAsset2BalanceValid;
     };
 
     watch(() => getters.newPoolPropertiesSMPool, validateCreatePoolForm);
@@ -315,10 +390,13 @@ export default defineComponent({
       amount,
       isCreatePoolFormValid,
       assetAmountAfterTransaction,
+      asset1AmountAfterTransaction,
+      asset2AmountAfterTransaction,
       onAmountChange,
       onInitialPriceChange,
       onAssetChange,
       onPoolCreateClick,
+      validationState,
     };
   },
 });
