@@ -61,6 +61,7 @@
           <ButtonCommon
             :on-click="swap"
             custom-class="submit-transaction full-width"
+            :disabled="!isTradeFormValid"
             >{{ actionType }}</ButtonCommon
           >
         </div>
@@ -76,7 +77,7 @@
 
 <script lang="ts">
 import { UnwrapRef, ComputedRef } from '@vue/reactivity';
-import { computed, defineComponent, watch, ref } from 'vue';
+import { computed, onMounted, defineComponent, watch, ref } from 'vue';
 import { useStore } from '@/store';
 import AssetAmountInput from '@/components/common/AssetAmountInput.vue';
 import TradeSlippageOptions from '@/components/trade/TradeSlippageOptions.vue';
@@ -92,6 +93,7 @@ import {
   getMinReceivedTradeAmount,
   getMaxReceivedTradeAmount,
 } from '@/services/utils';
+import BigNumber from 'bignumber.js';
 
 type AssetRecord = {
   assetId: number;
@@ -109,6 +111,7 @@ export default defineComponent({
     const { getters, dispatch } = useStore();
     const isInitialAsset1Configured = ref(false);
     const isInitialAsset2Configured = ref(false);
+    const isTradeFormValid = ref(true);
     const router = useRouter();
     const toast = useToast();
     const currentAccount = computed(() => getters.accountSMWallet);
@@ -143,12 +146,28 @@ export default defineComponent({
     });
 
     const swap = () => {
-      if (currentAccount.value && extensionInfo.value.extensionInitialized) {
+      if (!isTradeFormValid.value) {
+        return;
+      } else if (
+        currentAccount.value &&
+        extensionInfo.value.extensionInitialized
+      ) {
         dispatch('swapSMTrade');
       } else {
         toast.error(notifications.connectAccountIsRequired);
         router.push('/wallet');
       }
+    };
+
+    const validateTradeForm = (
+      currentTradeAmount: BigNumber,
+      tradePrice: BigNumber
+    ): void => {
+      isTradeFormValid.value =
+        !currentTradeAmount.isZero() &&
+        currentTradeAmount.isPositive() &&
+        !tradePrice.isZero() &&
+        tradePrice.isPositive();
     };
 
     // -----------------------------------
@@ -178,23 +197,6 @@ export default defineComponent({
         actionType: getters.tradePropertiesSMTrade.actionType,
       });
     };
-    watch(asset1List, newVal => {
-      if (newVal && newVal.length > 0 && !isInitialAsset1Configured.value) {
-        let initialAsset = newVal.find(asset => asset.assetId === 0);
-        if (!initialAsset) initialAsset = newVal[0];
-
-        onAssetChange('asset1', initialAsset.assetId.toString());
-        isInitialAsset1Configured.value = true;
-      }
-    });
-    watch(asset2List, newVal => {
-      if (newVal && newVal.length > 0 && !isInitialAsset2Configured.value) {
-        const initialAsset = newVal[0];
-
-        onAssetChange('asset2', initialAsset.assetId.toString());
-        isInitialAsset2Configured.value = true;
-      }
-    });
 
     const getAssetName = (
       assetId: string,
@@ -223,6 +225,39 @@ export default defineComponent({
       return amount.toString();
     });
 
+    /**
+     * ==== Hooks ====
+     */
+
+    onMounted(() => {
+      validateTradeForm(tradeAmount.value, sellPrice.value.amount);
+    });
+
+    watch(asset1List, newVal => {
+      if (newVal && newVal.length > 0 && !isInitialAsset1Configured.value) {
+        let initialAsset = newVal.find(asset => asset.assetId === 0);
+        if (!initialAsset) initialAsset = newVal[0];
+
+        onAssetChange('asset1', initialAsset.assetId.toString());
+        isInitialAsset1Configured.value = true;
+      }
+    });
+    watch(asset2List, newVal => {
+      if (newVal && newVal.length > 0 && !isInitialAsset2Configured.value) {
+        const initialAsset = newVal[0];
+
+        onAssetChange('asset2', initialAsset.assetId.toString());
+        isInitialAsset2Configured.value = true;
+      }
+    });
+
+    watch(tradeAmount, newVal => {
+      validateTradeForm(newVal, sellPrice.value.amount);
+    });
+    watch(sellPrice, newVal => {
+      validateTradeForm(tradeAmount.value, newVal.amount);
+    });
+
     return {
       actionType,
       setActionType,
@@ -245,6 +280,7 @@ export default defineComponent({
       asset1List,
       asset2List,
       swap,
+      isTradeFormValid,
     };
   },
 });
