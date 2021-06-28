@@ -1,4 +1,3 @@
-
 // ================================= STATE =====================================
 // import BigNumber from "bignumber.js";
 
@@ -103,7 +102,10 @@ type TradeActionAugments = Omit<
 };
 
 type TradeActions = {
-  changeTradeAmountSMTrade(context: TradeActionAugments, tradeAmount: BigNumber): void;
+  changeTradeAmountSMTrade(
+    context: TradeActionAugments,
+    tradeAmount: BigNumber
+  ): void;
   changeTradePropertiesSMTrade(
     context: TradeActionAugments,
     tradeProperties: TradeProperties

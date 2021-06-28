@@ -11,6 +11,8 @@ import {
   getMaxReceivedTradeAmount,
 } from '@/services/utils';
 
+import { handleTradeTransactionError } from '@/services/errorsUtils';
+
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
     commit('SET_TRADE_AMOUNT__TRADE', tradeAmount);
@@ -71,13 +73,14 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
 
-        let asset1Local = asset1 !== null ? asset1.toString() : null;
-        let asset2local = asset2 !== null ? asset2.toString() : null;
+        const asset1Local = asset1 !== null ? asset1.toString() : null;
+        const asset2local = asset2 !== null ? asset2.toString() : null;
 
-        if (actionType === 'buy') {
-          asset1Local = asset2 !== null ? asset2.toString() : null;
-          asset2local = asset1 !== null ? asset1.toString() : null;
-        }
+        /**
+         * the first one is selling asset. the second is buying asset - or IN and OUT.
+         * so in your buy case asset 1 is the one you buying.
+         * in the sell..asset 1 is what you are selling
+         */
 
         const amount = await api.hydraDx.query.getTradePrice(
           asset1Local,
@@ -97,7 +100,6 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
     const account = rootState.wallet.account;
     const amount = state.tradeAmount;
     const actionType = state.tradeProperties.actionType;
-    const currentIndex = Math.random();
     const slippagePercentage = state.tradeSlippagePercentage;
 
     const asset1 = state.tradeProperties.asset1;
@@ -152,15 +154,18 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         if (swapResp && swapResp.data) {
           swapResp.data.slippagePercentage = slippagePercentage;
           swapResp.data.slippageAmount = slippageAmount;
+          swapResp.data.totalAmountInitial = totalAmountInitial;
+          swapResp.data.saved = new BigNumber(0);
         }
 
         if (
           swapResp &&
           swapResp.data &&
-          swapResp.data.totalAmountFinal !== undefined
+          swapResp.data.totalAmountFinal !== undefined &&
+          swapResp.data.errorDetails === undefined
         ) {
           if (swapResp.data.intentionType === 'BUY') {
-            swapResp.data.saved = slippageAmount.minus(
+            swapResp.data.saved = totalAmountInitial.minus(
               swapResp.data.totalAmountFinal
             );
             swapResp.data.saved = swapResp.data.saved.plus(
@@ -168,13 +173,12 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
             );
           } else {
             swapResp.data.saved =
-              swapResp.data.totalAmountFinal.minus(slippageAmount);
+              swapResp.data.totalAmountFinal.minus(totalAmountInitial);
 
             swapResp.data.saved = swapResp.data.saved.minus(
               getTransactionFeeInitial(totalAmountInitial)
             );
           }
-          swapResp.data.totalAmountInitial = totalAmountInitial;
         }
 
         console.log('swapResp - ', swapResp);
@@ -183,12 +187,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
 
         dispatch('getSpotPriceSMTrade');
         dispatch('getSellPriceSMTrade');
-      } catch (e) {
-        console.log(e);
-        commit('UPDATE_TRANSACTIONS__TRADE', {
-          index: currentIndex,
-          progress: 5,
-        });
+      } catch (error) {
+        console.log(error);
+        handleTradeTransactionError(error);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
     }

@@ -3,7 +3,6 @@ import { Api } from 'hydradx-js';
 
 import { getSigner } from '@/services/utils';
 import BigNumber from 'bignumber.js';
-import { bnToBn } from '@polkadot/util';
 
 export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
   changeSelectedPoolSMPool({ commit, dispatch }, poolId) {
@@ -14,10 +13,7 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
     dispatch('getSellPriceSMTrade');
   },
-  changeNewPoolPropertiesSMPool(
-    { commit, dispatch, state },
-    newPoolProperties
-  ) {
+  changeNewPoolPropertiesSMPool({ commit }, newPoolProperties) {
     commit('SET_NEW_POOL_PROPERTIES__POOL', newPoolProperties);
   },
   async addLiquiditySMPool({ dispatch, commit, state, rootState }) {
@@ -29,8 +25,9 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     const spotPrice = rootState.trade.spotPrice;
 
     //TODO update multiply action -> spotPrice * 1.1
-    const maxSellPrice = amount
-      .multipliedBy(spotPrice.amount.multipliedBy(1.05));
+    const maxSellPrice = amount.multipliedBy(
+      spotPrice.amount.multipliedBy(1.05)
+    );
 
     if (api && account && asset1 !== null && asset2 !== null) {
       const signer = await getSigner(account);
@@ -113,11 +110,8 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
     if (!api) return;
 
     try {
-      const {
-        tokenTradeMap,
-        shareTokenIds,
-        poolInfo,
-      } = await api.hydraDx.query.getPoolInfo();
+      const { tokenTradeMap, shareTokenIds, poolInfo } =
+        await api.hydraDx.query.getPoolInfo();
 
       commit('UPDATE_TOKEN_TRADE_MAP__TRADE', tokenTradeMap);
       commit('SET_SHARE_TOKEN_IDS__TRADE', shareTokenIds);
@@ -152,11 +146,6 @@ export const actions: ActionTree<PoolState, MergedState> & PoolActions = {
         console.log(e);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
-
-      // @ts-ignore
-      // .signAndSend(account, { signer }, ({ status }) => {
-      //   if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-      // });
     }
   },
 };

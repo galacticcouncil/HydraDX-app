@@ -17,7 +17,7 @@ import { useStore } from '@/store';
 
 export default defineComponent({
   name: 'TradeAmount',
-  components: {  },
+  components: {},
   setup() {
     const { getters, dispatch } = useStore();
 
@@ -34,7 +34,7 @@ export default defineComponent({
     const tradeAmount = computed({
       get: () => getters.tradeAmountSMTrade,
       set: tradeAmount => {
-        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount)
+        console.log('tradeAmount - ', tradeAmount, typeof tradeAmount);
         dispatch('changeTradeAmountSMTrade', tradeAmount);
       },
     });

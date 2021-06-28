@@ -17,11 +17,13 @@ import {
 } from 'vue';
 import { useStore } from '@/store';
 import SinglePoolPanel from '@/components/liquidity/SinglePoolPanel.vue';
-import { useRouter, RouteParams } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { Ref } from '@vue/reactivity';
-import * as constants from '@/variables/constants';
 
-import { onRouteHashChangeWatch, onMountRouteHashCheck } from '@/services/componentsServices/singlePool';
+import {
+  onRouteHashChangeWatch,
+  onMountRouteHashCheck,
+} from '@/services/componentsServices/singlePool';
 
 export default defineComponent({
   name: 'SinglePool',

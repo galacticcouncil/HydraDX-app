@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed, reactive } from 'vue';
 
 import BigNumber from 'bignumber.js';
 
@@ -26,6 +26,31 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, context) {
+    const compState = reactive({
+      /**
+       * "currentInputValueString" is necessary for cases, when user enters
+       * some not valid value (e.g. "2.", "0.00"). Input component must provide
+       * BigNumber value, but when user starts enter value and during entering
+       * value is not valid, components cannot convert it to BigNumber. That's
+       * why we need use input value from inner component state till user enter
+       * valid value. If value is valid, component uses value from outer state.
+       */
+      currentInputValueString: '0',
+      isUserValueValid: true,
+    });
+
+    const formattedValue = computed(() => {
+      let currentVal = new BigNumber(0);
+
+      if (!compState.isUserValueValid) return compState.currentInputValueString;
+
+      if (!props.modelValue.isNaN() && props.modelValue.isFinite()) {
+        currentVal = props.modelValue as BigNumber;
+      }
+
+      return formatInput(currentVal as BigNumber);
+    });
+
     const formatInput = (value: BigNumber): string => {
       if (!value) return '';
       BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
@@ -55,13 +80,28 @@ export default defineComponent({
       const target = $event.target as HTMLInputElement;
       const value = target.value;
 
+      compState.currentInputValueString = value;
+
       if (
-        !value.length ||
+        // !value.length ||
         value.endsWith('.') ||
         (value.indexOf('.') !== -1 && value.endsWith('0'))
-      )
+      ) {
+        compState.isUserValueValid = false;
+        updateValue(new BigNumber(0));
+        console.log('not valid')
         return;
-      updateValue(unformatInput(value));
+      }
+
+      compState.isUserValueValid = true;
+
+      let unformattedValue = new BigNumber(0);
+
+      if (value.length) {
+        unformattedValue = unformatInput(value);
+      }
+
+      updateValue(unformattedValue);
     };
 
     const updateValue = (value: BigNumber) => {
@@ -69,9 +109,7 @@ export default defineComponent({
     };
 
     return {
-      formattedValue: computed(() => {
-        return formatInput(props.modelValue as BigNumber);
-      }),
+      formattedValue,
       onKeyPress,
       onInput,
     };

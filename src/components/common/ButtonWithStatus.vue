@@ -24,7 +24,9 @@ export default defineComponent({
     },
     onClick: {
       type: Function,
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
   },
   setup(props) {

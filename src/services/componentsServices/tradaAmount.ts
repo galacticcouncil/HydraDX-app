@@ -15,6 +15,6 @@ export const tradeAmountOptions = computed(() => {
 
 export const tradeAmount = computed(() => getters.tradeAmountSMTrade);
 
-export const setTradeAmount = (tradeAmount: BigNumber) => {
+export const setTradeAmount = (tradeAmount: BigNumber): void => {
   dispatch('changeTradeAmountSMTrade', tradeAmount);
 };

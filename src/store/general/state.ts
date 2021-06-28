@@ -10,6 +10,7 @@ export const state: GeneralState = {
     '0x10af6e84234477d84dc572bac0789813b254aa490767ed06fb9591191d1073f9',
   ],
   genesisHash: null,
+  chainAddressFormat: null,
 
   extensionInitialized: false,
   extensionPresent: true,

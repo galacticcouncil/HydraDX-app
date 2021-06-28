@@ -40,4 +40,23 @@
       background-color: $hdx-light-blue;
     }
   }
+
+  &.Vue-Toastification__toast--info {
+    background-color: $hdx-light-blue;
+    color: #fff;
+    border-radius: 0;
+    //border-width: 10px;
+    //border-style: double;
+    //border-color: $hdx-light-blue;
+
+    .Vue-Toastification__close-button {
+      color: $hdx-blue;
+      opacity: 1;
+      text-decoration: none;
+    }
+
+    .Vue-Toastification__progress-bar {
+      background-color: $hdx-light-blue;
+    }
+  }
 }

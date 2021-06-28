@@ -22,59 +22,11 @@ export const mutations: MutationTree<TradeState> & TradeMutations = {
   },
   UPDATE_TRANSACTIONS__TRADE(state, transaction) {
     if (transaction.data.id !== null && transaction.data.id !== undefined) {
-      console.log('UPDATE_TRANSACTIONS__TRADE transaction - ', transaction)
       state.transactions = {
         ...state.transactions,
         [transaction.data.id]: transaction,
       };
     }
-
-    // if (transaction.id != null) {
-    //   let transactionData;
-    //   if (transaction.index != null) {
-    //     transactionData = { ...state.unpairedTransactions[transaction.index] };
-    //
-    //     const updatedUnpairedTransactionsScope: Transactions = {};
-    //
-    //     for (const itemIndex in state.unpairedTransactions) {
-    //       if (itemIndex != transaction.index) {
-    //         updatedUnpairedTransactionsScope[itemIndex] =
-    //           state.unpairedTransactions[itemIndex];
-    //       }
-    //     }
-    //     state.unpairedTransactions = { ...updatedUnpairedTransactionsScope };
-    //   }
-    //
-    //   /**
-    //    * We could get unsorted transaction data the progress should always be
-    //    * the highest (errors being 4 and 5)
-    //    */
-    //   const progress = Math.max(
-    //     transaction.progress,
-    //     transactionData?.progress || 0,
-    //     state.transactions[transaction.id]?.progress || 0
-    //   );
-    //
-    //   transactionData = {
-    //     ...transactionData,
-    //     ...state.transactions[transaction.id],
-    //     ...transaction,
-    //     progress,
-    //   };
-    //
-    //   state.transactions = {
-    //     ...state.transactions,
-    //     [transaction.id]: transactionData,
-    //   };
-    // } else if (transaction.index != null) {
-    //   state.unpairedTransactions = {
-    //     ...state.unpairedTransactions,
-    //     [transaction.index]: {
-    //       ...state.unpairedTransactions[transaction.index],
-    //       ...transaction,
-    //     },
-    //   };
-    // }
   },
 
   UPDATE_SELL_PRICE__TRADE(state, sellPrice) {

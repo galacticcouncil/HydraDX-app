@@ -1,5 +1,5 @@
 <template>
-  <div class="hdx-balance-indicator">
+  <div class="hdx-balance-indicator" :class="{ 'not-valid-value': !valid }">
     <div class="label">{{ label }}</div>
     <div class="amount">{{ amountFormatted }} {{ ending }}</div>
   </div>
@@ -31,6 +31,10 @@ export default defineComponent({
     ending: {
       type: String,
       default: '',
+    },
+    valid: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props) {

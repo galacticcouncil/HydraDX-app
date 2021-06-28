@@ -1,5 +1,4 @@
 import { MutationTree } from 'vuex';
-import { uniq } from 'lodash';
 
 export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   SET_PENDING_ACTION__GENERAL(state, pending) {
@@ -7,6 +6,9 @@ export const mutations: MutationTree<GeneralState> & GeneralMutations = {
   },
   SET_GENESIS_HASH__GENERAL(state, genesisHash) {
     state.genesisHash = genesisHash;
+  },
+  SET_CHAIN_ADDRESS_FORMAT__GENERAL(state, addressFormat) {
+    state.chainAddressFormat = addressFormat;
   },
   SET_API_CONNECTION_VALID__GENERAL(state, status) {
     state.apiConnectionValid = status;

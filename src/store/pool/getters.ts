@@ -17,6 +17,7 @@ export const getters: GetterTree<PoolState, MergedState> & PoolGetters = {
   selectedPoolSMPool: ({ selectedPool }) => selectedPool,
   createPoolDialogOpenSMPool: ({ createPoolDialogOpen }) =>
     createPoolDialogOpen,
-  addRemovePoolLiquidityDialogOpenSMPool: ({ addRemovePoolLiquidityDialogOpen }) =>
+  addRemovePoolLiquidityDialogOpenSMPool: ({
     addRemovePoolLiquidityDialogOpen,
+  }) => addRemovePoolLiquidityDialogOpen,
 };

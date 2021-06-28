@@ -41,7 +41,29 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, context) {
     const compState = reactive({
+      /**
+       * "currentInputValueString" is necessary for cases, when user enters
+       * some not valid value (e.g. "2.", "0.00"). Input component must provide
+       * BigNumber value, but when user starts enter value and during entering
+       * value is not valid, components cannot convert it to BigNumber. That's
+       * why we need use input value from inner component state till user enter
+       * valid value. If value is valid, component uses value from outer state.
+       */
+      currentInputValueString: '0',
       range: '1',
+      isUserValueValid: true,
+    });
+
+    const formattedValue = computed(() => {
+      let currentVal = new BigNumber(0);
+
+      if (!compState.isUserValueValid) return compState.currentInputValueString;
+
+      if (!props.modelValue.isNaN() && props.modelValue.isFinite()) {
+        currentVal = props.modelValue as BigNumber;
+      }
+
+      return formatInput(currentVal, compState.range);
     });
 
     const formatInput = (value: BigNumber, range: string): string => {
@@ -78,20 +100,36 @@ export default defineComponent({
       const target = $event.target as HTMLInputElement;
       const value = target.value;
 
+      compState.currentInputValueString = value;
+
       if (
-        !value.length ||
+        // !value.length ||
         value.endsWith('.') ||
         (value.indexOf('.') !== -1 && value.endsWith('0'))
-      )
+      ) {
+        compState.isUserValueValid = false;
+        updateValue(new BigNumber(0));
         return;
+      }
+      compState.isUserValueValid = true;
 
-      const unformattedValue = unformatInput(value, compState.range);
+      let unformattedValue = new BigNumber(0);
+
+      if (value.length) {
+        unformattedValue = unformatInput(value, compState.range);
+      }
+
+      // const unformattedValue = unformatInput(value, compState.range);
       updateValue(unformattedValue);
     };
 
     const updateValue = (value: BigNumber) => {
       context.emit('update:modelValue', value);
     };
+
+    /**
+     * ==== Hooks ===
+     */
 
     onMounted(() => {
       if (props.options && props.options.range !== undefined) {
@@ -112,9 +150,7 @@ export default defineComponent({
     );
 
     return {
-      formattedValue: computed(() => {
-        return formatInput(props.modelValue as BigNumber, compState.range);
-      }),
+      formattedValue,
       compState,
       onKeyPress,
       onInput,

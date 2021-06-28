@@ -1,13 +1,10 @@
-import { bnToBn } from '@polkadot/util';
-import BN from 'bn.js';
-import { formatBalance } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
 import { Api } from 'hydradx-js';
-
 import { Signer } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
+import { encodeAddress } from '@polkadot/util-crypto';
 
-const decimalPlaces = 12;
+// const decimalPlaces = 12;
 
 // export const formatBalanceAmount = (balance: BN): AssetAmount => {
 //   const bnDecimals = bnToBn(decimalPlaces);
@@ -21,6 +18,13 @@ const decimalPlaces = 12;
 //   };
 // };
 
+export const getHydraDxFormattedAddress: (
+  address: string,
+  format?: number
+) => string = (address = '', format = 63) => {
+  return encodeAddress(address, format);
+};
+
 export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
   // const amount = balance.div(`1e${decimalPlaces}`);
   return {
@@ -28,12 +32,6 @@ export const formatBalanceAmountBigN = (balance: BigNumber): AssetAmount => {
     amountFormatted: balance.toString(),
   };
 };
-
-// const decToBn = (bignumber: BigNumber): BN => bnToBn(bignumber.toString());
-//
-// const bnToDec = (bn: BN): BigNumber => new BigNumber(bn.toString());
-
-// export { decToBn, bnToDec, formatBalanceAmount };
 
 export const getSigner = async (account: string): Promise<Signer> => {
   const injector = await web3FromAddress(account);

@@ -7,7 +7,7 @@ export const getters: GetterTree<TradeState, MergedState> & TradeGetters = {
   },
   tradeAmountSMTrade: ({ tradeAmount }) => tradeAmount,
   sellPriceSMTrade: ({ sellPrice }) => sellPrice,
-  transactionListSMTrade: ({ transactions, unpairedTransactions }) => {
+  transactionListSMTrade: ({ transactions }) => {
     const allTransactions = { ...transactions };
     // for (const transaction in unpairedTransactions) {
     //   const id = 'unpaired' + Math.random();

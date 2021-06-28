@@ -7,3 +7,7 @@ export default {
   loadingMsgApiConnectionErrorOccurred:
     'API connection error has been occurred',
 };
+
+export const transaction = {
+  transactionCancelled: 'Transaction has been cancelled.',
+};

@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
-const { getters, commit, dispatch } = useStore();
+const { getters } = useStore();
 
 export default defineComponent({
   name: 'ButtonCommon',
@@ -26,7 +26,9 @@ export default defineComponent({
     },
     onClick: {
       type: Function,
-      default: () => {},
+      default: () => {
+        return;
+      },
     },
     disabled: {
       type: Boolean,

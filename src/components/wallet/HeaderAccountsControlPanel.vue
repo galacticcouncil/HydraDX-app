@@ -1,8 +1,8 @@
 <template>
   <div class="header-accounts-control-panel">
-<!--    <div class="selected-account-short-info" v-if="accountInfo">-->
-<!--      Account: {{ accountInfo.name }}-->
-<!--    </div>-->
+    <!--    <div class="selected-account-short-info" v-if="accountInfo">-->
+    <!--      Account: {{ accountInfo.name }}-->
+    <!--    </div>-->
     <div class="accounts-list-toggle" v-if="extensionInfo.extensionInitialized">
       <ButtonCommon
         small
@@ -19,7 +19,7 @@
           small
           :on-click="() => onToggleAccountsListPopup(false)"
           custom-class="mt-0 mb-0"
-        >Close</ButtonCommon
+          >Close</ButtonCommon
         >
       </div>
       <div
@@ -34,7 +34,14 @@
           @click.prevent="() => onChangeAccountClick(accountRecord.address)"
         >
           <div class="account-name">{{ accountRecord.name }}</div>
-          <div class="account-hash">{{ accountRecord.address }}</div>
+          <div class="account-hash">
+            {{
+              getHydraDxFormattedAddress(
+                accountRecord.address,
+                chainAddressFormat
+              )
+            }}
+          </div>
         </div>
       </div>
     </div>
@@ -50,6 +57,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue';
 import { useStore } from '@/store';
+import { getHydraDxFormattedAddress } from '@/services/utils';
 
 export default defineComponent({
   name: 'HeaderAccountsControlPanel',
@@ -74,10 +82,14 @@ export default defineComponent({
       extensionInfo: computed(() => getters.extensionInfoSMGeneral),
       accountList: computed(() => getters.accountListSMWallet),
       currentAccount: computed(() => getters.accountSMWallet),
+      chainAddressFormat: computed(
+        () => getters.chainAddressFormatSMGeneral
+      ),
       openAccountListPopup,
       onConnectAccountClick,
       onToggleAccountsListPopup,
       onChangeAccountClick,
+      getHydraDxFormattedAddress,
     };
   },
 });
