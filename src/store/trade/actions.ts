@@ -73,13 +73,14 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         const { asset1, asset2, actionType } = state.tradeProperties;
         const tradeAmount = state.tradeAmount as BigNumber;
 
-        let asset1Local = asset1 !== null ? asset1.toString() : null;
-        let asset2local = asset2 !== null ? asset2.toString() : null;
+        const asset1Local = asset1 !== null ? asset1.toString() : null;
+        const asset2local = asset2 !== null ? asset2.toString() : null;
 
-        if (actionType === 'buy') {
-          asset1Local = asset2 !== null ? asset2.toString() : null;
-          asset2local = asset1 !== null ? asset1.toString() : null;
-        }
+        /**
+         * the first one is selling asset. the second is buying asset - or IN and OUT.
+         * so in your buy case asset 1 is the one you buying.
+         * in the sell..asset 1 is what you are selling
+         */
 
         const amount = await api.hydraDx.query.getTradePrice(
           asset1Local,
