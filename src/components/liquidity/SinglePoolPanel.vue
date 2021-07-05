@@ -103,13 +103,8 @@ export default defineComponent({
       (newVal, oldVal) => {
         if (newVal !== oldVal && newVal) {
           currentPool.value = poolInfo.value[newVal];
-        }
-      }
-    );
 
-    watch(
-      () => getters.selectedPoolSMPool,
-      newVal => {
+        }
         if (newVal !== null && currentPool.value !== null) {
           poolName.value = `${currentPool.value.poolAssetNames[0]} | ${currentPool.value.poolAssetNames[1]}`;
         } else {
