@@ -11,7 +11,7 @@ import {
   getMaxReceivedTradeAmount,
 } from '@/services/utils';
 
-import { handleTradeTransactionError } from '@/services/errorsUtils';
+import { handleTransactionError } from '@/services/transactionUtils';
 
 export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
   changeTradeAmountSMTrade({ commit, dispatch }, tradeAmount) {
@@ -189,7 +189,7 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         dispatch('getSellPriceSMTrade');
       } catch (error) {
         console.log(error);
-        handleTradeTransactionError(error);
+        handleTransactionError(error);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
     }

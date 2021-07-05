@@ -1,5 +1,10 @@
 import { ActionTree } from 'vuex';
 import { Api } from 'hydradx-js';
+import { useToast } from 'vue-toastification';
+import {
+  handleTransactionError,
+  handleTransactionSuccess,
+} from '@/services/transactionUtils';
 
 import { getSigner } from '@/services/utils';
 import BigNumber from 'bignumber.js';
@@ -35,7 +40,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
 
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
-        await api.hydraDx.tx.addLiquidity(
+        const resp = await api.hydraDx.tx.addLiquidity(
           asset1,
           asset2,
           amount,
@@ -43,21 +48,13 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
           account,
           signer
         );
-
+        handleTransactionSuccess(resp);
         dispatch('getSpotPriceSMTrade');
       } catch (e) {
         console.log(e);
+        handleTransactionError(e);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
-
-      // api.hydraDx.tx
-      //   .addLiquidity(asset1, asset2, amount.multipliedBy('1e12'), maxSellPrice)
-      //   // @ts-ignore
-      //   .signAndSend(account, { signer }, ({ status }) => {
-      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-      //     dispatch('getSpotPriceSMTrade');
-      //   });
-      //TODO Add error handler and notifications
     }
   },
   async withdrawLiquiditySMSinglePool({ dispatch, commit, state, rootState }) {
@@ -83,27 +80,21 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
 
       try {
         commit('SET_PENDING_ACTION__GENERAL', true);
-        await api.hydraDx.tx.removeLiquidity(
+        const removeResp = await api.hydraDx.tx.removeLiquidity(
           asset1,
           asset2,
           liquidityToRemove.integerValue(),
           account,
           signer
         );
+        handleTransactionSuccess(removeResp);
 
         dispatch('getSpotPriceSMTrade');
       } catch (e) {
         console.log(e);
+        handleTransactionError(e);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
-
-      // api.hydraDx.tx
-      //   .removeLiquidity(asset1, asset2, liquidityToRemove.integerValue())
-      //   // @ts-ignore
-      //   .signAndSend(account, { signer }, ({ status }) => {
-      //     if (status.isReady) commit('SET_PENDING_ACTION__GENERAL', true);
-      //     dispatch('getSpotPriceSMTrade');
-      //   });
     }
   },
 
@@ -126,12 +117,49 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
           account,
           signer
         );
-        // TODO Check response data and show nontifictation
-        console.log('resp - ', resp);
+        handleTransactionSuccess(resp);
       } catch (e) {
         console.log(e);
+        handleTransactionError(e);
       }
       commit('SET_PENDING_ACTION__GENERAL', false);
+    }
+  },
+
+  async getPoolMarketCapSMSinglePool({ commit, state }) {
+    const api = Api.getApi();
+
+    console.log('getPoolMarketCapSMSinglePool');
+
+    const { asset1, asset2 } = state.liquidityProperties;
+
+    if (api && asset1 !== null && asset2 !== null) {
+      try {
+        const mCResp = await api.hydraDx.query.getMarketcap(
+          asset1.toString(),
+          asset2.toString()
+        );
+        const poolAssetsResp = await api.hydraDx.query.getPoolAssetsAmounts(
+          asset1.toString(),
+          asset2.toString()
+        );
+        console.log('poolAssetsResp - ', poolAssetsResp);
+        if (mCResp[0] && mCResp[0].marketCap !== undefined) {
+          console.log(
+            'mCResp.marketCap.dividedBy("1e12") - ',
+            mCResp[0].marketCap.dividedBy('1e12')
+          );
+          commit(
+            'SET_POOL_MARKETCAP__SINGLE_POOL',
+            mCResp[0].marketCap.dividedBy('1e12')
+          );
+        }
+
+        console.log('MC resp - ', mCResp);
+      } catch (e) {
+        console.log(e);
+        commit('SET_POOL_MARKETCAP__SINGLE_POOL', new BigNumber(0));
+      }
     }
   },
 };

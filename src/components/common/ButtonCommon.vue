@@ -49,12 +49,14 @@ export default defineComponent({
   },
   setup(props) {
     const extensionInfo = computed(() => getters.extensionInfoSMGeneral);
+    const pendingAction = computed(() => getters.pendingActionSMGeneral);
 
     const disabledStatus = computed(() => {
       return (
         props.disabled ||
         (props.pdDappRequired && !extensionInfo.value.extensionInitialized) ||
-        (props.pdDappRequired && !extensionInfo.value.accountSelected)
+        (props.pdDappRequired && !extensionInfo.value.accountSelected) ||
+        pendingAction.value
       );
     });
 
