@@ -8,14 +8,14 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
   SinglePoolActions = {
   changeSelectedPoolSMSinglePool({ commit, dispatch }, poolId) {
     dispatch('getSpotPriceSMTrade');
-    commit('SET_SELECTED_POOL__POOL', poolId);
+    commit('SET_SELECTED_POOL__SINGLE_POOL', poolId);
   },
   changeLiquidityAmountSMSinglePool({ commit, dispatch }, liquidityAmount) {
-    commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmount);
+    commit('SET_LIQUIDITY_AMOUNT__SINGLE_POOL', liquidityAmount);
     dispatch('getSellPriceSMTrade');
   },
   changeNewPoolPropertiesSMSinglePool({ commit }, newPoolProperties) {
-    commit('SET_NEW_POOL_PROPERTIES__POOL', newPoolProperties);
+    commit('SET_NEW_POOL_PROPERTIES__SINGLE_POOL', newPoolProperties);
   },
   async addLiquiditySMSinglePool({ dispatch, commit, state, rootState }) {
     const api = Api.getApi();
@@ -68,7 +68,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
     const selectedPool = state.selectedPool;
 
     if (api && account && selectedPool && asset1 !== null && asset2 !== null) {
-      const shareToken = state.poolInfo[selectedPool].shareToken;
+      const shareToken = rootState.pool.poolsInfo[selectedPool].shareToken;
 
       const liquidityBalance =
         rootState.wallet.assetBalances[shareToken].balance;

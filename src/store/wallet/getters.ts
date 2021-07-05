@@ -19,11 +19,11 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
         assetRecord.assetId
       );
       if (shareToken) {
-        for (const key in rootState.pool.poolInfo) {
+        for (const key in rootState.pool.poolsInfo) {
           if (
-            Object.prototype.hasOwnProperty.call(rootState.pool.poolInfo, key)
+            Object.prototype.hasOwnProperty.call(rootState.pool.poolsInfo, key)
           ) {
-            const pool = rootState.pool.poolInfo[key];
+            const pool = rootState.pool.poolsInfo[key];
             if (pool.shareToken === assetRecord.assetId) {
               name = pool.poolAssets
                 .map(asset => assetList.find(x => x && x.assetId == +asset))

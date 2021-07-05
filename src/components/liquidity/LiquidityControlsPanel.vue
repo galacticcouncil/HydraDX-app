@@ -131,7 +131,7 @@ export default defineComponent({
     const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
 
     const actionType = computed(
-      () => getters.liquidityPropertiesSMPool.actionType
+      () => getters.liquidityPropertiesSMSinglePool.actionType
     );
 
     const spotPrice = computed(() => getters.spotPriceSMTrade);
@@ -141,9 +141,9 @@ export default defineComponent({
     );
 
     const liquidityAmount = computed({
-      get: () => getters.liquidityAmountSMPool,
+      get: () => getters.liquidityAmountSMSinglePool,
       set: (liquidityAmountUpdated: BigNumber) => {
-        commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmountUpdated);
+        commit('SET_LIQUIDITY_AMOUNT__SINGLE_POOL', liquidityAmountUpdated);
       },
     });
 
@@ -206,8 +206,8 @@ export default defineComponent({
 
     const onLiquidityAmountChange = (liquidityAmountUpdated: BigNumber) => {
       liquidityAmount.value = liquidityAmountUpdated;
-      // commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmountUpdated);
-      // dispatch('changeLiquidityAmountSMPool', liquidityAmountUpdated);
+      // commit('SET_LIQUIDITY_AMOUNT__SINGLE_POOL', liquidityAmountUpdated);
+      // dispatch('changeLiquidityAmountSMSinglePool', liquidityAmountUpdated);
     };
 
     const onPoolActionClick = () => {
@@ -217,9 +217,9 @@ export default defineComponent({
         return;
       }
       if (actionType.value === 'add') {
-        dispatch('addLiquiditySMPool');
+        dispatch('addLiquiditySMSinglePool');
       } else {
-        dispatch('withdrawLiquiditySMPool');
+        dispatch('withdrawLiquiditySMSinglePool');
       }
     };
 
@@ -291,7 +291,7 @@ export default defineComponent({
       validationState.isAsset2BalanceValid = isAsset2BalanceValid;
     };
 
-    watch(() => getters.liquidityAmountSMPool, validateAddRemoveLiquidityForm);
+    watch(() => getters.liquidityAmountSMSinglePool, validateAddRemoveLiquidityForm);
 
     onBeforeUnmount(() => {
       // onLiquidityAmountChange(new BigNumber(0));
@@ -299,7 +299,7 @@ export default defineComponent({
     });
 
     return {
-      selectedPool: computed(() => getters.selectedPoolSMPool),
+      selectedPool: computed(() => getters.selectedPoolSMSinglePool),
       assetBalancesList,
 
       liquidityAmount,

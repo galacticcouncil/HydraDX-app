@@ -1,8 +1,10 @@
 import { GetterTree } from 'vuex';
 
-export const getters: GetterTree<SinglePoolState, MergedState> & SinglePoolGetters = {
+export const getters: GetterTree<SinglePoolState, MergedState> &
+  SinglePoolGetters = {
   liquidityAmountSMSinglePool: ({ liquidityAmount }) => liquidityAmount,
-  liquidityPropertiesSMSinglePool: ({ liquidityProperties }) => liquidityProperties,
+  liquidityPropertiesSMSinglePool: ({ liquidityProperties }) =>
+    liquidityProperties,
   newPoolPropertiesSMSinglePool: ({ newPoolProperties }) => newPoolProperties,
   selectedPoolSMSinglePool: ({ selectedPool }) => selectedPool,
   createPoolDialogOpenSMSinglePool: ({ createPoolDialogOpen }) =>

@@ -268,7 +268,7 @@ export default defineComponent({
       setTradeAmount,
       // -----
 
-      poolInfo: computed(() => getters.poolInfoSMPool),
+      poolsInfo: computed(() => getters.poolsInfoSMPool),
       assetList: computed(() => getters.assetListSMWallet),
       tokenTradeMap: computed(() => getters.tokenTradeMapSMTrade),
       assetBalances: computed(() => getters.assetBalancesSMWallet),

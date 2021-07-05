@@ -41,8 +41,8 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
         asset1 = state.tradeProperties.asset1;
         asset2 = state.tradeProperties.asset2;
       } else if (router.currentRoute.value.path.indexOf('/liquidity') === 0) {
-        asset1 = rootState.pool.liquidityProperties.asset1;
-        asset2 = rootState.pool.liquidityProperties.asset2;
+        asset1 = rootState.singlePool.liquidityProperties.asset1;
+        asset2 = rootState.singlePool.liquidityProperties.asset2;
       } else {
         return;
       }

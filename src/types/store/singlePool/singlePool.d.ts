@@ -1,11 +1,5 @@
 // ================================= STATE =====================================
 
-type PoolInfo = {
-  poolAssets: string[];
-  poolAssetNames: string[];
-  shareToken: number;
-};
-
 type LiquidityProperties = {
   asset1: string | null;
   asset2: string | null;
@@ -113,16 +107,16 @@ type SinglePoolStore<S = SinglePoolState> = Omit<
   'commit' | 'getters' | 'dispatch'
 > & {
   commit<
-    K extends keyof PoolMutations,
-    P extends Parameters<PoolMutations[K]>[1]
+    K extends keyof SinglePoolMutations,
+    P extends Parameters<SinglePoolMutations[K]>[1]
   >(
     key: K,
     payload?: P,
     options?: CommitOptions
-  ): ReturnType<PoolMutations[K]>;
+  ): ReturnType<SinglePoolMutations[K]>;
 } & {
   getters: {
-    [K in keyof PoolGetters]: ReturnType<PoolGetters[K]>;
+    [K in keyof SinglePoolGetters]: ReturnType<SinglePoolGetters[K]>;
   };
 } & {
   dispatch<K extends keyof SinglePoolActions>(

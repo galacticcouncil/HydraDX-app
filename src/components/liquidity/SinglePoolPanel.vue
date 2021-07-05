@@ -79,11 +79,11 @@ export default defineComponent({
     const currentPool: Ref<PoolInfo | null> = ref(null);
     const router = useRouter();
 
-    const poolInfo = computed(() => getters.poolInfoSMPool);
+    const poolsInfo = computed(() => getters.poolsInfoSMPool);
     const addRemovePoolLiquidityDialogOpen = computed(
-      () => getters.addRemovePoolLiquidityDialogOpenSMPool
+      () => getters.addRemovePoolLiquidityDialogOpenSMSinglePool
     );
-    const selectedPool = computed(() => getters.selectedPoolSMPool);
+    const selectedPool = computed(() => getters.selectedPoolSMSinglePool);
 
     const userPoolLiquidity = computed(() => {
       if (
@@ -99,10 +99,10 @@ export default defineComponent({
     });
 
     watch(
-      () => getters.selectedPoolSMPool,
+      () => getters.selectedPoolSMSinglePool,
       (newVal, oldVal) => {
         if (newVal !== oldVal && newVal) {
-          currentPool.value = poolInfo.value[newVal];
+          currentPool.value = poolsInfo.value[newVal];
 
         }
         if (newVal !== null && currentPool.value !== null) {
@@ -125,7 +125,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (selectedPool.value) {
-        currentPool.value = poolInfo.value[selectedPool.value];
+        currentPool.value = poolsInfo.value[selectedPool.value];
       }
 
       if (selectedPool.value !== null && currentPool.value !== null) {
@@ -144,7 +144,7 @@ export default defineComponent({
     };
 
     return {
-      poolInfo,
+      poolsInfo,
       userPoolLiquidity,
       addRemovePoolLiquidityDialogOpen,
       onBackClick,

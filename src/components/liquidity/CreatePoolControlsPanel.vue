@@ -136,13 +136,13 @@ export default defineComponent({
       isAsset2BalanceValid: true,
     });
 
-    const newPoolProperties = computed(() => getters.newPoolPropertiesSMPool);
-    const asset1 = computed(() => getters.newPoolPropertiesSMPool.asset1);
-    const asset2 = computed(() => getters.newPoolPropertiesSMPool.asset2);
+    const newPoolProperties = computed(() => getters.newPoolPropertiesSMSinglePool);
+    const asset1 = computed(() => getters.newPoolPropertiesSMSinglePool.asset1);
+    const asset2 = computed(() => getters.newPoolPropertiesSMSinglePool.asset2);
     const initialPrice = computed(
-      () => getters.newPoolPropertiesSMPool.initialPrice
+      () => getters.newPoolPropertiesSMSinglePool.initialPrice
     );
-    const amount = computed(() => getters.newPoolPropertiesSMPool.amount);
+    const amount = computed(() => getters.newPoolPropertiesSMSinglePool.amount);
 
     const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
 
@@ -259,7 +259,7 @@ export default defineComponent({
         newAsset2 = assetValue;
       }
 
-      dispatch('changeNewPoolPropertiesSMPool', {
+      dispatch('changeNewPoolPropertiesSMSinglePool', {
         asset1: newAsset1,
         asset2: newAsset2,
         initialPrice: initialPrice.value,
@@ -268,7 +268,7 @@ export default defineComponent({
     };
 
     const onAmountChange = (newAmount: BigNumber) => {
-      dispatch('changeNewPoolPropertiesSMPool', {
+      dispatch('changeNewPoolPropertiesSMSinglePool', {
         asset1: asset1.value,
         asset2: asset2.value,
         initialPrice: initialPrice.value,
@@ -276,7 +276,7 @@ export default defineComponent({
       });
     };
     const onInitialPriceChange = (newAmount: BigNumber) => {
-      dispatch('changeNewPoolPropertiesSMPool', {
+      dispatch('changeNewPoolPropertiesSMSinglePool', {
         asset1: asset1.value,
         asset2: asset2.value,
         initialPrice: newAmount,
@@ -285,7 +285,7 @@ export default defineComponent({
     };
 
     const onPoolCreateClick = async () => {
-      await dispatch('createPoolSMPool');
+      await dispatch('createPoolSMSinglePool');
       await router.push(router.currentRoute.value.path);
     };
 
@@ -366,10 +366,10 @@ export default defineComponent({
       validationState.isAsset2BalanceValid = isAsset2BalanceValid;
     };
 
-    watch(() => getters.newPoolPropertiesSMPool, validateCreatePoolForm);
+    watch(() => getters.newPoolPropertiesSMSinglePool, validateCreatePoolForm);
 
     onBeforeUnmount(() => {
-      dispatch('changeNewPoolPropertiesSMPool', {
+      dispatch('changeNewPoolPropertiesSMSinglePool', {
         asset1: null,
         asset2: null,
         initialPrice: new BigNumber(0),
