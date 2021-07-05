@@ -67,7 +67,6 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
     const api = Api.getApi();
     try {
       const assetList = await api.hydraDx.query.getAssetList();
-      console.log('assetList - ', assetList);
       commit('SET_ASSET_LIST__WALLET', assetList);
     } catch (e) {
       console.log(e);

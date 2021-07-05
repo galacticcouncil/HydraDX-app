@@ -162,7 +162,9 @@ export const actions: ActionTree<TradeState, MergedState> & TradeActions = {
           swapResp &&
           swapResp.data &&
           swapResp.data.totalAmountFinal !== undefined &&
-          swapResp.data.errorDetails === undefined
+          swapResp.data.errorDetails === undefined &&
+          swapResp.method &&
+          swapResp.method.includes('IntentionResolvedDirectTrade')
         ) {
           if (swapResp.data.intentionType === 'BUY') {
             swapResp.data.saved = totalAmountInitial.minus(
