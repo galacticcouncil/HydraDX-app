@@ -136,7 +136,9 @@ export default defineComponent({
       isAsset2BalanceValid: true,
     });
 
-    const newPoolProperties = computed(() => getters.newPoolPropertiesSMSinglePool);
+    const newPoolProperties = computed(
+      () => getters.newPoolPropertiesSMSinglePool
+    );
     const asset1 = computed(() => getters.newPoolPropertiesSMSinglePool.asset1);
     const asset2 = computed(() => getters.newPoolPropertiesSMSinglePool.asset2);
     const initialPrice = computed(

@@ -1,5 +1,5 @@
 <template>
-  <div class="header-accounts-control-panel">
+  <div class="header-accounts-control-panel" v-click-away="onClosePanel">
     <!--    <div class="selected-account-short-info" v-if="accountInfo">-->
     <!--      Account: {{ accountInfo.name }}-->
     <!--    </div>-->
@@ -77,19 +77,23 @@ export default defineComponent({
       dispatch('changeAccountSMWallet', accountAddress);
     };
 
+    const onClosePanel = () => {
+      onToggleAccountsListPopup(false);
+    };
+
     return {
       accountInfo: computed(() => getters.accountInfoSMWallet),
       extensionInfo: computed(() => getters.extensionInfoSMGeneral),
       accountList: computed(() => getters.accountListSMWallet),
       currentAccount: computed(() => getters.accountSMWallet),
-      chainAddressFormat: computed(
-        () => getters.chainAddressFormatSMGeneral
-      ),
+      chainAddressFormat: computed(() => getters.chainAddressFormatSMGeneral),
       openAccountListPopup,
       onConnectAccountClick,
       onToggleAccountsListPopup,
       onChangeAccountClick,
       getHydraDxFormattedAddress,
+
+      onClosePanel,
     };
   },
 });

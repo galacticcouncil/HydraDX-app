@@ -7,7 +7,9 @@ const { getters, commit } = useStore();
 
 export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => { // eslint-disable-line
   // eslint-disable-line
-  const liquidityProperties = computed(() => getters.liquidityPropertiesSMSinglePool);
+  const liquidityProperties = computed(
+    () => getters.liquidityPropertiesSMSinglePool
+  );
 
   if (newVal.length === 0 && newVal === oldVal) return;
 
@@ -51,7 +53,9 @@ export const onMountRouteHashCheck = (): void => {
 
   if (currentRouteHash.length === 0) return;
 
-  const liquidityProperties = computed(() => getters.liquidityPropertiesSMSinglePool);
+  const liquidityProperties = computed(
+    () => getters.liquidityPropertiesSMSinglePool
+  );
 
   const liquidityPropsTpl: LiquidityProperties = {
     asset1: liquidityProperties.value.asset1,

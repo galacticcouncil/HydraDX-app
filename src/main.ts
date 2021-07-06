@@ -12,6 +12,7 @@ import ButtonCommon from '@/components/common/ButtonCommon.vue';
 import CommonPanel from '@/components/common/CommonPanel.vue';
 import BalanceInput from '@/components/common/BalanceInput.vue';
 import PagePanelLayout from '@/components/common/PagePanelLayout.vue';
+import VueClickAway from 'vue3-click-away';
 
 const options: PluginOptions = {
   timeout: 6000,
@@ -25,6 +26,7 @@ createApp(App)
   .use(store)
   .use(router)
   .use(Toast, options)
+  .use(VueClickAway)
   .component('AppLayout', AppLayout)
   .component('CommonPanel', CommonPanel)
   .component('NoticeMessage', NoticeMessage)

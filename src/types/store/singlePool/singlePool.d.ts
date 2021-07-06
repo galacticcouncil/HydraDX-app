@@ -38,7 +38,10 @@ type SinglePoolGetters = {
 // =============================== MUTATION ====================================
 
 type SinglePoolMutations = {
-  SET_SELECTED_POOL__SINGLE_POOL(state: SinglePoolState, poolId: string | null): void;
+  SET_SELECTED_POOL__SINGLE_POOL(
+    state: SinglePoolState,
+    poolId: string | null
+  ): void;
   SET_CREATE_POOL_DIALOG_OPEN__SINGLE_POOL(
     state: SinglePoolState,
     isOpen: boolean

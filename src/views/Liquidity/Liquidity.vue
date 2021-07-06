@@ -61,7 +61,9 @@ export default defineComponent({
 
     return {
       isPoolSelected,
-      createPoolDialogOpen: computed(() => getters.createPoolDialogOpenSMSinglePool),
+      createPoolDialogOpen: computed(
+        () => getters.createPoolDialogOpenSMSinglePool
+      ),
     };
   },
 });

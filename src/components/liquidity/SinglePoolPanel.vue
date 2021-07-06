@@ -103,7 +103,6 @@ export default defineComponent({
       (newVal, oldVal) => {
         if (newVal !== oldVal && newVal) {
           currentPool.value = poolsInfo.value[newVal];
-
         }
         if (newVal !== null && currentPool.value !== null) {
           poolName.value = `${currentPool.value.poolAssetNames[0]} | ${currentPool.value.poolAssetNames[1]}`;

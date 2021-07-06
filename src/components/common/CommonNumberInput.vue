@@ -89,7 +89,6 @@ export default defineComponent({
       ) {
         compState.isUserValueValid = false;
         updateValue(new BigNumber(0));
-        console.log('not valid')
         return;
       }
 
