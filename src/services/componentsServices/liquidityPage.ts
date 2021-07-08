@@ -12,19 +12,19 @@ export const onRouteHashChangeWatchLiquidityPage = (
   if (newVal.length === 0 && newVal === oldVal) return;
 
   if (!newVal && oldVal.length > 0) {
-    dispatch('changeNewPoolPropertiesSMPool', {
+    dispatch('changeNewPoolPropertiesSMSinglePool', {
       asset1: null,
       asset2: null,
       initialPrice: new BigNumber(0),
       amount: new BigNumber(0),
     });
-    commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false);
+    commit('SET_CREATE_POOL_DIALOG_OPEN__SINGLE_POOL', false);
     return;
   }
 
   switch (newVal.replace('#', '')) {
     case constants.POOL_CREAT_NEW_POOL_SECTION_PATH:
-      commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', true);
+      commit('SET_CREATE_POOL_DIALOG_OPEN__SINGLE_POOL', true);
       return;
   }
 };
@@ -38,7 +38,7 @@ export const onMountRouteHashCheckLiquidityPage = (): void => {
 
   switch (currentRouteHash.replace('#', '')) {
     case constants.POOL_CREAT_NEW_POOL_SECTION_PATH:
-      commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', true);
+      commit('SET_CREATE_POOL_DIALOG_OPEN__SINGLE_POOL', true);
       return;
   }
 };

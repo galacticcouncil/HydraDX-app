@@ -33,11 +33,11 @@ export default defineComponent({
     const router = useRouter();
     const currentPoolId: Ref<string | null> = ref(null);
 
-    const selectedPool = computed(() => getters.selectedPoolSMPool);
-    const poolInfo = computed(() => getters.poolInfoSMPool);
+    const selectedPool = computed(() => getters.selectedPoolSMSinglePool);
+    const poolsInfo = computed(() => getters.poolsInfoSMPool);
 
     const liquidityProperties = computed(
-      () => getters.liquidityPropertiesSMPool
+      () => getters.liquidityPropertiesSMSinglePool
     );
 
     const isPoolSelected = computed(() => {
@@ -49,22 +49,22 @@ export default defineComponent({
     });
 
     const setCurrentPool = () => {
-      if (currentPoolId.value === null || !poolInfo.value[currentPoolId.value])
+      if (currentPoolId.value === null || !poolsInfo.value[currentPoolId.value])
         return;
 
-      const asset1 = poolInfo.value[currentPoolId.value].poolAssets[0];
-      const asset2 = poolInfo.value[currentPoolId.value].poolAssets[1];
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      const asset1 = poolsInfo.value[currentPoolId.value].poolAssets[0];
+      const asset2 = poolsInfo.value[currentPoolId.value].poolAssets[1];
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         actionType: liquidityProperties.value.actionType,
         asset1,
         asset2,
       });
       dispatch('getSpotPriceSMTrade');
-      dispatch('changeSelectedPoolSMPool', currentPoolId.value);
+      dispatch('changeSelectedPoolSMSinglePool', currentPoolId.value);
     };
 
     watch(
-      () => getters.poolInfoSMPool,
+      () => getters.poolsInfoSMPool,
       (nawVal, oldVal) => {
         if (
           nawVal &&
@@ -89,17 +89,19 @@ export default defineComponent({
       }
     });
     onBeforeUnmount(() => {
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         actionType: '',
         asset1: null,
         asset2: null,
       });
-      dispatch('changeSelectedPoolSMPool', null);
+      dispatch('changeSelectedPoolSMSinglePool', null);
     });
 
     return {
       isPoolSelected,
-      createPoolDialogOpen: computed(() => getters.createPoolDialogOpenSMPool),
+      createPoolDialogOpen: computed(
+        () => getters.createPoolDialogOpenSMSinglePool
+      ),
     };
   },
 });

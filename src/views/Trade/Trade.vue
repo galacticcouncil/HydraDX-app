@@ -181,7 +181,7 @@ export default defineComponent({
     });
 
     return {
-      poolInfo: computed(() => getters.poolInfoSMPool),
+      poolsInfo: computed(() => getters.poolsInfoSMPool),
       assetList: computed(() => getters.assetListSMWallet),
       tokenTradeMap: computed(() => getters.tokenTradeMapSMTrade),
       assetBalances: computed(() => getters.assetBalancesSMWallet),

@@ -1,23 +1,14 @@
 import { GetterTree } from 'vuex';
 
 export const getters: GetterTree<PoolState, MergedState> & PoolGetters = {
-  poolInfoSMPool: ({ poolInfo }, getters, rootState) => {
-    for (const pool in poolInfo) {
-      poolInfo[pool].poolAssetNames = [];
-      poolInfo[pool].poolAssetNames[0] =
-        rootState.wallet.assetList[+poolInfo[pool].poolAssets[0]].name;
-      poolInfo[pool].poolAssetNames[1] =
-        rootState.wallet.assetList[+poolInfo[pool].poolAssets[1]].name;
+  poolsInfoSMPool: ({ poolsInfo }, getters, rootState) => {
+    for (const pool in poolsInfo) {
+      poolsInfo[pool].poolAssetNames = [];
+      poolsInfo[pool].poolAssetNames[0] =
+        rootState.wallet.assetList[+poolsInfo[pool].poolAssets[0]].name;
+      poolsInfo[pool].poolAssetNames[1] =
+        rootState.wallet.assetList[+poolsInfo[pool].poolAssets[1]].name;
     }
-    return poolInfo;
+    return poolsInfo;
   },
-  liquidityAmountSMPool: ({ liquidityAmount }) => liquidityAmount,
-  liquidityPropertiesSMPool: ({ liquidityProperties }) => liquidityProperties,
-  newPoolPropertiesSMPool: ({ newPoolProperties }) => newPoolProperties,
-  selectedPoolSMPool: ({ selectedPool }) => selectedPool,
-  createPoolDialogOpenSMPool: ({ createPoolDialogOpen }) =>
-    createPoolDialogOpen,
-  addRemovePoolLiquidityDialogOpenSMPool: ({
-    addRemovePoolLiquidityDialogOpen,
-  }) => addRemovePoolLiquidityDialogOpen,
 };

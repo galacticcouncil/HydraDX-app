@@ -7,7 +7,9 @@ const { getters, commit } = useStore();
 
 export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => { // eslint-disable-line
   // eslint-disable-line
-  const liquidityProperties = computed(() => getters.liquidityPropertiesSMPool);
+  const liquidityProperties = computed(
+    () => getters.liquidityPropertiesSMSinglePool
+  );
 
   if (newVal.length === 0 && newVal === oldVal) return;
 
@@ -18,8 +20,8 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => { // e
   };
 
   if (!newVal && oldVal.length > 0) {
-    commit('SET_LIQUIDITY_PROPERTIES__POOL', liquidityPropsTpl);
-    commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', false);
+    commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', liquidityPropsTpl);
+    commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__SINGLE_POOL', false);
     return;
   }
 
@@ -28,18 +30,18 @@ export const onRouteHashChangeWatch = (newVal: any, oldVal: any): void => { // e
 
   switch (newVal.replace('#', '')) {
     case constants.POOL_ADD_LIQUIDITY_SECTION_PATH:
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         ...liquidityPropsTpl,
         actionType: 'add',
       });
-      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
+      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__SINGLE_POOL', true);
       return;
     case constants.POOL_REMOVE_LIQUIDITY_SECTION_PATH:
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         ...liquidityPropsTpl,
         actionType: 'withdraw',
       });
-      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
+      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__SINGLE_POOL', true);
       return;
   }
 };
@@ -51,7 +53,9 @@ export const onMountRouteHashCheck = (): void => {
 
   if (currentRouteHash.length === 0) return;
 
-  const liquidityProperties = computed(() => getters.liquidityPropertiesSMPool);
+  const liquidityProperties = computed(
+    () => getters.liquidityPropertiesSMSinglePool
+  );
 
   const liquidityPropsTpl: LiquidityProperties = {
     asset1: liquidityProperties.value.asset1,
@@ -61,18 +65,18 @@ export const onMountRouteHashCheck = (): void => {
 
   switch (currentRouteHash.replace('#', '')) {
     case constants.POOL_ADD_LIQUIDITY_SECTION_PATH:
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         ...liquidityPropsTpl,
         actionType: 'add',
       });
-      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
+      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__SINGLE_POOL', true);
       return;
     case constants.POOL_REMOVE_LIQUIDITY_SECTION_PATH:
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         ...liquidityPropsTpl,
         actionType: 'withdraw',
       });
-      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__POOL', true);
+      commit('SET_ADD_REMOVE_POOL_LIQUIDITY_DIALOG__SINGLE_POOL', true);
       return;
   }
 };

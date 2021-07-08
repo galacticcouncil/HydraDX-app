@@ -131,7 +131,7 @@ export default defineComponent({
     const assetBalancesList = computed(() => getters.assetBalancesSMWallet);
 
     const actionType = computed(
-      () => getters.liquidityPropertiesSMPool.actionType
+      () => getters.liquidityPropertiesSMSinglePool.actionType
     );
 
     const spotPrice = computed(() => getters.spotPriceSMTrade);
@@ -141,9 +141,9 @@ export default defineComponent({
     );
 
     const liquidityAmount = computed({
-      get: () => getters.liquidityAmountSMPool,
+      get: () => getters.liquidityAmountSMSinglePool,
       set: (liquidityAmountUpdated: BigNumber) => {
-        commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmountUpdated);
+        commit('SET_LIQUIDITY_AMOUNT__SINGLE_POOL', liquidityAmountUpdated);
       },
     });
 
@@ -206,21 +206,22 @@ export default defineComponent({
 
     const onLiquidityAmountChange = (liquidityAmountUpdated: BigNumber) => {
       liquidityAmount.value = liquidityAmountUpdated;
-      // commit('SET_LIQUIDITY_AMOUNT__POOL', liquidityAmountUpdated);
-      // dispatch('changeLiquidityAmountSMPool', liquidityAmountUpdated);
+      // commit('SET_LIQUIDITY_AMOUNT__SINGLE_POOL', liquidityAmountUpdated);
+      // dispatch('changeLiquidityAmountSMSinglePool', liquidityAmountUpdated);
     };
 
-    const onPoolActionClick = () => {
+    const onPoolActionClick = async () => {
       if (!getters.accountSMWallet || !getters.extensionInfoSMGeneral) {
         toast.error(notifications.connectAccountIsRequired);
         router.push('/wallet');
         return;
       }
       if (actionType.value === 'add') {
-        dispatch('addLiquiditySMPool');
+        await dispatch('addLiquiditySMSinglePool');
       } else {
-        dispatch('withdrawLiquiditySMPool');
+        await dispatch('withdrawLiquiditySMSinglePool');
       }
+      onLiquidityAmountChange(new BigNumber(0));
     };
 
     const validateAddRemoveLiquidityForm = (newLiquidityAmount: BigNumber) => {
@@ -241,7 +242,7 @@ export default defineComponent({
 
       if (
         actionType.value === 'withdraw' &&
-        newLiquidityAmount.isLessThan(new BigNumber(100)) &&
+        newLiquidityAmount.isLessThanOrEqualTo(new BigNumber(100)) &&
         !newLiquidityAmount.isZero() &&
         newLiquidityAmount.isPositive()
       )
@@ -291,7 +292,10 @@ export default defineComponent({
       validationState.isAsset2BalanceValid = isAsset2BalanceValid;
     };
 
-    watch(() => getters.liquidityAmountSMPool, validateAddRemoveLiquidityForm);
+    watch(
+      () => getters.liquidityAmountSMSinglePool,
+      validateAddRemoveLiquidityForm
+    );
 
     onBeforeUnmount(() => {
       // onLiquidityAmountChange(new BigNumber(0));
@@ -299,7 +303,7 @@ export default defineComponent({
     });
 
     return {
-      selectedPool: computed(() => getters.selectedPoolSMPool),
+      selectedPool: computed(() => getters.selectedPoolSMSinglePool),
       assetBalancesList,
 
       liquidityAmount,

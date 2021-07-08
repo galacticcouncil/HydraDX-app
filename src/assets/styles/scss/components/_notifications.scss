@@ -41,6 +41,7 @@
     }
   }
 
+  &.Vue-Toastification__toast--success,
   &.Vue-Toastification__toast--info {
     background-color: $hdx-light-blue;
     color: #fff;

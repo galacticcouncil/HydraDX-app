@@ -3,6 +3,7 @@ import { createStore, ModuleTree } from 'vuex'; //createLogger
 import { general } from '@/store/general';
 import { wallet } from '@/store/wallet';
 import { pool } from '@/store/pool';
+import { singlePool } from '@/store/singlePool';
 import { trade } from '@/store/trade';
 import { notification } from '@/store/notification';
 
@@ -10,6 +11,7 @@ const modules: ModuleTree<MergedState> = {
   general,
   wallet,
   pool,
+  singlePool,
   trade,
   notification,
 };

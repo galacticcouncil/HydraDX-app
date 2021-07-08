@@ -33,7 +33,7 @@ export default defineComponent({
     const router = useRouter();
 
     onBeforeUnmount(() => {
-      commit('SET_CREATE_POOL_DIALOG_OPEN__POOL', false);
+      commit('SET_CREATE_POOL_DIALOG_OPEN__SINGLE_POOL', false);
     });
 
     onMounted(() => {
@@ -41,9 +41,9 @@ export default defineComponent({
       onMountRouteHashCheckLiquidityPage();
     });
 
-    const selectedPool = computed(() => getters.selectedPoolSMPool);
+    const selectedPool = computed(() => getters.selectedPoolSMSinglePool);
     const liquidityProperties = computed(
-      () => getters.liquidityPropertiesSMPool
+      () => getters.liquidityPropertiesSMSinglePool
     );
 
     const isPoolSelected = computed(() => {
@@ -61,7 +61,9 @@ export default defineComponent({
 
     return {
       isPoolSelected,
-      createPoolDialogOpen: computed(() => getters.createPoolDialogOpenSMPool),
+      createPoolDialogOpen: computed(
+        () => getters.createPoolDialogOpenSMSinglePool
+      ),
     };
   },
 });

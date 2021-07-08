@@ -18,11 +18,11 @@
         <div class="flex-row" role="columnheader">Volume 24h</div>
       </div>
 
-      <template v-if="Object.keys(poolInfo).length">
+      <template v-if="Object.keys(poolsInfo).length">
         <div
           class="flex-table row"
           role="rowgroup"
-          v-for="(pool, poolId) in poolInfo"
+          v-for="(pool, poolId) in poolsInfo"
           :key="poolId"
           @click.prevent="() => onPoolClick(poolId)"
         >
@@ -60,23 +60,23 @@ export default defineComponent({
     const { getters, commit, dispatch } = useStore();
     const router = useRouter();
 
-    const poolInfo = computed(() => getters.poolInfoSMPool);
+    const poolsInfo = computed(() => getters.poolsInfoSMPool);
     const walletAssetBalances = computed(() => getters.assetBalancesSMWallet);
     const liquidityProperties = computed(
-      () => getters.liquidityPropertiesSMPool
+      () => getters.liquidityPropertiesSMSinglePool
     );
     const onPoolClick = (poolId: string) => {
       const newPoolId = poolId as string;
-      const asset1 = poolInfo.value[newPoolId].poolAssets[0];
-      const asset2 = poolInfo.value[newPoolId].poolAssets[1];
+      const asset1 = poolsInfo.value[newPoolId].poolAssets[0];
+      const asset2 = poolsInfo.value[newPoolId].poolAssets[1];
 
-      commit('SET_LIQUIDITY_PROPERTIES__POOL', {
+      commit('SET_LIQUIDITY_PROPERTIES__SINGLE_POOL', {
         actionType: liquidityProperties.value.actionType,
         asset1,
         asset2,
       });
       dispatch('getSpotPriceSMTrade');
-      dispatch('changeSelectedPoolSMPool', poolId);
+      dispatch('changeSelectedPoolSMSinglePool', poolId);
       router.push(`/liquidity/${poolId}`);
     };
 
@@ -87,7 +87,7 @@ export default defineComponent({
     };
 
     return {
-      poolInfo,
+      poolsInfo,
       // selectedPool,
       getUserPoolLiquidity,
       onPoolClick,

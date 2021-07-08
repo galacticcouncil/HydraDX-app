@@ -57,6 +57,7 @@ export const actions: ActionTree<WalletState, MergedState> & WalletActions = {
       const balances = await api.hydraDx.query.getAccountBalances(
         context.state.account
       );
+
       context.commit('SET_ASSET_BALANCES__WALLET', balances);
     } catch (e) {
       console.log(e);
