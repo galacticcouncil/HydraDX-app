@@ -29,7 +29,9 @@
           <div class="flex-row first" role="cell">
             {{ pool.poolAssetNames[0] }} | {{ pool.poolAssetNames[1] }}
           </div>
-          <div class="flex-row" role="cell">---</div>
+          <div class="flex-row" role="cell">
+            {{ getPriceDecoratedShort(pool.marketCap) }}
+          </div>
           <div class="flex-row" role="cell">
             {{ getUserPoolLiquidity(pool.shareToken) || '---' }}
           </div>
@@ -52,6 +54,7 @@ import { defineComponent, computed } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import { POOL_CREAT_NEW_POOL_SECTION_PATH } from '@/variables/constants';
+import { getPriceDecoratedShort } from '@/services/utils';
 
 export default defineComponent({
   name: 'PoolsList',
@@ -66,6 +69,7 @@ export default defineComponent({
       () => getters.liquidityPropertiesSMSinglePool
     );
     const onPoolClick = (poolId: string) => {
+      console.log('poolsInfo.value- ', poolsInfo.value);
       const newPoolId = poolId as string;
       const asset1 = poolsInfo.value[newPoolId].poolAssets[0];
       const asset2 = poolsInfo.value[newPoolId].poolAssets[1];
@@ -81,9 +85,7 @@ export default defineComponent({
     };
 
     const getUserPoolLiquidity = (poolToken: number) => {
-      return walletAssetBalances.value[poolToken].balance
-        ? +walletAssetBalances.value[poolToken].balanceFormatted
-        : null;
+      return walletAssetBalances.value[poolToken].totalBalanceFormatted;
     };
 
     return {
@@ -91,6 +93,7 @@ export default defineComponent({
       // selectedPool,
       getUserPoolLiquidity,
       onPoolClick,
+      getPriceDecoratedShort,
       openCreatePoolDialog: () =>
         router.push(
           `${router.currentRoute.value.path}#${POOL_CREAT_NEW_POOL_SECTION_PATH}`

@@ -68,7 +68,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
       const shareToken = rootState.pool.poolsInfo[selectedPool].shareToken;
 
       const liquidityBalance =
-        rootState.wallet.assetBalances[shareToken].balance;
+        rootState.wallet.assetBalances[shareToken].freeBalance;
 
       const percentage = state.liquidityAmount;
 

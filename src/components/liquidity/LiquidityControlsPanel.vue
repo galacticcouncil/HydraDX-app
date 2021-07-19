@@ -17,7 +17,7 @@
 
           <BalanceIndicatorsGroup v-if="currentPool">
             <BalanceIndicator
-              :amount="asset1Detailed.balance"
+              :amount="asset1Detailed.freeBalance"
               :label="`Available balance:`"
               :ending="asset1Detailed.name"
               :valid="validationState.isAsset1BalanceValid"
@@ -47,7 +47,7 @@
           />
           <BalanceIndicatorsGroup v-if="currentPool">
             <BalanceIndicator
-              :amount="asset2Detailed.balance"
+              :amount="asset2Detailed.freeBalance"
               :label="`Available balance:`"
               :ending="asset2Detailed.name"
               :valid="validationState.isAsset2BalanceValid"
@@ -184,10 +184,10 @@ export default defineComponent({
     const assetAmountAfterTransaction = (asset: string): BigNumber => {
       let amountAfter = new BigNumber(0);
 
-      if (asset === 'asset1' && asset1Detailed.value.balance) {
-        amountAfter = asset1Detailed.value.balance.minus(liquidityAmount.value);
-      } else if (asset === 'asset2' && asset2Detailed.value.balance) {
-        amountAfter = asset2Detailed.value.balance.minus(asset2Amount.value);
+      if (asset === 'asset1' && asset1Detailed.value.freeBalance) {
+        amountAfter = asset1Detailed.value.freeBalance.minus(liquidityAmount.value);
+      } else if (asset === 'asset2' && asset2Detailed.value.freeBalance) {
+        amountAfter = asset2Detailed.value.freeBalance.minus(asset2Amount.value);
       }
 
       return !amountAfter.isNaN() &&
@@ -233,8 +233,8 @@ export default defineComponent({
 
       if (
         actionType.value === 'add' &&
-        asset2Detailed.value.balance !== undefined &&
-        newLiquidityAmount.isLessThan(asset2Detailed.value.balance) &&
+        // asset2Detailed.value.freeBalance !== null &&
+        newLiquidityAmount.isLessThan(asset2Detailed.value.freeBalance) &&
         !newLiquidityAmount.isZero() &&
         newLiquidityAmount.isPositive()
       )
@@ -261,16 +261,16 @@ export default defineComponent({
         isAsset2AmountAfterValid = true;
 
       if (
-        asset1Detailed.value.balance &&
-        !asset1Detailed.value.balance.isZero() &&
-        asset1Detailed.value.balance.isPositive()
+        asset1Detailed.value.freeBalance &&
+        !asset1Detailed.value.freeBalance.isZero() &&
+        asset1Detailed.value.freeBalance.isPositive()
       )
         isAsset1BalanceValid = true;
 
       if (
-        asset2Detailed.value.balance &&
-        !asset2Detailed.value.balance.isZero() &&
-        asset2Detailed.value.balance.isPositive()
+        asset2Detailed.value.freeBalance &&
+        !asset2Detailed.value.freeBalance.isZero() &&
+        asset2Detailed.value.freeBalance.isPositive()
       )
         isAsset2BalanceValid = true;
 

@@ -13,7 +13,7 @@
         />
         <BalanceIndicatorsGroup v-show="asset1 !== null">
           <BalanceIndicator
-            :amount="asset1Detailed.balance"
+            :amount="asset1Detailed.freeBalance"
             :label="`Available balance:`"
             :ending="asset1Detailed.name"
             :valid="validationState.isAsset1BalanceValid"
@@ -39,7 +39,7 @@
         />
         <BalanceIndicatorsGroup v-show="asset2 !== null">
           <BalanceIndicator
-            :amount="asset2Detailed.balance"
+            :amount="asset2Detailed.freeBalance"
             :label="`Available balance:`"
             :ending="asset2Detailed.name"
             :valid="validationState.isAsset2BalanceValid"
@@ -227,10 +227,10 @@ export default defineComponent({
     const assetAmountAfterTransaction = (asset: string): BigNumber => {
       let amountAfter = new BigNumber(0);
 
-      if (asset === 'asset1' && asset1Detailed.value.balance) {
-        amountAfter = asset1Detailed.value.balance.minus(amount.value);
-      } else if (asset === 'asset2' && asset2Detailed.value.balance) {
-        amountAfter = asset2Detailed.value.balance.minus(
+      if (asset === 'asset1' && asset1Detailed.value.freeBalance) {
+        amountAfter = asset1Detailed.value.freeBalance.minus(amount.value);
+      } else if (asset === 'asset2' && asset2Detailed.value.freeBalance) {
+        amountAfter = asset2Detailed.value.freeBalance.minus(
           requiredAsset2Amount.value
         );
       }
@@ -308,10 +308,7 @@ export default defineComponent({
       let isAsset1BalanceValid = false;
       let isAsset2BalanceValid = false;
 
-      if (
-        asset2Detailed.value.balance !== undefined &&
-        poolProps.amount.isLessThan(asset2Detailed.value.balance)
-      )
+      if (poolProps.amount.isLessThan(asset2Detailed.value.freeBalance))
         isAmountValid = true;
 
       if (
@@ -327,16 +324,16 @@ export default defineComponent({
         isAsset2AmountAfterValid = true;
 
       if (
-        asset1Detailed.value.balance &&
-        !asset1Detailed.value.balance.isZero() &&
-        asset1Detailed.value.balance.isPositive()
+        asset1Detailed.value.freeBalance &&
+        !asset1Detailed.value.freeBalance.isZero() &&
+        asset1Detailed.value.freeBalance.isPositive()
       )
         isAsset1BalanceValid = true;
 
       if (
-        asset2Detailed.value.balance &&
-        !asset2Detailed.value.balance.isZero() &&
-        asset2Detailed.value.balance.isPositive()
+        asset2Detailed.value.freeBalance &&
+        !asset2Detailed.value.freeBalance.isZero() &&
+        asset2Detailed.value.freeBalance.isPositive()
       )
         isAsset2BalanceValid = true;
 

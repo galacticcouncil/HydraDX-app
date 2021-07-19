@@ -6,8 +6,17 @@ type AccountInfo = {
 };
 type AssetBalance = {
   assetId: number;
-  balance: BigNumber;
-  balanceFormatted: string;
+  balance?: BigNumber;
+  totalBalance: BigNumber;
+  freeBalance: BigNumber;
+  feeFrozenBalance: BigNumber;
+  miscFrozenBalance: BigNumber;
+  reservedBalance: BigNumber;
+  totalBalanceFormatted?: string;
+  freeBalanceFormatted?: string;
+  feeFrozenBalanceFormatted?: string;
+  miscFrozenBalanceFormatted?: string;
+  reservedBalanceFormatted?: string;
   name?: string;
   shareToken?: boolean;
 };

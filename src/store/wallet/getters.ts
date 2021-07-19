@@ -45,18 +45,25 @@ export const getters: GetterTree<WalletState, MergedState> & WalletGetters = {
           }
         }
 
-        const balance = tokenInfo?.balance;
-        // const balanceFormatted = tokenInfo?.balanceFormatted;
-        const balanceFormatted = tokenInfo?.balance
-          ? tokenInfo?.balanceFormatted
-          : '0';
-
-        return {
+        const resultScope = {
           ...assetRecord,
           name,
           shareToken,
-          balance: balance || new BigNumber(0),
-          balanceFormatted: balanceFormatted || '0',
+
+          totalBalance: tokenInfo?.totalBalance || new BigNumber(0),
+          freeBalance: tokenInfo?.freeBalance || new BigNumber(0),
+          feeFrozenBalance: tokenInfo?.feeFrozenBalance || new BigNumber(0),
+          miscFrozenBalance: tokenInfo?.miscFrozenBalance || new BigNumber(0),
+          reservedBalance: tokenInfo?.reservedBalance || new BigNumber(0),
+        };
+
+        return {
+          ...resultScope,
+          totalBalanceFormatted: resultScope.totalBalance.toString(),
+          freeBalanceFormatted: resultScope.freeBalance.toString(),
+          feeFrozenBalanceFormatted: resultScope.feeFrozenBalance.toString(),
+          miscFrozenBalanceFormatted: resultScope.miscFrozenBalance.toString(),
+          reservedBalanceFormatted: resultScope.reservedBalance.toString(),
         };
       });
   },

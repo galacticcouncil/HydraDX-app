@@ -9,11 +9,17 @@
     <div class="screen-panel-body">
       <div class="pool-meta-data-panel">
         <div class="meta-data-item">
-          <div class="item-value">120$ M</div>
+          <div class="item-value">
+            {{
+              currentPool
+                ? getPriceDecoratedShort(currentPool.marketCap)
+                : '---'
+            }}
+          </div>
           <div class="item-name">Liquidity</div>
         </div>
         <div class="meta-data-item">
-          <div class="item-value">3.3$ M</div>
+          <div class="item-value">---</div>
           <div class="item-name">Volume (24h)</div>
         </div>
         <div class="meta-data-item">
@@ -66,6 +72,7 @@ import LiquidityControlsPanel from '@/components/liquidity/LiquidityControlsPane
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
 import { useRouter } from 'vue-router';
 import * as constants from '@/variables/constants';
+import { getPriceDecoratedShort } from '@/services/utils';
 
 export default defineComponent({
   name: 'SinglePoolPanel',
@@ -89,13 +96,13 @@ export default defineComponent({
       if (
         currentPool.value === null ||
         getters.assetBalancesSMWallet[currentPool.value.shareToken]
-          .balanceFormatted === '0'
+          .totalBalanceFormatted === '0'
       ) {
         return null;
       }
 
       return getters.assetBalancesSMWallet[currentPool.value.shareToken]
-        .balanceFormatted;
+        .totalBalanceFormatted;
     });
 
     watch(
@@ -151,6 +158,7 @@ export default defineComponent({
       poolName,
       setActionType,
       onCloseLiquidityActionControlsClick,
+      getPriceDecoratedShort,
     };
   },
 });

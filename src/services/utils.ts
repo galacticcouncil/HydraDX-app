@@ -80,3 +80,20 @@ export const getMaxReceivedTradeAmount = (
   const maxPercentage = new BigNumber(100).plus(slippage);
   return tradeAmount.multipliedBy(maxPercentage).div(100);
 };
+
+export const getPriceDecoratedShort = (priceValue: BigNumber): string => {
+  let priceSuffix = '';
+  let priceDivider = new BigNumber(1);
+
+  if (!priceValue.isLessThanOrEqualTo(new BigNumber(1000000))) {
+    priceSuffix = 'M';
+    priceDivider = new BigNumber(1000000);
+  } else if (!priceValue.isLessThanOrEqualTo(new BigNumber(1000))) {
+    priceSuffix = 'K';
+    priceDivider = new BigNumber(1000);
+  }
+
+  const valueDecorated = priceValue.dividedBy(priceDivider).decimalPlaces(1);
+
+  return `${valueDecorated.toString()}${priceSuffix}`;
+};

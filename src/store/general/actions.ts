@@ -60,48 +60,52 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   async initializeApiSMGeneral(context) {
     const { commit, dispatch } = context;
     const toast = useToast();
+    console.log('process.env.VUE_APP_CHAIN_NODE_URL - ', process.env.VUE_APP_CHAIN_NODE_URL);
 
     try {
-      const apiInstance = await Api.initialize({
-        error: (e: Error) => {
-          console.log('on error listener - ', e);
-          commit('SET_GENERAL_LOADING__NOTIFICATION', true);
-          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
-            action: 'delete',
-            message: notificationsVars.loadingMsgApiConnection,
-          });
-          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
-            action: 'add',
-            message: notificationsVars.loadingMsgApiConnectionErrorOccurred,
-          });
-          commit(
-            'SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION',
-            true
-          );
-          commit('SET_GENERAL_LOADING_SPINNER__NOTIFICATION', false);
+      const apiInstance = await Api.initialize(
+        {
+          error: (e: Error) => {
+            console.log('on error listener - ', e);
+            commit('SET_GENERAL_LOADING__NOTIFICATION', true);
+            commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
+              action: 'delete',
+              message: notificationsVars.loadingMsgApiConnection,
+            });
+            commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
+              action: 'add',
+              message: notificationsVars.loadingMsgApiConnectionErrorOccurred,
+            });
+            commit(
+              'SET_GENERAL_LOADING_SHOW_RECONNECT_CONTROL__NOTIFICATION',
+              true
+            );
+            commit('SET_GENERAL_LOADING_SPINNER__NOTIFICATION', false);
+          },
+          disconnected: () => {
+            console.log('on disconnected listener');
+            commit('SET_GENERAL_LOADING__NOTIFICATION', true);
+            commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
+              action: 'add',
+              message: notificationsVars.loadingMsgApiConnection,
+            });
+          },
+          connected: () => {
+            console.log('on connected listener');
+            commit('SET_GENERAL_LOADING__NOTIFICATION', false);
+          },
+          //TODO add parameter to the hydra-js
+          ready: (apiInstance?: ApiPromise) => {
+            console.log('on ready listener - ', apiInstance);
+            commit('SET_GENERAL_LOADING__NOTIFICATION', false);
+          },
+          onTxEvent: eventData => {
+            console.log('onTxEvent - ', eventData);
+            // commit('UPDATE_TRANSACTIONS__TRADE', eventData);
+          },
         },
-        disconnected: () => {
-          console.log('on disconnected listener');
-          commit('SET_GENERAL_LOADING__NOTIFICATION', true);
-          commit('SET_GENERAL_LOADING_MESSAGES__NOTIFICATION', {
-            action: 'add',
-            message: notificationsVars.loadingMsgApiConnection,
-          });
-        },
-        connected: () => {
-          console.log('on connected listener');
-          commit('SET_GENERAL_LOADING__NOTIFICATION', false);
-        },
-        //TODO add parameter to the hydra-js
-        ready: (apiInstance?: ApiPromise) => {
-          console.log('on ready listener - ', apiInstance);
-          commit('SET_GENERAL_LOADING__NOTIFICATION', false);
-        },
-        onTxEvent: eventData => {
-          console.log('onTxEvent - ', eventData);
-          // commit('UPDATE_TRANSACTIONS__TRADE', eventData);
-        },
-      });
+        process.env.VUE_APP_CHAIN_NODE_URL
+      );
 
       console.log('apiInstance - ', apiInstance);
 

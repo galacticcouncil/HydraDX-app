@@ -19,10 +19,10 @@
           {{ assetRecord.name }}
         </div>
         <div class="flex-row" role="cell">
-          {{ assetRecord.balanceFormatted }}
+          {{ assetRecord.totalBalanceFormatted }}
         </div>
-        <div class="flex-row" role="cell">---</div>
-        <div class="flex-row" role="cell">---</div>
+        <div class="flex-row" role="cell">{{ assetRecord.freeBalanceFormatted }}</div>
+        <div class="flex-row" role="cell">{{ assetRecord.reservedBalanceFormatted }}</div>
         <div class="flex-row" role="cell">
           <ButtonCommon
             small
@@ -58,11 +58,12 @@ export default defineComponent({
       }
     };
 
-    const assetBalancesSorted = computed(() =>
-      [...getters.assetBalancesSMWallet].sort(
-        (a, b) => Number(b.balance) - Number(a.balance)
-      )
-    );
+    const assetBalancesSorted = computed(() => {
+      console.log('getters.assetBalancesSMWallet - ', getters.assetBalancesSMWallet)
+      return [...getters.assetBalancesSMWallet].sort(
+        (a, b) => Number(b.totalBalance) - Number(a.totalBalance)
+      );
+    });
 
     return {
       assetBalancesSorted,
