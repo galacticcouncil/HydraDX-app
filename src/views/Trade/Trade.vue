@@ -64,12 +64,12 @@
               <div>
                 {{ assetList[asset1].name }}
                 OWNED:
-                {{ assetBalances[asset1].balanceFormatted }}
+                {{ assetBalances[asset1].totalBalanceFormatted }}
               </div>
               <div>
                 {{ assetList[asset2].name }}
                 OWNED:
-                {{ assetBalances[asset2].balanceFormatted }}
+                {{ assetBalances[asset2].totalBalanceFormatted }}
               </div>
             </div>
             <TradeAmount />

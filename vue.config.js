@@ -1,4 +1,6 @@
 // const path = require('path');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+// const dotenv = require('dotenv');
 
 module.exports = {
   lintOnSave: true,

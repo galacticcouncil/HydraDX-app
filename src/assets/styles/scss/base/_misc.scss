@@ -58,6 +58,11 @@
       width: calc(100% / 4);
     }
   }
+  &.col-num-3 {
+    .flex-row {
+      width: calc(100% / 3);
+    }
+  }
 
   .flex-row {
     //text-align: center;
