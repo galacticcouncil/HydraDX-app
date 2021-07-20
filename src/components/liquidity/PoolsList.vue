@@ -10,12 +10,12 @@
       >
     </div>
 
-    <div class="hdx-table-container col-num-4" role="table">
+    <div class="hdx-table-container col-num-3" role="table">
       <div class="flex-table header" role="rowgroup">
         <div class="flex-row first" role="columnheader">Pool</div>
         <div class="flex-row" role="columnheader">Market cap</div>
         <div class="flex-row" role="columnheader">My Liquidity</div>
-        <div class="flex-row" role="columnheader">Volume 24h</div>
+        <!--        <div class="flex-row" role="columnheader">Volume 24h</div>-->
       </div>
 
       <template v-if="Object.keys(poolsInfo).length">
@@ -35,7 +35,7 @@
           <div class="flex-row" role="cell">
             {{ getUserPoolLiquidity(pool.shareToken) || '---' }}
           </div>
-          <div class="flex-row" role="cell">---</div>
+          <!--          <div class="flex-row" role="cell">-&#45;&#45;</div>-->
         </div>
       </template>
       <template v-else>
@@ -69,7 +69,8 @@ export default defineComponent({
       () => getters.liquidityPropertiesSMSinglePool
     );
     const onPoolClick = (poolId: string) => {
-      console.log('poolsInfo.value- ', poolsInfo.value);
+      console.log('poolsInfo >>> ', poolsInfo.value);
+
       const newPoolId = poolId as string;
       const asset1 = poolsInfo.value[newPoolId].poolAssets[0];
       const asset2 = poolsInfo.value[newPoolId].poolAssets[1];

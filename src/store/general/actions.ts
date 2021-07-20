@@ -60,7 +60,6 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
   async initializeApiSMGeneral(context) {
     const { commit, dispatch } = context;
     const toast = useToast();
-    console.log('process.env.VUE_APP_CHAIN_NODE_URL - ', process.env.VUE_APP_CHAIN_NODE_URL);
 
     try {
       const apiInstance = await Api.initialize(
@@ -106,8 +105,6 @@ export const actions: ActionTree<GeneralState, MergedState> & GeneralActions = {
         },
         process.env.VUE_APP_CHAIN_NODE_URL
       );
-
-      console.log('apiInstance - ', apiInstance);
 
       if (!apiInstance) return 1;
 

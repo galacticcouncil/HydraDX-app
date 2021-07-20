@@ -21,8 +21,12 @@
         <div class="flex-row" role="cell">
           {{ assetRecord.totalBalanceFormatted }}
         </div>
-        <div class="flex-row" role="cell">{{ assetRecord.freeBalanceFormatted }}</div>
-        <div class="flex-row" role="cell">{{ assetRecord.reservedBalanceFormatted }}</div>
+        <div class="flex-row" role="cell">
+          {{ assetRecord.freeBalanceFormatted }}
+        </div>
+        <div class="flex-row" role="cell">
+          {{ assetRecord.reservedBalanceFormatted }}
+        </div>
         <div class="flex-row" role="cell">
           <ButtonCommon
             small
@@ -38,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, onMounted } from 'vue';
 import notifications from '@/variables/notifications';
 import { useStore } from '@/store';
 import { useToast } from 'vue-toastification';
@@ -59,10 +63,13 @@ export default defineComponent({
     };
 
     const assetBalancesSorted = computed(() => {
-      console.log('getters.assetBalancesSMWallet - ', getters.assetBalancesSMWallet)
       return [...getters.assetBalancesSMWallet].sort(
         (a, b) => Number(b.totalBalance) - Number(a.totalBalance)
       );
+    });
+
+    onMounted(() => {
+      console.log('assetBalances >>> ', assetBalancesSorted.value);
     });
 
     return {

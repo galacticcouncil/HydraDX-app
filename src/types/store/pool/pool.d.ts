@@ -4,6 +4,11 @@ type PoolInfo = {
   poolAssets: string[];
   poolAssetNames: string[];
   shareToken: number;
+  poolAssetsAmount: {
+    asset1: BigNumber;
+    asset2: BigNumber;
+  };
+  marketCap: BigNumber;
 };
 
 type PoolsInfoList = {

@@ -185,9 +185,13 @@ export default defineComponent({
       let amountAfter = new BigNumber(0);
 
       if (asset === 'asset1' && asset1Detailed.value.freeBalance) {
-        amountAfter = asset1Detailed.value.freeBalance.minus(liquidityAmount.value);
+        amountAfter = asset1Detailed.value.freeBalance.minus(
+          liquidityAmount.value
+        );
       } else if (asset === 'asset2' && asset2Detailed.value.freeBalance) {
-        amountAfter = asset2Detailed.value.freeBalance.minus(asset2Amount.value);
+        amountAfter = asset2Detailed.value.freeBalance.minus(
+          asset2Amount.value
+        );
       }
 
       return !amountAfter.isNaN() &&

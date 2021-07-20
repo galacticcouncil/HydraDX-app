@@ -18,9 +18,25 @@
           </div>
           <div class="item-name">Liquidity</div>
         </div>
-        <div class="meta-data-item">
-          <div class="item-value">---</div>
-          <div class="item-name">Volume (24h)</div>
+        <!--        <div class="meta-data-item">-->
+        <!--          <div class="item-value">-&#45;&#45;</div>-->
+        <!--          <div class="item-name">Volume (24h)</div>-->
+        <!--        </div>-->
+        <div v-if="currentPool" class="meta-data-item">
+          <div class="item-value">
+            {{ asset1LockedAmountFormatted }}
+          </div>
+          <div class="item-name">
+            Total locked {{ currentPool.poolAssetNames[0] }}
+          </div>
+        </div>
+        <div v-if="currentPool" class="meta-data-item">
+          <div class="item-value">
+            {{ asset2LockedAmountFormatted }}
+          </div>
+          <div class="item-name">
+            Total locked {{ currentPool.poolAssetNames[1] }}
+          </div>
         </div>
         <div class="meta-data-item">
           <div class="item-value">{{ userPoolLiquidity || '---' }}</div>
@@ -64,8 +80,13 @@ type PoolInfo = {
   poolAssets: string[];
   poolAssetNames: string[];
   shareToken: number;
+  poolAssetsAmount: {
+    [key: string]: BigNumber;
+  };
+  marketCap: BigNumber;
 };
 import { Ref } from '@vue/reactivity';
+import BigNumber from 'bignumber.js';
 import { defineComponent, computed, watch, ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import LiquidityControlsPanel from '@/components/liquidity/LiquidityControlsPanel.vue';
@@ -73,6 +94,7 @@ import PanelBackButton from '@/components/common/PanelBackButton.vue';
 import { useRouter } from 'vue-router';
 import * as constants from '@/variables/constants';
 import { getPriceDecoratedShort } from '@/services/utils';
+import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComponentsServices';
 
 export default defineComponent({
   name: 'SinglePoolPanel',
@@ -96,13 +118,31 @@ export default defineComponent({
       if (
         currentPool.value === null ||
         getters.assetBalancesSMWallet[currentPool.value.shareToken]
-          .totalBalanceFormatted === '0'
+          .freeBalanceFormatted === '0'
       ) {
         return null;
       }
 
-      return getters.assetBalancesSMWallet[currentPool.value.shareToken]
-        .totalBalanceFormatted;
+      return getters.assetBalancesSMWallet[
+        currentPool.value.shareToken
+      ].freeBalance
+        .decimalPlaces(3)
+        .toString();
+    });
+
+    const getAssetLockedAmountFormatted = (asset: string): string => {
+      if (currentPool.value === null) return '---';
+
+      return currentPool.value.poolAssetsAmount[asset]
+        .decimalPlaces(3)
+        .toString();
+    };
+
+    const asset1LockedAmountFormatted = computed(() => {
+      return getAssetLockedAmountFormatted('asset1');
+    });
+    const asset2LockedAmountFormatted = computed(() => {
+      return getAssetLockedAmountFormatted('asset2');
     });
 
     watch(
@@ -130,6 +170,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      tryConnectPolkadotDapp();
       if (selectedPool.value) {
         currentPool.value = poolsInfo.value[selectedPool.value];
       }
@@ -153,6 +194,8 @@ export default defineComponent({
       poolsInfo,
       userPoolLiquidity,
       addRemovePoolLiquidityDialogOpen,
+      asset1LockedAmountFormatted,
+      asset2LockedAmountFormatted,
       onBackClick,
       currentPool,
       poolName,

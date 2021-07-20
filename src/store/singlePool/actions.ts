@@ -50,6 +50,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
         );
         handleTransactionSuccess(resp);
         dispatch('getSpotPriceSMTrade');
+        dispatch('syncPoolsSMPool');
       } catch (e) {
         console.log(e);
         handleTransactionError(e);
@@ -90,6 +91,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
         handleTransactionSuccess(removeResp);
 
         dispatch('getSpotPriceSMTrade');
+        dispatch('syncPoolsSMPool');
       } catch (e) {
         console.log(e);
         handleTransactionError(e);
@@ -98,7 +100,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
     }
   },
 
-  async createPoolSMSinglePool({ commit, state, rootState }) {
+  async createPoolSMSinglePool({ commit, state, dispatch, rootState }) {
     const api = Api.getApi();
 
     const account = rootState.wallet.account;
@@ -118,6 +120,7 @@ export const actions: ActionTree<SinglePoolState, MergedState> &
           signer
         );
         handleTransactionSuccess(resp);
+        dispatch('syncPoolsSMPool');
       } catch (e) {
         console.log(e);
         handleTransactionError(e);
