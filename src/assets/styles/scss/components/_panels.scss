@@ -1,25 +1,23 @@
 .hdx-common-panel-layout {
   background-color: $hdx-blue;
-  box-shadow: 0.5em 0.5em rgba($hdx-bgr-blue, 0.9);
+  box-shadow: 0.5em 0.5em rgba(0, 0, 0, 0.6);
   padding: 10px;
 }
 
 .hdx-common-panels-container {
-  //height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  //align-items: center;
-  padding: 100px 0;
+  flex-wrap: wrap-reverse;
+  margin: auto;
 
   .hdx-common-panel-container {
     @extend .hdx-common-panel-layout;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 500px;
-    margin-left: 20px;
-    margin-right: 20px;
+    min-width: 380px;
+    margin: 10px;
+
     min-height: 600px;
   }
 
@@ -60,8 +58,16 @@
 }
 
 .hdx-page-screen-panel-container {
-  border: 1px solid $hdx-light-blue;
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: scroll;
+  z-index: 11;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
 
   .screen-panel-header {
     position: relative;
@@ -81,7 +87,11 @@
       font-weight: 600;
     }
   }
+
   .screen-panel-body {
-    //padding: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
   }
+
 }

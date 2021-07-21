@@ -10,10 +10,9 @@
     right: 0;
     width: 450px;
     background-color: $hdx-light-blue;
-    box-shadow: 0.5em 0.5em $hdx-bgr-blue;
+    box-shadow: 0.5em 0.5em rgba(0, 0, 0, 0.6);
     padding: 10px;
     color: $hdx-bgr-blue;
-    @include crt-effect();
   }
 
   .accounts-list-popup-header {

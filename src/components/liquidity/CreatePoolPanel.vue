@@ -1,11 +1,8 @@
 <template>
   <div class="hdx-create-pool">
     <div class="hdx-page-screen-panel-container hdx-create-pool-panel">
-      <div class="screen-panel-header">
-        <PanelBackButton :on-click="closeCreatePoolDialog" />
-        <div class="create-pool-title">Create new pool</div>
-      </div>
       <div class="screen-panel-body">
+        <PanelBackButton :on-click="closeCreatePoolDialog" />
         <div class="hdx-common-panels-container built-in-panels">
           <CreatePoolControlsPanel />
         </div>

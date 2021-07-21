@@ -1,11 +1,11 @@
 .layout-default {
-  padding: 25px;
-  width: 100%;
+  padding: 12px;
+  width: 100vw;
   height: 100vh;
 
   .layout-outer-container {
     border: 2px solid $hdx-pink;
-    padding: 10px;
+    padding: 5px;
     width: 100%;
     height: 100%;
   }
@@ -19,11 +19,9 @@
   .layout-bgr-image {
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center top;
     background-image: url('~@/assets/images/snakes-bg.png');
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
   }

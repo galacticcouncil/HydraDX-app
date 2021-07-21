@@ -4,7 +4,7 @@
       <div class="header-logo-container">
         <router-link class="logo-link" to="/">
           <div class="logo"></div>
-          <h1>HACK.HYDRA.DX</h1>
+          <p>HACK.HYDRA.DX</p>
         </router-link>
       </div>
 
