@@ -1,0 +1,31 @@
+.hdx-common-modal {
+  .hdx-common-modal-container {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: scroll;
+    z-index: 11;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hdx-common-modal-content {
+    position: relative;
+
+    &.with-body-panel {
+      background-color: $hdx-blue;
+      box-shadow: 0.5em 0.5em rgba(0, 0, 0, 0.6);
+      padding: 15px;
+    }
+  }
+
+  .modal-close-button {
+    position: absolute;
+    top: -35px;
+    right: 0;
+    left: 0;
+  }
+}

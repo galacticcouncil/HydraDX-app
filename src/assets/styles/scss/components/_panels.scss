@@ -59,16 +59,18 @@
 }
 
 .hdx-page-screen-panel-container {
+  //width: 100%;
+  //position: fixed;
+  //top: 0;
+  //left: 0;
+  //overflow: scroll;
+  //z-index: 11;
+  //height: 100%;
+  //background: rgba(0,0,0,0.7);
+  //display: flex;
+  //align-items: center;
+  border: 1px solid $hdx-light-blue;
   width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow: scroll;
-  z-index: 11;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
 
   .screen-panel-header {
     position: relative;
@@ -90,9 +92,9 @@
   }
 
   .screen-panel-body {
-    left: 0;
-    right: 0;
-    margin: auto;
+    //left: 0;
+    //right: 0;
+    //margin: auto;
   }
 
 }

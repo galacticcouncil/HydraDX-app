@@ -12,6 +12,7 @@ import ButtonCommon from '@/components/common/ButtonCommon.vue';
 import CommonPanel from '@/components/common/CommonPanel.vue';
 import BalanceInput from '@/components/common/BalanceInput.vue';
 import PagePanelLayout from '@/components/common/PagePanelLayout.vue';
+import ModalCommon from '@/components/common/ModalCommon.vue';
 import VueClickAway from 'vue3-click-away';
 
 const options: PluginOptions = {
@@ -35,4 +36,5 @@ createApp(App)
   .component('ButtonCommon', ButtonCommon)
   .component('BalanceInput', BalanceInput)
   .component('PagePanelLayout', PagePanelLayout)
+  .component('ModalCommon', ModalCommon)
   .mount('#app');

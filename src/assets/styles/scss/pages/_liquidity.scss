@@ -33,5 +33,10 @@
 }
 
 .hdx-liquidity-controls-panel-container {
-  border: 1px solid $hdx-light-blue;
+  //border: 1px solid $hdx-light-blue;
+  min-width: 380px;
+  max-width: 430px;
+
+  min-height: 400px;
+
 }
