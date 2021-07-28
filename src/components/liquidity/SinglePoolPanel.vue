@@ -58,19 +58,16 @@
           >
         </div>
       </div>
-      <div
-        class="liquidity-action-controls"
-        v-if="addRemovePoolLiquidityDialogOpen"
+
+      <ModalCommon
+        :open="addRemovePoolLiquidityDialogOpen"
+        name="create-pool"
+        :on-close-click="onCloseLiquidityActionControlsClick"
       >
-        <ButtonCommon
-          :on-click="onCloseLiquidityActionControlsClick"
-          custom-class="close-liquidity-action-controls-btn"
-          >Close</ButtonCommon
-        >
-        <div class="hdx-common-panels-container built-in-panels">
+        <div class="hdx-common-panels-container">
           <LiquidityControlsPanel :current-pool="currentPool" />
         </div>
-      </div>
+      </ModalCommon>
     </div>
   </div>
 </template>

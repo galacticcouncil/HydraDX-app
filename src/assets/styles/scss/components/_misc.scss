@@ -24,8 +24,6 @@
     background-color: #0c36a1;
   }
 
-  //---------------------------
-
   ul {
     list-style: none;
     display: flex;
@@ -93,6 +91,8 @@
   display: flex;
   margin-top: 15px;
   margin-bottom: 15px;
+  flex-direction: row;
+  flex-wrap: wrap;
 
   &.align-center {
     justify-content: center;
@@ -100,7 +100,7 @@
 
   &.sub-value {
     opacity: 0.8;
-    font-size: 15px;
+    font-size: 13px;
   }
 
   &.not-valid-value {

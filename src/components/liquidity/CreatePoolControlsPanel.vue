@@ -1,5 +1,5 @@
 <template>
-  <CommonPanel class="hdx-liquidity-controls-panel-container">
+  <CommonPanel>
     <div class="panel-header">Create pool</div>
     <div class="panel-body">
       <div class="asset-select-with-details-container">

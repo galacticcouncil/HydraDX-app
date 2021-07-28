@@ -1,8 +1,8 @@
 <template>
   <div class="page-wrapper liquidity">
     <PagePanelLayout>
-      <PoolsList v-show="!isPoolSelected && !createPoolDialogOpen" />
-      <CreatePoolPanel v-if="createPoolDialogOpen" />
+      <PoolsList v-show="!isPoolSelected" />
+      <CreatePoolDialog />
     </PagePanelLayout>
   </div>
 </template>
@@ -17,7 +17,7 @@ import {
 } from 'vue';
 import { useStore } from '@/store';
 import PoolsList from '@/components/liquidity/PoolsList.vue';
-import CreatePoolPanel from '@/components/liquidity/CreatePoolPanel.vue';
+import CreatePoolDialog from '@/components/liquidity/CreatePoolDialog.vue';
 import {
   onRouteHashChangeWatchLiquidityPage,
   onMountRouteHashCheckLiquidityPage,
@@ -27,7 +27,7 @@ import { tryConnectPolkadotDapp } from '@/services/componentsServices/commonComp
 
 export default defineComponent({
   name: 'Liquidity',
-  components: { PoolsList, CreatePoolPanel },
+  components: { PoolsList, CreatePoolDialog },
   setup() {
     const { getters, commit } = useStore();
     const router = useRouter();

@@ -23,22 +23,20 @@
     align-items: center;
     justify-content: flex-end;
     padding: 10px 10px 20px 10px;
-
-    //.liquidity-page-control {
-    //  margin-top: 0;
-    //  margin-bottom: 0;
-    //  font-size: 18px;
-    //}
   }
 }
 
 .hdx-create-pool {
   .screen-panel-body {
-    padding-top: 40px;
-    padding-bottom: 40px;
+
   }
 }
 
 .hdx-liquidity-controls-panel-container {
-  border: 1px solid $hdx-light-blue;
+  //border: 1px solid $hdx-light-blue;
+  min-width: 380px;
+  max-width: 430px;
+
+  min-height: 400px;
+
 }

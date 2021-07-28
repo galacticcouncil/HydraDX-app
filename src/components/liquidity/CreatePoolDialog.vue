@@ -1,36 +1,39 @@
 <template>
-  <div class="hdx-create-pool">
-    <div class="hdx-page-screen-panel-container hdx-create-pool-panel">
-      <div class="screen-panel-header">
-        <PanelBackButton :on-click="closeCreatePoolDialog" />
-        <div class="create-pool-title">Create new pool</div>
-      </div>
-      <div class="screen-panel-body">
-        <div class="hdx-common-panels-container built-in-panels">
-          <CreatePoolControlsPanel />
-        </div>
-      </div>
+  <ModalCommon
+    :open="createPoolDialogOpen"
+    name="create-pool"
+    :on-close-click="closeCreatePoolDialog"
+  >
+    <div class="hdx-common-panels-container">
+      <CreatePoolControlsPanel />
     </div>
-  </div>
+  </ModalCommon>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import CreatePoolControlsPanel from '@/components/liquidity/CreatePoolControlsPanel.vue';
 import PanelBackButton from '@/components/common/PanelBackButton.vue';
+import ModalCommon from '@/components/common/ModalCommon.vue';
+import { useStore } from '@/store';
 
 export default defineComponent({
-  name: 'CreatePoolPanel',
+  name: 'CreatePoolDialog',
   components: {
     PanelBackButton,
     CreatePoolControlsPanel,
+    ModalCommon,
   },
   setup() {
     const router = useRouter();
+    const { getters } = useStore();
 
     return {
       closeCreatePoolDialog: () => router.push(router.currentRoute.value.path),
+      createPoolDialogOpen: computed(
+        () => getters.createPoolDialogOpenSMSinglePool
+      ),
     };
   },
 });

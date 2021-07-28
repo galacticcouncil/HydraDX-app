@@ -3,9 +3,6 @@
 
 .hdx-table-container {
   display: block;
-  //margin: 2em auto;
-  //width: 90%;
-  //max-width: 600px;
   box-sizing: border-box;
 
   div {
@@ -26,26 +23,12 @@
       border-color: $hdx-light-blue;
     }
 
-    &:hover {
-      //background: #F5F5F5;
-    }
-
     &.align-center {
       .flex-row {
         display: flex;
         align-items: center;
       }
     }
-
-    //&.row {
-    //  &:hover {
-    //    border-style: inset;
-    //    border-color: $hdx-light-blue;
-    //    border-top-color: $hdx-blue;
-    //    border-left-color: $hdx-blue;
-    //    border-width: 3px;
-    //  }
-    //}
   }
 
   &.col-num-5 {

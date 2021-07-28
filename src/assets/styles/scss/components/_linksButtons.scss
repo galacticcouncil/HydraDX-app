@@ -1,4 +1,18 @@
-.hdx-link-with-status,
+.hdx-link-with-status {
+  text-transform: uppercase;
+  text-decoration: underline;
+
+  &.active {
+    color: $hdx-pink;
+    text-decoration: none;
+  }
+  
+  &:hover {
+    color: $hdx-pink;
+  }
+}
+
+
 .hdx-button-with-status {
   display: inline-block;
   color: rgba($hdx-light-blue, 0.7);
@@ -16,7 +30,6 @@
   cursor: pointer;
 
   &:hover {
-    text-transform: uppercase;
     border-style: inset;
     border-color: $hdx-light-blue;
     border-top-color: $hdx-blue;
@@ -26,8 +39,6 @@
 
   &.active {
     color: $hdx-pink;
-    text-transform: uppercase;
-
     border-style: inset;
     border-color: $hdx-light-blue;
     border-top-color: $hdx-blue;
